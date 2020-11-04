@@ -11,7 +11,7 @@ loadData().then(data => {
 async function loadData() {
     try {
         console.log('Load Data')
-        const data = await d3.csv('data/LanguageData_States.csv')
+        const data = await d3.csv('cleaned_data.csv')
         console.log('Data Loaded')
         return data
     }
