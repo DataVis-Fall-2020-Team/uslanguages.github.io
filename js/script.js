@@ -1,7 +1,8 @@
 loadData().then(data => {
     console.log("HERE IS THE DATA", data)
 
-   
+   let megacluster = new cluster(data)
+   megacluster.draw_circles()
     
 })
 
@@ -11,7 +12,7 @@ loadData().then(data => {
 async function loadData() {
     try {
         console.log('Load Data')
-        const data = await d3.csv('cleaned_data.csv')
+        const data = await d3.csv('./data/National_Languages.csv')
         console.log('Data Loaded')
         return data
     }
