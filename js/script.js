@@ -1,4 +1,4 @@
-loadData().then(data => {
+loadData_National().then(data => {
     console.log("HERE IS THE DATA", data)
 
    let megacluster = new cluster(data)
@@ -9,7 +9,7 @@ loadData().then(data => {
 
 
 // Import the JSON file
-async function loadData() {
+async function loadData_National() {
     try {
         console.log('Load Data')
         const data = await d3.csv('./data/National_Languages.csv')
