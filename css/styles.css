@@ -1,0 +1,9 @@
+#tooltip {
+    position: absolute;
+    background-color: white;
+    opacity: .75;
+    font-weight: 600;
+    text-transform: capitalize;
+    fill: #787878;
+
+}
