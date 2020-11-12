@@ -1,0 +1,33 @@
+body {
+    position: relative;
+}
+
+.barchart text{
+    font-size: 15px;
+
+}
+
+.english {
+    fill: #ffa600;
+}
+.spanish {
+    fill: #ff6361;
+}
+.europe {
+    fill: #bc5090;
+}
+.asian {
+    fill: #58508d;
+}
+.other {
+    fill: #003f5c;
+}
+
+line {
+    stroke: black;
+
+}
+.hover {
+    stroke: black;
+}
+

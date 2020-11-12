@@ -1,5 +1,17 @@
 loadData().then(data => {
     console.log("HERE IS THE DATA", data)
+    for (let d of data[0]){
+        d.Speakers = +d.Speakers.replace(/,/g ,"");
+    }
+    for (let d of data[1]){
+        d.Speakers = +d.Speakers.replace(/,/g ,"");
+        d.EnglishSpeakers = +d.EnglishSpeakers.replace(/,/g ,"");
+    }
+    let barChart = new Barchart(data[0]);
+    //let divChart = new DivChart(data[1]);
+    let divChart2 = new DivChart2(data[1]);
+
+
 
    
     
@@ -10,10 +22,11 @@ loadData().then(data => {
 // Import the JSON file
 async function loadData() {
     try {
-        console.log('Load Data')
-        const data = await d3.csv('cleaned_data.csv')
-        console.log('Data Loaded')
-        return data
+        const stateData = await d3.csv('./data/LanguageData_States.csv');
+        console.log('State Data Loaded');
+        const nationalData = await d3.csv('./data/National_Languages.csv');
+        console.log('National Data Loaded');
+        return [stateData, nationalData];
     }
     catch (error) {
         console.log(error)
