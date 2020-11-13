@@ -6,7 +6,7 @@ class Node{
      * @param {string} parentName - the name of the parent node
      * @param {Node} parent - a reference to the parent node
      */
-    constructor(name, level, grouping, parentName, parent, total, english){
+    constructor(name, level, grouping, parentName, parent, total, nonEnglish){
         this.name = name;
         this.level = level;
         this.grouping = grouping;
@@ -14,7 +14,7 @@ class Node{
         this.parent = parent;
         this.children = [];
         this.totalSpeakers = total;
-        this.englishSpeakers = english;
+        this.nonEnglishSpeakers = nonEnglish;
     }
 
 /**
@@ -43,30 +43,30 @@ class Tree{
         //filter out total row and rows with NaN Speakers and speakers less than 100
         let otherData = data.filter(obj => obj.Group != "Total" 
             && obj.Group != "English" && !Number.isNaN(obj.Speakers) && obj.Speakers > 100);
-        this.root = new Node(rootData.Group, "root", null, null, null, rootData.Speakers, rootData.EnglishSpeakers);
+        this.root = new Node(rootData.Group, "root", null, null, null, rootData.Speakers, rootData.nonEnglishSpeakers);
         let groupData = d3.rollup(otherData, v => d3.sum(v, d => d.Speakers), d => d.Group);
-        let groupDataEnglish = d3.rollup(otherData, v => d3.sum(v, d => d.EnglishSpeakers), d => d.Group);
+        let groupDataNonEnglish = d3.rollup(otherData, v => d3.sum(v, d => d.nonEnglishSpeakers), d => d.Group);
     
         groupData.forEach(function(val, key) {
-            let newNode = new Node(key, "group", key, "root", that.root, val, groupDataEnglish.get(key));
+            let newNode = new Node(key, "group", key, "root", that.root, val, groupDataNonEnglish.get(key));
             that.root.addChild(newNode);
         });
 
         let subgroupData = d3.rollup(otherData, v => d3.sum(v, d => d.Speakers), d => d.Group, d => d.Subgroup);
-        let subgroupDataEnglish = d3.rollup(otherData, v => d3.sum(v, d => d.EnglishSpeakers), d => d.Group, d => d.Subgroup);
+        let subgroupDataNonEnglish = d3.rollup(otherData, v => d3.sum(v, d => d.nonEnglishSpeakers), d => d.Group, d => d.Subgroup);
 
         subgroupData.forEach(function(val, key) {
             val.forEach(function (v, k){
                 let parentNode = that.getNode(key, "group", that.root)
-                let englishSpeakers = subgroupDataEnglish.get(key).get(k);
-                let newNode = new Node(k, "subgroup", parentNode.grouping, parentNode.name, parentNode, v, englishSpeakers);
+                let nonEnglishSpeakers = subgroupDataNonEnglish.get(key).get(k);
+                let newNode = new Node(k, "subgroup", parentNode.grouping, parentNode.name, parentNode, v, nonEnglishSpeakers);
                 parentNode.addChild(newNode);
             })
         });
 
         for (let d of otherData){
             let parentNode = this.getNode(d.Subgroup, "subgroup", this.root);
-            let newNode = new Node(d.Language, "language", parentNode.grouping, parentNode.name, parentNode, d.Speakers, d.EnglishSpeakers);
+            let newNode = new Node(d.Language, "language", parentNode.grouping, parentNode.name, parentNode, d.Speakers, d.nonEnglishSpeakers);
             parentNode.addChild(newNode);
         }
         //this.treeTraversal(this.root);
