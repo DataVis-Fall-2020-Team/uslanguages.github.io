@@ -31,3 +31,36 @@ line {
     stroke: black;
 }
 
+.divchart2 {
+    position: relative;
+}
+
+div.tooltip {
+    position: absolute;
+    text-align-last: center;
+    width: auto;
+    height: auto;
+    background: white;
+    border-radius: 2px;
+    pointer-events: none;
+    font-size: 12;
+    font-weight: bold;
+    stroke: black;
+}
+.tooltip h1 {
+    margin: 2px;
+    font-size: 20px;
+    font: ariel;
+    font-weight: bold;
+}
+
+.hidden{
+    display: none;
+}
+
+.labels {
+    fill: black;
+    font-size: 12;
+    font-weight: bold;
+}
+

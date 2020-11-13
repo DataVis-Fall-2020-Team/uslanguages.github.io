@@ -8,12 +8,7 @@ loadData().then(data => {
         d.EnglishSpeakers = +d.EnglishSpeakers.replace(/,/g ,"");
     }
     let barChart = new Barchart(data[0]);
-    //let divChart = new DivChart(data[1]);
-    let divChart2 = new DivChart2(data[1]);
-
-
-
-   
+    let divChart2 = new BarChart2(data[1]);
     
 })
 
