@@ -13,8 +13,8 @@ d3.csv('data/National_Languages.csv', function(d){
         Group: d.Group,
         Subgroup: d.Subgroup,
         Language: d.Language,
-        NumberofSpeakers: +(d['Number of speakers'].replace(/,/g, '')),
-        SpeaksEnglishPoorly: +(d['Speak English less than "Very Well"'].replace(/,/g, '')),
+        NumberofSpeakers: +(d['Speakers'].replace(/,/g, '')),
+        SpeaksEnglishPoorly: +(d['nonEnglishSpeakers'].replace(/,/g, '')),
     };
 }).then(data => {
     dataset = data
@@ -189,26 +189,32 @@ d3.csv('data/National_Languages.csv', function(d){
     })
       
 //Janaan's merged information:
-//loadData().then(data => {
-//    console.log("HERE IS THE DATA", data)
-//    for (let d of data[0]){
-//        d.Speakers = +d.Speakers.replace(/,/g ,"");
-//    }
-//    for (let d of data[1]){
-//        d.Speakers = +d.Speakers.replace(/,/g ,"");
-//        d.EnglishSpeakers = +d.EnglishSpeakers.replace(/,/g ,"");
-//    }
-//    let barChart = new Barchart(data[0]);
-//    let divChart2 = new BarChart2(data[1]);
+loadData().then(data => {
+   console.log("HERE IS THE DATA", data)
+   for (let d of data[0]){
+       d.Speakers = +d.Speakers.replace(/,/g ,"");
+   }
+   for (let d of data[1]){
+       d.Speakers = +d.Speakers.replace(/,/g ,"");
+       d.nonEnglishSpeakers = +d.nonEnglishSpeakers.replace(/,/g ,"");
+   }
+   let barChart = new Barchart(data[0]);
+   let divChart2 = new BarChart2(data[1]);
     
-//})
+})
 // Import the JSON file
-//async function loadData() {
-//    try {
-//        const stateData = await d3.csv('./data/LanguageData_States.csv');
-//        console.log('State Data Loaded');
-//        const nationalData = await d3.csv('./data/National_Languages.csv');
-//        console.log('National Data Loaded');
-//        return [stateData, nationalData];
+async function loadData() {
+   try {
+       const stateData = await d3.csv('./data/LanguageData_States.csv');
+       console.log('State Data Loaded');
+       const nationalData = await d3.csv('./data/National_Languages.csv');
+       console.log('National Data Loaded');
+       return [stateData, nationalData];
+   }
+   catch{
+       console.log("Data not loaded");
+   }
+}
+
       
       

@@ -47,7 +47,7 @@ class BarChart2{
                 .attr("height", this.height + this.margin.top + this.margin.bottom)
                 .attr("width", this.width + this.margin.left + this.margin.right);
             svg.append("g").attr("class", "speakerBars");
-            svg.append("g").attr("class", "englishBars");
+            svg.append("g").attr("class", "nonEnglishBars");
             svg.append("g").attr("class", "labels");
 
             d3.select(".divchart2")
@@ -101,16 +101,16 @@ class BarChart2{
                         return 0.2;
                     else return 0.6});
                 
-            d3.select(".englishBars").selectAll("rect")
+            d3.select(".nonEnglishBars").selectAll("rect")
                 .data(this.currentData)
                 .join("rect")
                 .on("click", function(d) {
                     that.updateData(d3.select(this))})
                 //.transition()
                 .attr("x", d => d.x)
-                .attr("y", d => 750 - this.getScale(d)(d.englishSpeakers))
+                .attr("y", d => 750 - this.getScale(d)(d.nonEnglishSpeakers))
                 .attr("width", d => this.getBarWidth(d))
-                .attr("height", d => this.getScale(d)(d.englishSpeakers))
+                .attr("height", d => this.getScale(d)(d.nonEnglishSpeakers))
                 //.style("fill", "grey")
                 .style("fill", function(d){
                     if (d.level != that.currentLevel)
@@ -128,14 +128,14 @@ class BarChart2{
                 .join("text")
                 .attr("class", "pLabels")
                 .attr("x", d=>d.x + this.getBarWidth(d)/4)
-                .attr("y", d => 750 - this.getScale(d)(d.englishSpeakers) - 15)
+                .attr("y", d => 750 - this.getScale(d)(d.nonEnglishSpeakers) - 15)
                 .classed("hidden", function(d){
                     if (that.currentGrouping === "Total" || d.level === "language")
                         return false;
                     else return true;
                 })
                 .attr("id", d=>d.name.replace(/\s/g, "").replace(/,/g, '').replace(/\)/g, '').replace(/\(/g,''))
-                .text( d => parseFloat(d.englishSpeakers/d.totalSpeakers * 100).toFixed(2) + "%");
+                .text( d => parseFloat(d.nonEnglishSpeakers/d.totalSpeakers * 100).toFixed(2) + "%");
                 
         }
 
