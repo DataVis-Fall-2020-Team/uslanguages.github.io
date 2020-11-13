@@ -1,3 +1,4 @@
+
 #tooltip {
     position: absolute;
     background-color: white;
@@ -15,6 +16,7 @@
 body {
     /* background-color: rgb(248, 247, 242); */
     overflow-x: hidden;
+    position: relative;
 }
 
 #sections {
@@ -111,4 +113,64 @@ a {
 
 img {
     display: none;
+}
+.barchart text{
+    font-size: 15px;
+}
+
+.english {
+    fill: #ffa600;
+}
+.spanish {
+    fill: #ff6361;
+}
+.europe {
+    fill: #bc5090;
+}
+.asian {
+    fill: #58508d;
+}
+.other {
+    fill: #003f5c;
+}
+
+line {
+    stroke: black;
+
+}
+.hover {
+    stroke: black;
+}
+
+.divchart2 {
+    position: relative;
+}
+
+div.tooltip {
+    position: absolute;
+    text-align-last: center;
+    width: auto;
+    height: auto;
+    background: white;
+    border-radius: 2px;
+    pointer-events: none;
+    font-size: 12;
+    font-weight: bold;
+    stroke: black;
+}
+.tooltip h1 {
+    margin: 2px;
+    font-size: 20px;
+    font: ariel;
+    font-weight: bold;
+}
+
+.hidden{
+    display: none;
+}
+
+.labels {
+    fill: black;
+    font-size: 12;
+    font-weight: bold;
 }
