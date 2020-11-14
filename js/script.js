@@ -1,40 +1,58 @@
+// Set global variables
+let dataset
+let simulation, nodes
 
 // --------------------------------------------
         // Import the data
 // --------------------------------------------
 
-// Set global variables
-let dataset
-let simulation, nodes
-
-// Import the data
-d3.csv('data/National_Languages.csv', function(d){
-    return {
-        Group: d.Group,
-        Subgroup: d.Subgroup,
-        Language: d.Language,
-        NumberofSpeakers: +(d['Speakers'].replace(/,/g, '')),
-        SpeaksEnglishPoorly: +(d['nonEnglishSpeakers'].replace(/,/g, '')),
-    };
-}).then(data => {
+loadData().then(data => {
     dataset = data
-    console.log("This is the dataset", dataset)
     
-    setTimeout(setup_page(), 100)
-    }) // end then function
+    setTimeout(setup_page(), 100) 
+ })
+ 
+ async function loadData() {
+    try {
+        const stateData = await d3.csv('./data/LanguageData_States.csv', function (d){ 
+            return {
+                Group: d.Group
+                , Subgroup: d.Subgroup
+                , Language: d.Language
+                , Speakers: +d.Speakers.replace(/,/g ,"")
+                // , nonEnglishSpeakers: +d.nonEnglishSpeakers.replace(/,/g ,"")
+            }
+        });
+        console.log('State Data Loaded');
+        const nationalData = await d3.csv('./data/National_Languages.csv', function(d){
+            return {
+                Group: d.Group,
+                Subgroup: d.Subgroup,
+                Language: d.Language,
+                Speakers: +d.Speakers.replace(/,/g ,""),
+                nonEnglishSpeakers: +d.nonEnglishSpeakers.replace(/,/g ,"")
+            }
+        });
+        console.log('National Data Loaded');
+        return [stateData, nationalData];
+    }
+    catch{
+        console.log("Data not loaded");
+    }
+ }
 
 // --------------------------------------------
         // Setup the scales 
 // --------------------------------------------
 
-
+    // Viz #1 - Megacluster scales --------------------------------
     function colorScale(input){
         // Get distinct values, taken from: https://codeburst.io/javascript-array-distinct-5edc93501dc4
         const distinct = (value, index, self) => {
             return self.indexOf(value) === index;
         }
             
-        let my_categories = dataset.map(x => x.Group).filter(distinct);
+        let my_categories = dataset[1].map(x => x.Group).filter(distinct);
     
         // Color scale
         let my_colorScale = d3.scaleOrdinal() 
@@ -44,6 +62,7 @@ d3.csv('data/National_Languages.csv', function(d){
         return my_colorScale(input)
     }
     
+    
     function scaleSize(input){ 
         
         let my_scaleSize = d3.scaleSymlog() 
@@ -52,10 +71,12 @@ d3.csv('data/National_Languages.csv', function(d){
             .nice()
         return my_scaleSize(input)
     }
+    // ----------------------------------------------------------------
 
 // --------------------------------------------
         // Setup the page 
 // --------------------------------------------
+
     // Setup the page 
     function setup_page(){
 
@@ -63,11 +84,19 @@ d3.csv('data/National_Languages.csv', function(d){
         let svg = d3.select("#vis")
             .append('svg')
             .attr('width', 1000)
-            .attr('height', 950)
+            .attr('height', 500)
             .attr('opacity', 1)
+            .attr('position', 'relative')
+        
+        // Create the table for Viz #3
+        d3.select('#vis')
+            .append('div')
+                .classed('barchart',true)
+            .append('table')
+                .attr('id',"table-body")
         
         // Simulation setup
-        simulation = d3.forceSimulation(dataset)
+        simulation = d3.forceSimulation(dataset[1])
           .force("center", d3.forceCenter(500,500))
         
         // Define each tick of simulation
@@ -78,19 +107,20 @@ d3.csv('data/National_Languages.csv', function(d){
     })
     
         // Viz #1 Megacluster setup
-        nodes = svg
-          .selectAll('circle')
-          .data(dataset)
-          .join('circle')
-          .attr('r',d => scaleSize(d.NumberofSpeakers))
-          .attr('fill',d => colorScale(d.Group))
-          .attr('opacity', 0.8)
+        new cluster(svg)
 
-        // Stop the simulation until later
-        // simulation.stop()
+        // Viz #3 Bar Graph setup
+        new Barchart(dataset[0]);
+
+        // Viz #4 Bar Graph setup
+        // new BarChart2(dataset[1]);
       
     } // End setup_page function
-    
+
+
+// --------------------------------------------
+        // Control the opacity
+// --------------------------------------------    
     function clean(chartType){
         let svg = d3.select('#vis').select('svg')
         if (chartType !== "isFirst"){
@@ -118,8 +148,8 @@ d3.csv('data/National_Languages.csv', function(d){
         
         svg.selectAll('circle')
             .transition()
-            .attr('opacity',0)
-            .attr('r',d => scaleSize(d.NumberofSpeakers))
+            
+            .attr('r',d => scaleSize(d.Speakers))
             .attr('fill',d => colorScale(d.Group))
             .attr('opacity',.8)
     
@@ -187,34 +217,5 @@ d3.csv('data/National_Languages.csv', function(d){
     
         }
     })
-      
-//Janaan's merged information:
-loadData().then(data => {
-   console.log("HERE IS THE DATA", data)
-   for (let d of data[0]){
-       d.Speakers = +d.Speakers.replace(/,/g ,"");
-   }
-   for (let d of data[1]){
-       d.Speakers = +d.Speakers.replace(/,/g ,"");
-       d.nonEnglishSpeakers = +d.nonEnglishSpeakers.replace(/,/g ,"");
-   }
-   let barChart = new Barchart(data[0]);
-   let divChart2 = new BarChart2(data[1]);
-    
-})
-// Import the JSON file
-async function loadData() {
-   try {
-       const stateData = await d3.csv('./data/LanguageData_States.csv');
-       console.log('State Data Loaded');
-       const nationalData = await d3.csv('./data/National_Languages.csv');
-       console.log('National Data Loaded');
-       return [stateData, nationalData];
-   }
-   catch{
-       console.log("Data not loaded");
-   }
-}
-
       
       

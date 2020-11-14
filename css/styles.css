@@ -80,7 +80,7 @@ strong {
     stroke: 'red'
 }
 
-#tooltip {
+/* #tooltip {
     position: absolute;
     display: none;
     background: rgba(0, 0, 0, .7);
@@ -92,7 +92,7 @@ strong {
     font-size: 1.1em;
     max-width: 400px;
     z-index: 100;
-}
+} */
 
 svg circle:hover{
     cursor: pointer;

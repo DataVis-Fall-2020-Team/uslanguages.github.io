@@ -109,8 +109,8 @@ class Barchart{
         function numberWithCommas(x) {
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
-
-        let rowSelection = d3.select("#table-body")
+        
+        let rowSelection =d3.select('#table-body')
             .selectAll("tr")
             .data(this.stateData)
             .join("tr");
