@@ -89,8 +89,10 @@ loadData().then(data => {
             .attr('height', 1000)
             .attr('opacity', 1)
             // .attr('position', 'relative')
+
+        // Viz #2 - Map
         
-        // Create the table for Viz #3
+        // Viz #3 - Barchart 1
         d3.select('#graphic')
             .append('div')
                 .classed('barchart',true)
@@ -101,6 +103,9 @@ loadData().then(data => {
                 .style('opacity',0)
             .append('table')
                 .attr('id',"table-body")
+
+        // Viz #4 - Barchart 2
+        d3.select('.divchart2').style('opacity',0)
         
         // Simulation setup
         simulation = d3.forceSimulation(dataset[1])
@@ -116,13 +121,15 @@ loadData().then(data => {
         // Viz #1 Megacluster setup
         new cluster(svg)
 
+        // Viz #2 Map
+
+
         // Viz #3 Bar Graph setup
         new Barchart(dataset[0]);
 
         // Viz #4 Bar Graph setup
         new BarChart2(dataset[1]);
-        d3.select('.divchart2').style('opacity',0)
-      
+
     } // End setup_page function
 
 
@@ -161,9 +168,6 @@ loadData().then(data => {
         
         svg.selectAll('circle')
             .transition()
-            
-            .attr('r',d => scaleSize(d.Speakers))
-            .attr('fill',d => colorScale(d.Group))
             .style('opacity',.8)
     
         simulation.alpha(0.9).restart()

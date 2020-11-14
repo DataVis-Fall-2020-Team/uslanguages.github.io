@@ -24,7 +24,7 @@ class cluster {
                         .style('visibility', 'hidden')
 
         // Mouse over
-        d3.selectAll('circle').on('mouseover', function(d){
+        d3.selectAll('circle').on('mouseover.cluster', function(d){
             tooltip
             .style('visibility', 'visible')
             .style("top", d3.event.pageY -10 + 'px')
@@ -39,14 +39,14 @@ class cluster {
         }) // End mouseover listener
 
         // Mouse move
-        d3.selectAll('circle').on('mousemove', () => {
+        d3.selectAll('circle').on('mousemove.cluster', () => {
             tooltip
             .style("top", d3.event.pageY -10 + 'px')
             .style("left", d3.event.pageX -300 + 'px')
         }) // End mousemove listener
 
         // Mouse out
-        d3.selectAll('circle').on('mouseout', () => {
+        d3.selectAll('circle').on('mouseout.cluster', () => {
             tooltip.style('visibility', 'hidden')
         }) // End mouseout listener
 

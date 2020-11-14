@@ -20,7 +20,7 @@ class Barchart{
         this.margin = { top: 20, right: 10, bottom: 20, left: 10};
         this.width = 200;
         this.height = 1500;
-        this.barWidth = 200;
+        this.barWidth = 500;
         this.cellHeight = 17;
         this.nameWidth = 150;
         this.sortAscending = true;
