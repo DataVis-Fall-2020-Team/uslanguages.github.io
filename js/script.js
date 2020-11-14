@@ -14,15 +14,16 @@ loadData().then(data => {
  
  async function loadData() {
     try {
-        const stateData = await d3.csv('./data/LanguageData_States.csv', function (d){ 
-            return {
-                Group: d.Group
-                , Subgroup: d.Subgroup
-                , Language: d.Language
-                , Speakers: +d.Speakers.replace(/,/g ,"")
-                // , nonEnglishSpeakers: +d.nonEnglishSpeakers.replace(/,/g ,"")
-            }
-        });
+        const stateData = await d3.csv('./data/LanguageData_States.csv')
+        // , function (d){ 
+        //     return {
+        //         Group: d.Group
+        //         , Subgroup: d.Subgroup
+        //         , Language: d.Language
+        //         , Speakers: +d.Speakers.replace(/,/g ,"")
+        //         // , nonEnglishSpeakers: +d.nonEnglishSpeakers.replace(/,/g ,"")
+        //     }
+        // });
         console.log('State Data Loaded');
         const nationalData = await d3.csv('./data/National_Languages.csv', function(d){
             return {
@@ -82,16 +83,22 @@ loadData().then(data => {
 
         // Create the SVG
         let svg = d3.select("#vis")
+            .style('margin-left', '200px')
             .append('svg')
             .attr('width', 1000)
-            .attr('height', 500)
+            .attr('height', 1000)
             .attr('opacity', 1)
-            .attr('position', 'relative')
+            // .attr('position', 'relative')
         
         // Create the table for Viz #3
-        d3.select('#vis')
+        d3.select('#graphic')
             .append('div')
                 .classed('barchart',true)
+                .style('position','fixed')
+                .style('margin-left','500px')
+                .style('margin-top', '100px')
+                
+                .style('opacity',0)
             .append('table')
                 .attr('id',"table-body")
         
@@ -113,7 +120,8 @@ loadData().then(data => {
         new Barchart(dataset[0]);
 
         // Viz #4 Bar Graph setup
-        // new BarChart2(dataset[1]);
+        new BarChart2(dataset[1]);
+        d3.select('.divchart2').style('opacity',0)
       
     } // End setup_page function
 
@@ -123,11 +131,16 @@ loadData().then(data => {
 // --------------------------------------------    
     function clean(chartType){
         let svg = d3.select('#vis').select('svg')
-        if (chartType !== "isFirst"){
-            svg.selectAll('circle').transition().attr('opacity',0)
-    
-
-        } // End if statement
+        if (chartType !== "cluster"){
+            svg.selectAll('circle').transition().style('opacity',0)
+        } // End cluster if statement
+        if (chartType !== "bar1"){
+            d3.select('.barchart').transition().style('opacity',0)
+        } // End bar1 if statement
+        if (chartType !== "bar2"){
+            d3.select('.divchart2').transition().style('opacity',0)
+        } // End bar2 if statement
+        
     } // End function clean()
 
 
@@ -141,7 +154,7 @@ loadData().then(data => {
         //Stop simulation
         simulation.stop()
         
-        clean('isFirst') // Turns off opacity for all other charts
+        clean('cluster') // Turns off opacity for all other charts
         
         let svg = d3.select("#vis")
             .select('svg')
@@ -151,7 +164,7 @@ loadData().then(data => {
             
             .attr('r',d => scaleSize(d.Speakers))
             .attr('fill',d => colorScale(d.Group))
-            .attr('opacity',.8)
+            .style('opacity',.8)
     
         simulation.alpha(0.9).restart()
     
@@ -160,15 +173,28 @@ loadData().then(data => {
     // Draw 2nd Viz
     function draw1(){
     
-    clean('none')
+    //Stop simulation
+    simulation.stop()
+    
+    clean('bar1')
     console.log('Check')
+
+    d3.select('.barchart')
+        .transition()
+        .style('opacity',.8)
+
+    simulation.alpha(0.9).restart()
+
     
     } // end draw1 function    
 
     function draw2(){
     
-        clean('none')
+        clean('bar2')
         console.log('Check')
+        d3.select('.divchart2')
+            .style('margin-left', '500px')
+            .style('opacity',.8)
         
     } // end draw1 function   
 

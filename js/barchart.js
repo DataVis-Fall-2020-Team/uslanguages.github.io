@@ -18,9 +18,9 @@ class Barchart{
         
         this.stateData = this.sumData(data);
         this.margin = { top: 20, right: 10, bottom: 20, left: 10};
-        this.width = 750;
+        this.width = 200;
         this.height = 1500;
-        this.barWidth = 600;
+        this.barWidth = 200;
         this.cellHeight = 17;
         this.nameWidth = 150;
         this.sortAscending = true;
