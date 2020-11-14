@@ -1,4 +1,8 @@
-
+#map{
+    height:1000px;
+    width:1000px;
+    position:fixed;
+}
 #tooltip {
     position: absolute;
     background-color: white;
