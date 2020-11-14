@@ -96,10 +96,10 @@ loadData().then(data => {
         // Viz #3 - Barchart 1
         d3.select('#graphic')
             .append('div')
-                .classed('barchart',true)
-                .style('position','fixed')
+                .classed('barchart',true) 
+                .style('position','absolute')
                 .style('margin-left','500px')
-                .style('margin-top', '100px')
+                .style('margin-top', '2000px')
                 
                 .style('opacity',0)
             .append('table')

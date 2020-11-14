@@ -39,7 +39,7 @@ body {
 
 .step {
     margin-bottom: 100px;
-    height: 800px;
+    height: 900px; /* Was originally 800px */
     font-family: "Domine";
     font-weight: 400;
     line-height: 1.4em;
@@ -48,6 +48,7 @@ body {
     flex-direction: column;
     justify-content: space-around; */
 }
+
 
 h1, h2 {
     font-weight: 700;
