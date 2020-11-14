@@ -72,6 +72,7 @@ loadData().then(data => {
             .nice()
         return my_scaleSize(input)
     }
+
     // ----------------------------------------------------------------
 
 // --------------------------------------------
@@ -122,7 +123,8 @@ loadData().then(data => {
         new cluster(svg)
 
         // Viz #2 Map
-
+		let map = new US_Map(dataset[0]);
+		map.drawBubbles();
 
         // Viz #3 Bar Graph setup
         new Barchart(dataset[0]);
@@ -147,6 +149,9 @@ loadData().then(data => {
         if (chartType !== "bar2"){
             d3.select('.divchart2').transition().style('opacity',0)
         } // End bar2 if statement
+		if (chartType !== "map"){
+			d3.select('.us_map').style('opacity',0);
+		} // End map if statement
         
     } // End function clean()
 
@@ -174,8 +179,18 @@ loadData().then(data => {
     
     } // end draw0 function
 
-    // Draw 2nd Viz
     function draw1(){
+
+        clean('map')
+        console.log('Check')
+        
+		d3.select('.us_map')
+			.style('opacity',1);
+			
+    } // end draw1 function 
+	
+    // Draw 2nd Viz
+    function draw2(){
     
     //Stop simulation
     simulation.stop()
@@ -192,7 +207,7 @@ loadData().then(data => {
     
     } // end draw1 function    
 
-    function draw2(){
+    function draw3(){
     
         clean('bar2')
         console.log('Check')
@@ -200,14 +215,7 @@ loadData().then(data => {
             .style('margin-left', '500px')
             .style('opacity',.8)
         
-    } // end draw1 function   
-
-    function draw3(){
-
-        clean('none')
-        console.log('Check')
-        
-    } // end draw1 function   
+    } // end draw1 function     
 
 // --------------------------------------------
         // Run the scrolling functions
@@ -247,5 +255,3 @@ loadData().then(data => {
     
         }
     })
-      
-      
