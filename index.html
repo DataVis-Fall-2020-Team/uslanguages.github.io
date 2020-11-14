@@ -1,31 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<title></title>
-		<!-- Fonts -->
-		<!-- <link href "https://fonts.googleapis.com/css?family=Work+Sans:400,700&display=swap" rel="stylesheet"> -->
-		<!-- Bootstrap -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-		
-		<!-- Font Awesome -->
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-		
-		<!-- Style Sheet -->
-		<link rel="stylesheet" href="css/styles.css">
-		
-		<!-- References:
-			map: https://simplemaps.com/resources/svg-us
-		-->
-	</head>
-	
+	<head>	
 	<body>
-		<div class="content">
-			<div class="us_map">
-				<svg id="map" class="us_map">
-					<g>
-						<path id="HI" class="states"
+
+		<!-- <div id="info">
+			a
+		</div> -->
+		
+		<div id="tooltip"></div>
+		<div id="graphic">
+			<div id="sections">
+				<section class="step">
+					<h1>Which languages are spoken in the U.S.?</h1>
+					<p>By Janaan Lake, Andreas Martinson, Rachel Berghout</a></p>
+					<!-- <p>
+						Here is a bunch of text about the visualization on the right. It's soooooooooooooooooooooooooooooooooo important and has coolio tooltips.
+					</p> -->
+					
+				</section>
+				<section class="step">
+					
+					<br><br>
+					<h2>Where are these languages spoken in the U.S.?</h2>
+					<!-- <p>
+					 
+					</p> -->
+				</section>
+				<section class="step">
+					<h2>Which states have the most language diversity?</h2>
+	
+					
+				</section>
+				<section class = 'step'>
+					<h2>Which foreign language speakers are the most fluent in English?</h2>
+					
+					
+				</section>
+	
+			</div>
+			<div id="vis">
+	
+			</div>
+		</div>
+
+
+	<!-- Rachel's Merge items -->
+	<div class="us_map">
+		<svg id="map">
+			<g>
+					<path id="HI" class="states"
 							  d="M 233.08751,519.30948 L 235.02744,515.75293 L 237.2907,515.42961 L 237.61402,516.23791
 							  L 235.51242,519.30948 L 233.08751,519.30948 z M 243.27217,515.59127 L 249.4153,518.17784
 							  L 251.51689,517.85452 L 253.1335,513.97465 L 252.48686,510.57977 L 248.28366,510.09479
@@ -988,19 +1011,37 @@
 							 C 77.979305,371.05615 77.251828,369.6012 77.251828,369.19704
 							 C 77.251828,368.7929 77.251828,367.01462 77.251828,367.01462 L 77.736809,366.93379 z"/>
 					</g>
-				</svg>
-			</div>
-		</div>
-		<script src="https://d3js.org/d3.v5.js"></script>
+		</svg>
+	</div>
+	
+    <!-- Janaan's merge items -- change as needed -->
+    <div class="content">
+          <!-- <div class="barchart">
+            <table id="table-body">
+            </table>
+          </div> -->
+          <div class="divchart">
+          </div>
+          <div class="divchart2">
+
+          </div>
+        </div>
+		
+		 <script src="https://d3js.org/d3.v5.js"></script>
+		 <script src = 'https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js'></script>
+
 		<script src="https://d3js.org/d3-force.v2.min.js"></script>
 		<script src="https://d3js.org/d3-dispatch.v2.min.js"></script>
 		<script src="https://d3js.org/d3-quadtree.v2.min.js"></script>
 		<script src="https://d3js.org/d3-timer.v2.min.js"></script>
+		<script src="https://d3js.org/d3-array.v2.min.js"></script>
 
 		<script src="js/barchart.js"></script>
-		<script src="js/diverging_bar.js"></script>
+		<script src="js/tree.js"></script>
+		<script src="js/barchart2.js"></script>
 		<script src="js/map.js"></script>
 		<script src="js/megacluster.js"></script>
+		<script src="js/scroller.js"></script>
 		<script src="js/script.js"></script>
 	</body>
 </html>
