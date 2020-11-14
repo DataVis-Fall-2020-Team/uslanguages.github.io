@@ -92,7 +92,8 @@ loadData().then(data => {
             // .attr('position', 'relative')
 
         // Viz #2 - Map
-        
+        d3.select("#map").style('opacity',0)
+
         // Viz #3 - Barchart 1
         d3.select('#graphic')
             .append('div')
@@ -123,8 +124,7 @@ loadData().then(data => {
         new cluster(svg)
 
         // Viz #2 Map
-		let map = new US_Map(dataset[0]);
-		map.drawBubbles();
+        new US_Map(dataset[0]);
 
         // Viz #3 Bar Graph setup
         new Barchart(dataset[0]);
@@ -149,10 +149,9 @@ loadData().then(data => {
         if (chartType !== "bar2"){
             d3.select('.divchart2').transition().style('opacity',0)
         } // End bar2 if statement
-		if (chartType !== "map"){
-			d3.select('.us_map').style('opacity',0);
-		} // End map if statement
-        
+        if (chartType !== "map"){
+            d3.select('#map').transition().style('opacity',0)
+        } // End map if statement
     } // End function clean()
 
 
@@ -161,7 +160,7 @@ loadData().then(data => {
 // --------------------------------------------
 
     //First Viz
-    function draw0(){
+    function draw_cluster(){
         
         //Stop simulation
         simulation.stop()
@@ -179,18 +178,15 @@ loadData().then(data => {
     
     } // end draw0 function
 
-    function draw1(){
+    function draw_map(){
 
         clean('map')
-        console.log('Check')
+        d3.select("#map").style('opacity',1)
         
-		d3.select('.us_map')
-			.style('opacity',1);
-			
-    } // end draw1 function 
-	
+    } // end draw1 function  
+
     // Draw 2nd Viz
-    function draw2(){
+    function draw_bar1(){
     
     //Stop simulation
     simulation.stop()
@@ -204,10 +200,9 @@ loadData().then(data => {
 
     simulation.alpha(0.9).restart()
 
-    
     } // end draw1 function    
 
-    function draw3(){
+    function draw_bar2(){
     
         clean('bar2')
         console.log('Check')
@@ -215,16 +210,18 @@ loadData().then(data => {
             .style('margin-left', '500px')
             .style('opacity',.8)
         
-    } // end draw1 function     
+    } // end draw1 function   
+
+ 
 
 // --------------------------------------------
         // Run the scrolling functions
 // --------------------------------------------
     let activationFunctions = [
-        draw0,
-        draw1,
-        draw2,
-        draw3,
+        draw_cluster,
+        draw_map,
+        draw_bar1,
+        draw_bar2,
     ]
     
     //All the scrolling function

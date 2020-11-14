@@ -1106,6 +1106,8 @@ class US_Map{
     constructor(data){
         this.data=data;
         //this.drawStates();
+
+        this.drawBubbles();
     }
 
     // Draw the US States
