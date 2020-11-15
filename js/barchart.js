@@ -18,9 +18,9 @@ class Barchart{
         
         this.stateData = this.sumData(data);
         this.margin = { top: 20, right: 10, bottom: 20, left: 10};
-        this.width = 750;
+        this.width = 200;
         this.height = 1500;
-        this.barWidth = 600;
+        this.barWidth = 500;
         this.cellHeight = 17;
         this.nameWidth = 150;
         this.sortAscending = true;
@@ -109,8 +109,8 @@ class Barchart{
         function numberWithCommas(x) {
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
-
-        let rowSelection = d3.select("#table-body")
+        
+        let rowSelection =d3.select('#table-body')
             .selectAll("tr")
             .data(this.stateData)
             .join("tr");
