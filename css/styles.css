@@ -151,18 +151,19 @@ div.tooltip {
     text-align-last: center;
     width: auto;
     height: auto;
-    background: white;
     border-radius: 2px;
     pointer-events: none;
     font-size: 12;
     font-weight: bold;
     stroke: black;
+    opacity: 0.8;
 }
 .tooltip h1 {
     margin: 2px;
-    font-size: 20px;
-    font: ariel;
+    font-size: 16px;
+    font: aeriel;
     font-weight: bold;
+
 }
 
 .hidden{
