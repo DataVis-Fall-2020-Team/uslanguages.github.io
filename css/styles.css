@@ -188,7 +188,7 @@ div.us_map{
     margin-left:300px;
 }
 
-.states{
+.state, .territory{
     fill:#d3d3d3;
     stroke:#ffffff;
     stroke-opacity:1;
@@ -197,11 +197,11 @@ div.us_map{
     stroke-dasharray:none;
 }
 
-.states:hover{
+.state:hover, .territory:hover{
     fill:gray;
 }
 
-#path57{
+.frame{
      stroke:#a9a9a9;
      fill:none;
      stroke-width:2;

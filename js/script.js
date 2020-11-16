@@ -9,7 +9,7 @@ let simulation, nodes
 loadData().then(data => {
     dataset = data
     
-    setTimeout(setup_page(), 100) 
+    setTimeout(setup_page(), 100)
  })
  
  async function loadData() {
@@ -100,7 +100,6 @@ loadData().then(data => {
                 .style('position','absolute')
                 .style('margin-left','500px')
                 .style('margin-top', '2000px')
-                
                 .style('opacity',0)
             .append('table')
                 .attr('id',"table-body")
@@ -117,7 +116,7 @@ loadData().then(data => {
            nodes
                .attr('cx', d => d.x)
                .attr('cy', d => d.y)
-    })
+        })
     
         // Viz #1 Megacluster setup
         new cluster(svg)
@@ -180,8 +179,12 @@ loadData().then(data => {
     function draw_map(){
 
         clean('map')
-        d3.select("#map").style('opacity',1)
-        
+        let svg = d3.select("#map").style('opacity',0.8);
+
+        svg.selectAll('.state')
+            .transition()
+            .style('opacity',1);
+
     } // end draw1 function  
 
     // Draw 2nd Viz
