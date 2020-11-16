@@ -14,17 +14,17 @@ loadData().then(data => {
  
  async function loadData() {
     try {
-        const stateData = await d3.csv('./data/LanguageData_States.csv')
-        // , function (d){ 
-        //     return {
-        //         Group: d.Group
-        //         , Subgroup: d.Subgroup
-        //         , Language: d.Language
-        //         , Speakers: +d.Speakers.replace(/,/g ,"")
-        //         // , nonEnglishSpeakers: +d.nonEnglishSpeakers.replace(/,/g ,"")
-        //     }
-        // });
-        console.log('State Data Loaded');
+        const stateData = await d3.csv('./data/LanguageData_States.csv', function (d){ 
+            return {
+                Group: d.Group,
+                Subgroup: d.Subgroup,
+                Language: d.Language,
+                State: d.State,
+                Speakers: +d.Speakers.replace(/["',]/g ,""),
+                nonEnglishSpeakers: +d.nonEnglishSpeakers.replace(/["',]/g ,"")
+            }
+        });
+        console.log('State Data Loaded:', stateData);
         const nationalData = await d3.csv('./data/National_Languages.csv', function(d){
             return {
                 Group: d.Group,
@@ -96,17 +96,16 @@ loadData().then(data => {
         // Viz #3 - Barchart 1
         d3.select('#graphic')
             .append('div')
-                .classed('barchart',true) 
-                .style('position','absolute')
-                .style('margin-left','500px')
-                .style('margin-top', '2000px')
-                
-                .style('opacity',0)
+            .attr('id', 'barchart1')
+            .style('opacity',0)
             .append('table')
-                .attr('id',"table-body")
+            .attr('id',"table-body");
 
         // Viz #4 - Barchart 2
-        d3.select('.divchart2').style('opacity',0)
+        d3.select('#graphic')
+            .append('div')
+            .attr("id", "barchart2")
+            .style('opacity', 0);
         
         // Simulation setup
         simulation = d3.forceSimulation(dataset[1])
@@ -143,10 +142,10 @@ loadData().then(data => {
             svg.selectAll('circle').transition().style('opacity',0)
         } // End cluster if statement
         if (chartType !== "bar1"){
-            d3.select('.barchart').transition().style('opacity',0)
+            d3.select('#barchart1').transition().style('opacity',0)
         } // End bar1 if statement
         if (chartType !== "bar2"){
-            d3.select('.divchart2').transition().style('opacity',0)
+            d3.select('#barchart2').transition().style('opacity',0)
         } // End bar2 if statement
         if (chartType !== "map"){
             d3.select('#map').transition().style('opacity',0)
@@ -193,7 +192,7 @@ loadData().then(data => {
     clean('bar1')
     console.log('Check')
 
-    d3.select('.barchart')
+    d3.select('#barchart1')
         .transition()
         .style('opacity',.8)
 
@@ -205,7 +204,7 @@ loadData().then(data => {
     
         clean('bar2')
         console.log('Check')
-        d3.select('.divchart2')
+        d3.select('#barchart2')
             .style('margin-left', '500px')
             .style('opacity',.8)
         
