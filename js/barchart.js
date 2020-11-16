@@ -11,7 +11,7 @@ class StateData {
 class Barchart{
 
 /**
- * @param data array that contains the state language data
+ * @param {array} data -- array that contains the state language data
  */
 
     constructor(data){
@@ -38,17 +38,6 @@ class Barchart{
             "ALL OTHER LANGUAGES": [4, "other"],
         }
         
-        const distinct = (value, index, self) => {
-            return self.indexOf(value) === index;
-        }
-
-        this.categories = data.map(x => x.group).filter(distinct);
-
-        // Color scale
-        this.colorScale = d3.scaleOrdinal() 
-            .domain(this.categories)
-            .range(d3.schemeCategory10.slice(0,5))
-
         this.drawBarChart();
         this.attachSortHandlers();
     }
@@ -152,8 +141,8 @@ class Barchart{
                     .attr("y", 1)
                     .attr("width", d => that.scaleBar(d.percentage))
                     .attr("height", that.cellHeight-2)
-                    //.attr('fill',d => that.colorScale(d.group));
-                    .attr("class", d => that.groupMap[d.group][1]);
+                    .attr('fill',d => colorScale(d.group));
+                    //.attr("class", d => that.groupMap[d.group][1]);
                     
             });
 

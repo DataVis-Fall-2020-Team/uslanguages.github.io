@@ -42,17 +42,17 @@ class BarChart2{
 
         drawChart(){
 
-            let svg = d3.select(".divchart2").append("svg")
-                .attr("id", "divchart2-svg")
+            let svg = d3.select("#barchart2").append("svg")
+                .attr("id", "barchart2-svg")
                 .attr("height", this.height + this.margin.top + this.margin.bottom)
                 .attr("width", this.width + this.margin.left + this.margin.right);
             svg.append("g").attr("class", "speakerBars");
             svg.append("g").attr("class", "nonEnglishBars");
             svg.append("g").attr("class", "labels");
 
-            d3.select(".divchart2")
+            d3.select("#barchart2")
                 .append("div")
-                .attr("class","tooltip hidden")
+                .attr("class","tooltip-bar2 hidden")
         }
 
         updateBarChart(){

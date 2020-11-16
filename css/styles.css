@@ -141,13 +141,18 @@ line {
 .hover {
     stroke: black;
 }
-
-.divchart2 {
+#barchart1 {
     position: fixed;
+    margin-left: 500px;
+}
+
+#barchart2 {
+    position: fixed;
+    margin-left: 500px;
 }
 
 div.tooltip {
-    position: absolute;
+    position: relative;
     text-align-last: center;
     width: auto;
     height: auto;
