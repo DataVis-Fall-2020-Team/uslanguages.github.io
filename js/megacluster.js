@@ -2,18 +2,27 @@ class cluster {
     constructor(svg){
         this.svg = svg
         
+        
+
+        this.svg
+            .append("g")
+            .attr("id", "cluster")
+            .style('opacity', 1)
+
+
         this.draw_circles() 
         this.tooltip() 
+
     } // End constructor call
 
     draw_circles(){
-        nodes = this.svg
+        nodes = d3.select("#cluster")
           .selectAll('circle')
           .data(dataset[1])
           .join('circle')
           .attr('r',d => scaleSize(d.Speakers))
           .attr('fill',d => colorScale(d.Group))
-          .attr('opacity', 0.8)
+          .style('opacity', 0.8)
     }
 
     tooltip() {
@@ -24,7 +33,9 @@ class cluster {
                         .style('visibility', 'hidden')
 
         // Mouse over
-        d3.selectAll('circle').on('mouseover.cluster', function(d){
+        d3.selectAll('circle')
+            .on('mouseover.cluster', function(d){
+                console.log("mouseover in cluster")
             tooltip
             .style('visibility', 'visible')
             .style("top", d3.event.pageY -10 + 'px')
@@ -39,7 +50,8 @@ class cluster {
         }) // End mouseover listener
 
         // Mouse move
-        d3.selectAll('circle').on('mousemove.cluster', () => {
+        d3.selectAll('circle')
+        .on('mousemove.cluster', () => {
             tooltip
             .style("top", d3.event.pageY -10 + 'px')
             .style("left", d3.event.pageX -300 + 'px')
@@ -51,5 +63,11 @@ class cluster {
         }) // End mouseout listener
 
     } // End of tooltip function
+
+    clearEventHandlers(){
+        d3.selectAll('circle').on('mousemove.cluster', null);
+        d3.selectAll('circle').on('mouseover.cluster', null);
+        d3.selectAll('circle').on('mouseout.cluster', null);
+    }
 
 } // End cluster class
