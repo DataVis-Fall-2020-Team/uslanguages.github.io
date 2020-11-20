@@ -32,7 +32,8 @@ loadData().then(data => {
                 Subgroup: d.Subgroup,
                 Language: d.Language,
                 Speakers: +d.Speakers.replace(/,/g ,""),
-                nonEnglishSpeakers: +d.nonEnglishSpeakers.replace(/,/g ,"")
+                nonEnglishSpeakers: +d.nonEnglishSpeakers.replace(/,/g ,""),
+                r: d3.randomUniform(100, 400)
             }
         });
         console.log('National Data Loaded');
@@ -96,7 +97,14 @@ loadData().then(data => {
         
         // Simulation setup
         simulation = d3.forceSimulation(dataset[1])
+
           .force("center", d3.forceCenter(500,500))
+        //   .force('charge', d3.forceManyBody().strength(2))
+        //   .force("cluster", clustering)
+          .force("collide", d3.forceCollide().radius(function(d){
+              return scaleSize(d.Speakers)
+          }))
+
         
         // Define each tick of simulation
        simulation.on('tick', () => {
@@ -104,8 +112,10 @@ loadData().then(data => {
                .attr('cx', d => d.x)
                .attr('cy', d => d.y)
     }) 
+    simulation.alpha(0.9).restart()
 
-        
+     
+
         // Viz #4 Bar Graph setup
         views['bar2'] = new BarChart2(dataset[1], svg);
         views['bar2'].clearEventHandlers();
@@ -118,6 +128,7 @@ loadData().then(data => {
         
         // Viz #1 Megacluster setup
         views['cluster'] = new cluster(svg);
+
 
 
 
@@ -160,7 +171,7 @@ loadData().then(data => {
 
     //First Viz
     function draw_cluster(){
-        
+        // console.log("CAN YOU SEE THIS YET?")
         //Stop simulation
         simulation.stop()
         
@@ -176,7 +187,29 @@ loadData().then(data => {
             .style('opacity',1)
     
         simulation.alpha(0.9).restart()
-        views['cluster'].tooltip()
+        // views['cluster'].tooltip()
+
+        simulation.force("cluster", clustering)
+
+           // Define clustering simulation function
+           function clustering(alpha){
+            nodes.forEach(function(d){
+                
+                let cluster = d.Group
+                let x = d.x - cluster.x,
+                    y = d.y - cluster.y,
+                    l = Math.sqrt(x * x + y * y),
+                    r = d.r + cluster.r;
+                if (l !== r) {
+                    l = (l - r) / l * alpha;
+                    d.x -= x *= l;
+                    d.y -= y *= l;
+                    cluster.x += x;
+                    cluster.y += y;
+                }
+
+            })
+        }
     
     } // end draw0 function
 
