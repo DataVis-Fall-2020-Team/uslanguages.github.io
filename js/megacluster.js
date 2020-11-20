@@ -28,15 +28,13 @@ class cluster {
     tooltip() {
         
         // Create tooltip    
-        let tooltip = d3.select('#vis').append('div') 
-                        .attr('id','tooltip')
-                        .style('visibility', 'hidden')
+        let tooltip = d3.select('#tooltip-bar2')
 
         // Mouse over
         d3.selectAll('circle')
             .on('mouseover.cluster', function(d){
                 console.log("mouseover in cluster")
-            tooltip
+        tooltip
             .style('visibility', 'visible')
             .style("top", d3.event.pageY -10 + 'px')
             .style("left", d3.event.pageX + 25 + 'px')

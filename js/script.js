@@ -104,18 +104,22 @@ loadData().then(data => {
                .attr('cx', d => d.x)
                .attr('cy', d => d.y)
     }) 
-        // Viz #1 Megacluster setup
-        views['cluster'] = new cluster(svg);
+
         
-        // Viz #2 Map
-        views['map'] = new US_Map(dataset[0]);
+        // Viz #4 Bar Graph setup
+        views['bar2'] = new BarChart2(dataset[1], svg);
+        views['bar2'].clearEventHandlers();
 
         // Viz #3 Bar Graph setup
         views['bar1'] = new Barchart(dataset[0], svg);
 
-        // Viz #4 Bar Graph setup
-        views['bar2'] = new BarChart2(dataset[1], svg);
-        views['bar2'].clearEventHandlers();
+        // Viz #2 Map
+        views['map'] = new US_Map(dataset[0]);
+        
+        // Viz #1 Megacluster setup
+        views['cluster'] = new cluster(svg);
+
+
 
     } // End setup_page function
 
@@ -169,9 +173,10 @@ loadData().then(data => {
         d3.select("#cluster").raise();
         d3.select("#cluster")
             .transition()
-            .style('opacity',.8)
+            .style('opacity',1)
     
         simulation.alpha(0.9).restart()
+        views['cluster'].tooltip()
     
     } // end draw0 function
 
