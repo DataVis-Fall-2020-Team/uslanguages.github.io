@@ -106,13 +106,8 @@ loadData().then(data => {
           }))
 
         
-        // Define each tick of simulation
-       simulation.on('tick', () => {
-           nodes
-               .attr('cx', d => d.x)
-               .attr('cy', d => d.y)
-    }) 
-    simulation.alpha(0.9).restart()
+
+    
 
      
 
@@ -129,7 +124,12 @@ loadData().then(data => {
         // Viz #1 Megacluster setup
         views['cluster'] = new cluster(svg);
 
-
+        // Define each tick of simulation
+        simulation.on('tick', () => {
+            d3.selectAll('.cluster_circles')
+                .attr('cx', (d) => d.x)
+                .attr('cy', (d) => d.y)
+     }) 
 
 
     } // End setup_page function
@@ -189,13 +189,18 @@ loadData().then(data => {
         simulation.alpha(0.9).restart()
         // views['cluster'].tooltip()
 
-        simulation.force("cluster", clustering)
+        // simulation.force("cluster", clustering)
 
            // Define clustering simulation function
+
+        clustering()
+
            function clustering(alpha){
-            nodes.forEach(function(d){
+            dataset[1].forEach(function(d,i){
                 
-                let cluster = d.Group
+                let cluster = i
+                if (cluster === d) return;
+
                 let x = d.x - cluster.x,
                     y = d.y - cluster.y,
                     l = Math.sqrt(x * x + y * y),
@@ -210,6 +215,7 @@ loadData().then(data => {
 
             })
         }
+        console.log(dataset[1])
     
     } // end draw0 function
 
