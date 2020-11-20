@@ -137,7 +137,7 @@ let StateInfo = [
 	    id:"FL",
 	    name:"Florida",
 	    class:"states",
-        center:[722.812, 505.401],
+        center: [762.812, 485.401], //original center: [722.812, 505.401],
 	    paths:[
 			"M 759.8167,439.1428 L 762.08236,446.4614 L 765.81206,456.20366 L 771.14685,465.57996 "+
 			"L 774.86504,471.88472 L 779.71486,477.38118 L 783.75637,481.09937 L 785.37297,484.00926 "+
@@ -207,7 +207,7 @@ let StateInfo = [
 	    id:"MI",
 	    name:"Michigan",
 	    class:"states",
-        center:[632.837, 143.537],
+        center:[657.837, 168.537], //Original Center: [632.837, 143.537],
 		paths:[
 			"M 697.86007,177.23689 L 694.62686,168.9922 L 692.36361,159.93922 L 689.93871,156.70601 " +
 			"L 687.35214,154.92774 L 685.73554,156.05937 L 681.85568,157.83763 L 679.91576,162.84911 " +
@@ -827,7 +827,7 @@ let StateInfo = [
         id:"LA",
         name:"Louisiana",
         class:"states",
-        center:[571.886, 449.477],
+        center:[551.886, 449.477], //Original Center: [571.886, 449.477],
         paths:["M 607.96706,459.16125 L 604.68245,455.99511 L 605.69236,450.49488 L 605.03101,449.6018 " +
          "L 595.76934,450.60836 L 570.74102,451.06728 L 570.05683,448.6726 L 570.96964,440.2169 " +
          "L 574.28552,434.27105 L 579.31688,425.58003 L 578.74281,423.18201 L 579.9994,422.50116 " +
@@ -1122,7 +1122,7 @@ let StateInfo = [
         id:"ID",
         name:"Idaho",
         class:"states",
-        center:[200.151, 111.528],
+        center:[200.151, 141.528], //Original Center: [200.151, 111.528],
         paths:[
             "M 148.47881,176.48395 L 157.24968,141.26323 L 158.62142,137.03371 L 161.13626,131.08953 " +
             "L 159.87884,128.8033 L 157.36398,128.91761 L 156.56381,127.88881 L 157.02106,126.7457 " +
@@ -1244,7 +1244,7 @@ let StateInfo = [
         id:"CA",
         name:"California",
         class:"states",
-        center:[91.416, 265.706],
+        center:[71.416, 265.706], //original center: [91.416, 265.706],
         paths:[
             "M 144.69443,382.19813 L 148.63451,381.70951 L 150.12055,379.69807 L 150.66509,376.75698 "+
             "L 147.11357,376.16686 L 146.5994,375.49864 L 147.0769,373.46633 L 146.91762,372.87666 "+
@@ -1312,11 +1312,15 @@ class US_Map{
     constructor(data){
         //console.log(data); //355 languages, 51 states/territories
         this.data=data;
+        this.lastIndex = 0;
+        this.lastId = "";
+
         //this.drawStates();
         this.drawBubbles();
         this.states = [];
     }
 
+    //used to draw the states if they aren't hard-coded
     drawStates(){
         let stateMap = d3.select(".us_map")
             .append("svg")
@@ -1335,6 +1339,7 @@ class US_Map{
             .attr("d",d=>d);
     }
 
+    //Draws the language bubbles
     drawBubbles(){
         let stateMap = d3.select("#map").append("g");
         let bubbles = stateMap.selectAll("circle")
@@ -1344,22 +1349,31 @@ class US_Map{
             .attr("r", 3)
             .attr("cx", d=>StateInfo.find(a=>a.name==d.State).center[0])
             .attr("cy", d=>StateInfo.find(a=>a.name==d.State).center[1])
-            //.attr("cx", (d,i)=>this.getStateLocation(d.State, "x", i))
-            //.attr("cy", (d,i)=>this.getStateLocation(d.State, "y", i))
+            .attr("transform", function(d,i){
+                if(i==1) console.log(d); //this.GetBubbleTranslation(d.id, i);
+                return "translate(0,0)";
+            })
             .attr("class", function(d){
                 let si = StateInfo.find(f=>f.name == d.State).id;
                 return si;
             });
-
-        //for(let i = 0; i<StateInfo.length; i++){
-        //    let stateBubbles = d3.select("#map").selectAll("."+StateInfo[1].id);
-
-        //    console.log(stateBubbles);
-            //console.log(StateInfo[1].id);
-        //}
     }
 
-    getStateLocation(stateName, valType, i){
+    GetBubbleTranslation(stateName, index){
+        console.log(stateId);
+
+        if(stateId != this.lastId){
+            this.lastIndex = index;
+            this.lastId = stateId;
+        }
+    }
+
+    /*
+        Calculate center of states. This isn't used in real time,
+        as it takes too long, but it was used to calculate the
+        centers of the states that are saved in StateInfo.
+    */
+    getStateLocation(stateName, valType){
         let state = StateInfo.find(d=>d.name == stateName);
         let stateId = "#"+state.id;
         let stateGroup = d3.selectAll(stateId)._groups[0][0];
@@ -1368,8 +1382,7 @@ class US_Map{
         //https://developer.mozilla.org/en-US/docs/Web/API/SVGGraphicsElement/getBBox
         let stateBounds = stateGroup.getBBox();
         let center = [stateBounds.width/2, stateBounds.height/2];
-        //console.log(stateBounds);
-        if(stateName == "Kentucky") console.log([stateBounds.x + center[0], stateBounds.y+center[1]]);
+
         if(center){
             if(valType == "x") return stateBounds.x + center[0];
             else if (valType == "y") return stateBounds.y + center[1];
