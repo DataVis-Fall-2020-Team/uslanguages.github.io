@@ -1,14 +1,17 @@
+/**
+ * Class that creates nodes for a tree.  The nodes hold data for foreign languages spoken
+ * in the United States.  
+ */
 class Node{
     /**Creates a node and initializes the following fields to null/empty:
      * children, totalSpeakers, englishSpeakers
      * @param {string} name - the name of the node
      * @param {string} level - the level of the node {"root", "group", "subgroup", "language"}
+     * @param {string} grouping - the language grouping of the node
      * @param {string} parentName - the name of the parent node
      * @param {Node} parent - a reference to the parent node
-     * @param {array} children - array of children nodes
-     * @param {int} totalSpeakers - total number of speakers
-     * @param {int} nonEnglishSpeakers - number that don't speak Enlgish "very well"
-     * @param {boolean} isSelected - true if node is currently selected in view, false otherwise
+     * @param {int} total - total number of speakers
+     * @param {int} nonEnglish - number that don't speak Enlgish "very well"
      */
     constructor(name, level, grouping, parentName, parent, total, nonEnglish){
         this.name = name;
@@ -19,7 +22,7 @@ class Node{
         this.children = [];
         this.totalSpeakers = total;
         this.nonEnglishSpeakers = nonEnglish;
-        this.isSelected = false;
+        this.percentage = (this.totalSpeakers - this.nonEnglishSpeakers) / this.totalSpeakers;
     }
 
 /**
@@ -39,13 +42,13 @@ class Tree{
     /**
      * Creates a tree data structure with a root node for use with the National 
      * Languagues data set
-     * @param {Array} data 
+     * @param {Array} data - The data array containing the language information
      */
     constructor(data){
         let that = this;
         let rootData = data.filter(obj => obj.Group === "Total")[0];
 
-        //filter out total row and rows with NaN Speakers and speakers less than 100 and Native American Languages
+        //filter out total row and rows with NaN Speakers and speakers less than 100
         let otherData = data.filter(obj => obj.Group != "Total" 
             && obj.Group != "English" && !Number.isNaN(obj.Speakers) && obj.Speakers > 100);
 
@@ -76,13 +79,8 @@ class Tree{
             parentNode.addChild(newNode);
         }
 
-        //eliminate native American languages
-        let selection = this.getNode("Other Native North American languages", "subgroup", this.root)
-        selection.children = [new Node("Other Native North American languages", "language", 
-            "ALL OTHER LANGUAGES", selection.name, selection, selection.totalSpeakers, selection.nonEnglishSpeakers)];
-
-        //this.treeTraversal(this.root);
-
+        //remove percentages that are NaN
+        this.removeNodes(this.root);
     }
 
     /**
@@ -125,5 +123,25 @@ class Tree{
             data.push(node.parent);
         }
         return data;
+    }
+
+    /**
+     * Recursive function that traverses the tree and removes any leaf nodes that have
+     * NaN for the percentage.
+     * @param {Node} node - the starting node for the search
+     */
+    removeNodes(node){
+        if (node.level === "language" && Number.isNaN(node.percentage)){
+            node.parent.children = node.parent.children.filter(obj => obj != node);
+        }
+
+        else if (node.children){
+            let searchQueue = [...node.children];
+            while (searchQueue.length > 0){
+                let currentNode = searchQueue.pop();
+                this.removeNodes(currentNode);
+            }
+        }
+        return;
     }
 }
