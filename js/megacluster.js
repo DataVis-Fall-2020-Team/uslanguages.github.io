@@ -23,6 +23,7 @@ class cluster {
           .attr('r',d => scaleSize(d.Speakers))
           .attr('fill',d => colorScale(d.Group))
           .style('opacity', 0.8)
+          .classed('cluster_circles', true)
     }
 
     tooltip() {
