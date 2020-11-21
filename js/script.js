@@ -37,6 +37,7 @@ loadData().then(data => {
             }
         });
         console.log('National Data Loaded');
+        
         return [stateData, nationalData];
     }
     catch{
@@ -68,9 +69,10 @@ loadData().then(data => {
     
     function scaleSize(input){ 
         
-        let my_scaleSize = d3.scaleSymlog() 
+        let my_scaleSize = d3.scalePow() 
+            .exponent(.15)
             .domain([1, 232000000])
-            .range([1,20])
+            .range([1,60])
             .nice()
         return my_scaleSize(input)
     }
@@ -82,7 +84,7 @@ loadData().then(data => {
 
     // Setup the page 
     function setup_page(){
-
+        
         // Create the SVG
         let svg = d3.select("#vis")
             .style('margin-left', '500px')
@@ -99,13 +101,37 @@ loadData().then(data => {
         simulation = d3.forceSimulation(dataset[1])
 
           .force("center", d3.forceCenter(500,500))
-        //   .force('charge', d3.forceManyBody().strength(2))
-        //   .force("cluster", clustering)
+        //   .force('charge', d3.forceManyBody().strength(-100))
+          .force("cluster", clustering)
+          .force("gravity", d3.forceManyBody(30))
           .force("collide", d3.forceCollide().radius(function(d){
               return scaleSize(d.Speakers)
           }))
 
-        
+          let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:100, y:110}
+          , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:120, y:120}
+          , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:140, y:130}
+          , {'Group':"English",number:3, x:160, y:140}
+          , {'Group':"Total", number: 4, x:180, y:150}
+          , {'Group':"ALL OTHER LANGUAGES", number:5, x: 200, y:160}
+        ]
+
+        for (i of dataset[1]){
+            for (n of clusters){
+                if (i.Group == n.Group){
+                    i.number = n.number
+                }
+            }
+        }
+
+        function clustering(alpha) {
+            for (let i = 0, n = dataset[1].length, node, cluster, k = alpha * 1; i < n; ++i) {
+                node = dataset[1][i];
+                cluster = clusters[node.number];
+                node.vx -= (node.x - cluster.x) * k;
+                node.vy -= (node.y - cluster.y) * k;
+            }
+            }
 
     
 
@@ -193,28 +219,8 @@ loadData().then(data => {
 
            // Define clustering simulation function
 
-        clustering()
+        // clustering()
 
-           function clustering(alpha){
-            dataset[1].forEach(function(d,i){
-                
-                let cluster = i
-                if (cluster === d) return;
-
-                let x = d.x - cluster.x,
-                    y = d.y - cluster.y,
-                    l = Math.sqrt(x * x + y * y),
-                    r = d.r + cluster.r;
-                if (l !== r) {
-                    l = (l - r) / l * alpha;
-                    d.x -= x *= l;
-                    d.y -= y *= l;
-                    cluster.x += x;
-                    cluster.y += y;
-                }
-
-            })
-        }
         console.log(dataset[1])
     
     } // end draw0 function
