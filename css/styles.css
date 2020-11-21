@@ -169,7 +169,8 @@ div.us_map{
     height:1000px;
     width:1000px;
     position:fixed;
-    margin-left:300px;
+    margin-left:700px;
+    margin-top:200px
 }
 
 .states{

@@ -18,11 +18,11 @@ class cluster {
     draw_circles(){
         nodes = d3.select("#cluster")
           .selectAll('circle')
-          .data(dataset[1])
+          .data(dataset_updated)
           .join('circle')
           .attr('r',d => scaleSize(d.Speakers))
           .attr('fill',d => colorScale(d.Group))
-          .style('opacity', 0.8)
+          .style('opacity', .8)
           .classed('cluster_circles', true)
     }
 
