@@ -58,7 +58,7 @@ loadData().then(data => {
         }
             
         let my_categories = dataset[1].map(x => x.Group).filter(distinct);
-        const colors = ["#1b9e77","#6a3d9a","#ff7f00","#e7298a","#66a61e"];
+        const colors = ["#6a3d9a","#ff7f00","#e7298a","#66a61e","#1b9e77"];
         
         // Color scale
         let my_colorScale = d3.scaleOrdinal() 
@@ -269,6 +269,7 @@ loadData().then(data => {
         // Draw the map
         clean('map')
         d3.select("#map").raise();
+
         d3.select("#map").style('opacity',1)
 
         //Move the bubbles
@@ -334,6 +335,7 @@ loadData().then(data => {
         clean('bar2')
         d3.select("#barchart2").raise();
         d3.select('#barchart2')
+            .transition()
             .style('margin-left', '500px')
             .style('opacity',.8)
         views['bar2'].attachEventHandlers();

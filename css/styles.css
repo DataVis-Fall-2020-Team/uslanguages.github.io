@@ -125,6 +125,24 @@ line {
     margin-left: 500px;
 }
 
+#sortLabel.clicked{
+   
+   font-size: 1.1em;
+   text-align: center;
+   color: rgb(243, 18, 194);
+}
+
+#sortLabelButton {
+    fill:  lightgrey;
+}
+
+#sortLabelButton.clicked {
+    fill:  darkgrey;
+    stroke: black;
+    stroke-width: 1;
+}
+
+
 #tooltip-bar2 {
     position: absolute;
     background: silver;

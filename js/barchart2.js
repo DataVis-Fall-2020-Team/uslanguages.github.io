@@ -16,15 +16,21 @@ class BarChart2{
         this.currentData = this.tree.treeSelectionToArray(this.tree.root, this.direction);
 
         this.margin = { top: 20, right: 50, bottom: 20, left: 10};
-        this.width = 1000 - this.margin.right - this.margin.left;
+        this.width = 450 - this.margin.right - this.margin.left;
         this.height = 750 - this.margin.top - this.margin.bottom;
         this.barWidth = {group: 100, subgroup: 30, language: 20, gap: 2};
             
         this.scale = d3.scaleLinear().domain([0, 1]).range([0, this.height]);
         
-        this.currentLevel = "group";    
+        this.currentLevel = "group";  
+        this.isSorted = false;  
         this.drawChart();
         this.updateBarChart();
+        
+
+        //call sort function
+        //this.currentLevel = "language"
+        //this.sort();
     }
 
     /**
@@ -39,6 +45,10 @@ class BarChart2{
         d3.select("#vis")
             .append("div")
             .attr("id","tooltip-bar2");
+
+        //setup grouping for rects
+        d3.select("#barchart2").append("g")
+            .attr("id", "bar-rects");
         
         //draw axis
         let yScale = d3.scaleLinear().domain([0, 1]).range([this.height, 0]);
@@ -52,15 +62,33 @@ class BarChart2{
             .call(axis)
             .call(g => g.select(".domain").remove());
         
-        //draw label
+        //draw text label
         d3.select("#barchart2").append("text")
-            .attr("transform", "translate(300, 50)")
+            .attr("transform", "translate(350, 50)")
             .attr("y", 0)
             .attr("x",0)
             .style("text-anchor", "middle")
             .style("font-size", "1.1em")
             .text("Percentage of Speakers that Speak English 'Very Well'");  
-    }      
+        
+        //draw sort box
+        d3.select("#barchart2").append("g")
+            .attr("id", "sortLabel")
+            .append("rect")
+            .attr("id", "sortLabelButton")
+            .attr("transform", "translate(650, 20)")
+            .attr("width", 80)
+            .attr("height", 40);
+            
+
+        d3.select("#sortLabel").append("text")
+            .attr("id", "sortLabelText")
+            .attr("transform", "translate(660, 50)")
+            .attr("x", 0)
+            .attr("y", 0)
+            .style("font-size", "1.5em")
+            .text("Sort");
+   }      
 
     /**
      * Function that renders the barchart.  This function is called everytime
@@ -76,7 +104,7 @@ class BarChart2{
             x += this.getBarWidth(d) + this.barWidth["gap"];
         }
         
-        d3.select("#barchart2").selectAll("rect")
+        d3.select("#bar-rects").selectAll("rect")
             .data(this.currentData)
             .join("rect")
             .transition()
@@ -97,14 +125,15 @@ class BarChart2{
         //These must be attached after every update so that each rect has an 
         //event handler attached to it
         this.attachMouseEventHandlers();
+
     }
 
     /**
      * Helper function that updates this.currentData after each click or doubleclick
-     * @param {Node} selection - the Node that is currently selected by a click or doubleclick
+     * @param {Node} selection - the currently selected node
      */
-    updateData(selection){
-        let node = selection.data()[0];
+    updateData(node){
+        //let node = selection.data()[0];
         let newData = this.tree.treeSelectionToArray(node, this.direction);
         this.currentLevel = newData[0].level;
 
@@ -156,17 +185,21 @@ class BarChart2{
         if (this.direction === "up"){
             switch(node.level){
                 case "subgroup":
-                    return "group";
+                    this.currentLevel =  "group";
+                    break;
                 case "language":
-                    return "subgroup";
+                    this.currentLevel =  "subgroup";
+                    break;
             }
         }
         else{
             switch(node.level){
                 case "group":
-                    return "subgroup";
+                    this.currentLevel = "subgroup";
+                    break;
                 case "subgroup":
-                    return "language";
+                    this.currentLevel = "language";
+                    break;
             }
         }
     }
@@ -185,13 +218,17 @@ class BarChart2{
         let groupWidth = this.barWidth["group"];
         let subgroupWidth = this.barWidth["subgroup"];
         let languageWidth = this.barWidth["language"];
+        let barWidth;
 
         //calculate language width first
-        let barWidth = (this.width - (groupWidth + this.barWidth["gap"]) * numGroups  
-            - (subgroupWidth + this.barWidth["gap"]) * numSubgroups) / numLanguages;
-        console.log("barwidth: ", barWidth);
+        if (numLanguages === 0)
+            languageWidth = 0;
+        
+        else {
+            barWidth = (this.width - (groupWidth + this.barWidth["gap"]) * numGroups  
+                - (subgroupWidth + this.barWidth["gap"]) * numSubgroups) / numLanguages;
             
-            while(barWidth < 5){
+            while(barWidth < 5 && this.isSorted != true){
                 console.log("Recalculating the other bar widths");
                 groupWidth = groupWidth * 0.75;
                 subgroupWidth = subgroupWidth * 0.75;
@@ -199,10 +236,15 @@ class BarChart2{
                     - (subgroupWidth  + this.barWidth["gap"]) * numSubgroups) / numLanguages;
             }
             languageWidth = Math.min(barWidth, this.barWidth["language"]);
+        }
+        
         
         //Next calculate subgroup width
-        barWidth = (this.width - (groupWidth + this.barWidth["gap"]) * numGroups  
-            - (languageWidth + this.barWidth["gap"]) * numLanguages) / numSubgroups;   
+        if (numSubgroups === 0)
+            subgroupWidth = 0;
+        else {
+            barWidth = (this.width - (groupWidth + this.barWidth["gap"]) * numGroups  
+                - (languageWidth + this.barWidth["gap"]) * numLanguages) / numSubgroups;   
                 
             while(barWidth < 10){
                 groupWidth = groupWidth * 0.75;
@@ -210,6 +252,8 @@ class BarChart2{
                     - (languageWidth + this.barWidth["gap"]) * numLanguages) / numSubgroups; 
             }
             subgroupWidth = Math.min(barWidth, this.barWidth["subgroup"]);
+        }
+        
         
         //Lastly calculate the group width
         groupWidth = Math.min(groupWidth, this.barWidth["group"]);
@@ -234,18 +278,21 @@ class BarChart2{
         function numberWithCommas(x) {
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
-        d3.select("#barchart2").selectAll("rect")
+        d3.select("#bar-rects").selectAll("rect")
             .on("mouseover", function(d) {
-                console.log("mouseover in barchart2");
                 d3.select(this).classed("hover", true);
                 let level = d3.select(this).data()[0]["level"];
-                let xCoord = parseInt(d3.select(this).attr("x")) + 20;
-                let yCoord = parseInt(d3.select(this).attr("y")) - 50;
-                if (yCoord > 650)
-                    yCoord -= 100;
+                let x = parseInt(d3.select(this).attr("x")) + 20;
+                let y = parseInt(d3.select(this).attr("y")) - 50;
+                if (x > 350)
+                    x -= 150;
+                if (y > 650)
+                    y -= 150;
+                if (y < 100)
+                    y += 150;
                 d3.select("#tooltip-bar2")
-                    .style("left", xCoord + "px")
-                    .style("top", yCoord + "px")
+                    .style("left", x + "px")
+                    .style("top", y + "px")
                     .style('visibility', 'visible')
                     .style("opacity", function(){
                         if (level != that.currentLevel)
@@ -260,6 +307,12 @@ class BarChart2{
                 d3.select("#tooltip-bar2")
                     .style('visibility', 'hidden');
             });
+
+        d3.select("#sortLabel")
+            .on("mouseover", function() {
+                d3.select(this).classed("hover", true);})
+                .on("mouseout", function() {
+                    d3.select(this).classed("hover", false);})
     }
 
     /**
@@ -315,21 +368,68 @@ class BarChart2{
         //d3.select("#vis").select("svg").call(cc);
 
         cc.on('click', function(d, index) {
-            that.direction = "down";
-            d3.select("#tooltip-bar2")
-                .style('visibility', 'hidden');
-            let id = this.srcElement.id;
-            let selection = d3.select("#" + id);
-            that.updateData(selection);
-        });
+            if (this !== null && this.srcElement.id !== "") {
+
+                let id = this.srcElement.id;
+                if (id.includes("sort")) {
+                    if(that.isSorted){
+                        //reset the graph
+                        that.direction = "down";
+                        that.currentData = that.tree.treeSelectionToArray(that.tree.root, that.direction);
+                        that.currentLevel = "group";
+                        that.isSorted = false;
+                        d3.select("#sortLabelButton")
+                            .classed("clicked", false);
+                        that.updateBarChart();
+                    }
+
+                    else{
+                        that.isSorted = true;
+                        d3.select("#sortLabelButton")
+                            .classed("clicked", true);
+                        that.sort();
+                    }
+                }
+
+                else {
+                    that.direction = "down";
+                    d3.select("#tooltip-bar2")
+                        .style('visibility', 'hidden');
+                    let node = d3.select("#" + id).data()[0];
+                    if (that.isSorted){
+                        if (node.level === "language")
+                            return;
+                        else {
+                            that.updateLevel(node);
+                            that.sort(that.currentLevel)
+                        }
+                    }
+                else {
+                    that.updateData(node);
+                }
+
+            }    
+        }
+    });
 
         cc.on('dblclick', function(d, index) {
-            that.direction = "up";  
-            d3.select("#tooltip-bar2")
-                .style('visibility', 'hidden');
-            let id = this.srcElement.id;
-            let selection = d3.select("#" + id);
-            that.updateData(selection);
+            if (this !== null && this.srcElement.id !== ""){
+                that.direction = "up";  
+                d3.select("#tooltip-bar2")
+                    .style('visibility', 'hidden');
+                let node = d3.select("#" + this.srcElement.id).data()[0];
+                if (that.isSorted){
+                    if (node.level === "group")
+                        return;
+                    else {
+                        that.updateLevel(node);
+                        that.sort(that.currentLevel)
+                    }
+                }
+                else {
+                    that.updateData(node);
+                }
+            }
         });
     }
 
@@ -353,4 +453,23 @@ class BarChart2{
         event.on('click', null);
         event.on('dblclick', null);
    }   
+
+   /**
+    * Function that sorts the nodes given the level
+    * @param {string} level - level that will be sorted {"group", "subgroup", "language"} 
+    */
+    sort(){
+        this.isSorted = true;
+
+        //get all the nodes in the tree at specified level
+        this.currentData = this.tree.returnAll(this.currentLevel);
+        
+        let sortDescending = function (a,b){
+            if (b.percentage > a.percentage) return 1;
+                else return -1;
+        };
+
+        this.currentData.sort(sortDescending);
+        this.updateBarChart();
+   }
 }
