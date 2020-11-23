@@ -43,7 +43,6 @@ class cluster {
             .html("<p style=font-size:20px>" + d.Group + "</p> \
                    <p>" + d.Subgroup + "</p> \
                    <p>" + d.Language + ": " + d.Speakers +"</p>"
-                   
             )    
                 
         }) // End mouseover listener

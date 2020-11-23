@@ -62,7 +62,7 @@ class BarChart2{
             .call(axis)
             .call(g => g.select(".domain").remove());
         
-        //draw text label
+        //draw text labels
         d3.select("#barchart2").append("text")
             .attr("transform", "translate(350, 50)")
             .attr("y", 0)
@@ -70,6 +70,15 @@ class BarChart2{
             .style("text-anchor", "middle")
             .style("font-size", "1.1em")
             .text("Percentage of Speakers that Speak English 'Very Well'");  
+        
+        d3.select("#barchart2").append("text")
+            .attr("transform", "translate(350, 100)")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("id", "levelLabel")
+            .style("text-anchor", "middle")
+            .style("font-size", "1.4em")
+            .text("Groups");
         
         //draw sort box
         d3.select("#barchart2").append("g")
@@ -95,6 +104,7 @@ class BarChart2{
      * something changes with a mouseclick or doubleclick.
      */
     updateBarChart(){
+        console.log("updated bar chart");
         let that = this;
 
         //calculate x values for bars
@@ -121,6 +131,10 @@ class BarChart2{
                 if (d.level != that.currentLevel)
                     return 0.2;
                 else return 1.0});
+
+        d3.select("#levelLabel")
+            .text(that.currentLevel.charAt(0).toUpperCase() + that.currentLevel.slice(1) + "s");
+        
 
         //These must be attached after every update so that each rect has an 
         //event handler attached to it
@@ -221,42 +235,39 @@ class BarChart2{
         let barWidth;
 
         //calculate language width first
-        if (numLanguages === 0)
-            languageWidth = 0;
-        
-        else {
+
+        if (this.currentLevel === "language"){
+
             barWidth = (this.width - (groupWidth + this.barWidth["gap"]) * numGroups  
                 - (subgroupWidth + this.barWidth["gap"]) * numSubgroups) / numLanguages;
             
-            while(barWidth < 5 && this.isSorted != true){
+            while(barWidth < 2 && this.isSorted === false){
                 console.log("Recalculating the other bar widths");
                 groupWidth = groupWidth * 0.75;
                 subgroupWidth = subgroupWidth * 0.75;
                 barWidth = (this.width - (groupWidth +this.barWidth["gap"]) * numGroups  
                     - (subgroupWidth  + this.barWidth["gap"]) * numSubgroups) / numLanguages;
-            }
+                console.log("bar width is: ", barWidth);
+                }
             languageWidth = Math.min(barWidth, this.barWidth["language"]);
+            console.log("Final language Width is", languageWidth);
         }
+
+        else if (this.currentLevel === "subgroup"){
         
-        
-        //Next calculate subgroup width
-        if (numSubgroups === 0)
-            subgroupWidth = 0;
-        else {
+            console.log("Calculating subgroup widths");
             barWidth = (this.width - (groupWidth + this.barWidth["gap"]) * numGroups  
                 - (languageWidth + this.barWidth["gap"]) * numLanguages) / numSubgroups;   
-                
+            
             while(barWidth < 10){
                 groupWidth = groupWidth * 0.75;
                 barWidth = (this.width - (groupWidth + this.barWidth["gap"]) * numGroups  
                     - (languageWidth + this.barWidth["gap"]) * numLanguages) / numSubgroups; 
+            console.log("subgroup width:", barWidth);
             }
             subgroupWidth = Math.min(barWidth, this.barWidth["subgroup"]);
+            console.log("final subgroupWidth is", subgroupWidth);
         }
-        
-        
-        //Lastly calculate the group width
-        groupWidth = Math.min(groupWidth, this.barWidth["group"]);
 
         switch(node.level){
             case "group" :
@@ -264,6 +275,7 @@ class BarChart2{
             case "subgroup":
                 return subgroupWidth;
             case "language":
+                console.log("Returning language width: ", languageWidth);
                 return languageWidth;
         }
     }
@@ -411,7 +423,6 @@ class BarChart2{
             }    
         }
     });
-
         cc.on('dblclick', function(d, index) {
             if (this !== null && this.srcElement.id !== ""){
                 that.direction = "up";  
@@ -433,12 +444,41 @@ class BarChart2{
         });
     }
 
+    attachStorytellingHandlers(){
+        let that = this;
+        d3.select("#showSubgroupSort")
+            .on("click", function(){
+                that.currentLevel = "subgroup";
+                that.isSorted = true;
+                d3.select("#sortLabelButton")
+                    .classed("clicked", true);
+                that.sort();
+            });
+        
+        d3.select("#showNativeAmerican")
+            .on("click", function(){
+                if (that.isSorted){
+                    that.isSorted = false;
+                    d3.select("#sortLabelButton")
+                        .classed("clicked", false);
+                }
+                that.currentLevel = "language";
+                that.currentDirection = "down";
+                that.currentData = that.tree.treeSelectionToArray(that.tree.root, that.direction);
+                let node = that.tree.getNode("ALL OTHER LANGUAGES", "group", that.tree.root);
+                that.updateData(node);
+                node = that.tree.getNode("Other Native North American languages", "subgroup", node);
+                that.updateData(node);
+            });
+    }
+
     /**
      * Function that attaches all the event handlers for the barchart2
      */
     attachEventHandlers(){
         this.attachMouseEventHandlers();
         this.attachClickHandlers();
+        this.attachStorytellingHandlers();
     }
 
     /**

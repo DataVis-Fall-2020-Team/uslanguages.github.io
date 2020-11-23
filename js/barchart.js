@@ -157,8 +157,10 @@ class Barchart{
                 });
     }
 
+    
+
     /**
-     * Function that attaches tshe sort handlers to the barchart visualization
+     * Function that attaches the sort handlers to the barchart visualization
      */
     attachSortHandlers(){
         let that = this;
@@ -175,9 +177,9 @@ class Barchart{
                 that.sortAscending = true;
             }
 
-            let aPercentage;
-            let bPercentage;
             let sort = function(a,b) {
+                let aPercentage;
+                let bPercentage;
                 for (let aData of a.groups){
                     if(aData.group === sortSelection){
                         aPercentage = aData.percentage;
@@ -193,13 +195,14 @@ class Barchart{
                     if (aPercentage < bPercentage) return 1;
                     else return -1;
                 }
-
+    
                 else {
                     if (aPercentage < bPercentage) return -1;
                     else return 1;
                 }
                 
             }
+
             that.stateData.sort(sort);
             that.sortAscending = !that.sortAscending;
             that.drawBarChart();
@@ -207,14 +210,15 @@ class Barchart{
     }
 
     /**
-     * Function that attaches the mouse event handlers to the horizontal barchart.
+     * Function that attaches the mouse event and storytelling handlers to the barchart.
      * When a language group is clicked, the barchart will be sorted by that language group.
      * When the language group is clicked again, the barchart will be sorted in reverse order
      * by that language group.  Clicking on the state name sorts alphabetically by state.
      */
     attachEventHandlers(){
-        let that = this;
         this.attachSortHandlers();
+        this.attachStorytellingHandlers();
+        let that = this;
 
 
         //https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
@@ -254,6 +258,51 @@ class Barchart{
             that.currentSelection = "ENGLISH";
             that.drawBarChart();
         });
+    }
+
+    /**
+     * Function that attaches handlers for the storytelling buttons
+     */
+
+    attachStorytellingHandlers(){
+        let that = this;
+        let sort = function(selection){
+            that.sortAscending = "true";
+            that.currentSelection = selection;
+            let sortFunction = function(a,b){
+                let aPercentage;
+                let bPercentage;
+                for (let aData of a.groups){
+                    if(aData.group === selection)
+                        aPercentage = aData.percentage;
+                }
+            
+                for (let bData of b.groups){
+                    if  (bData.group === selection)
+                        bPercentage = bData.percentage;
+                }
+                
+                if (aPercentage < bPercentage) return 1;
+                else return -1;
+            }
+            that.stateData.sort(sortFunction);
+            that.sortAscending = !that.sortAscending;
+        }
+
+        d3.select("#showEnglishSort")
+            .on("click", function(){
+                sort("ENGLISH");
+                that.drawBarChart()});
+
+        d3.select("#showSpanishSort")
+            .on("click", function(){
+                sort("SPANISH AND SPANISH CREOLE");
+                that.drawBarChart()});
+
+        d3.select("#showNativeAmericanSort")
+            .on("click", function(){
+                sort("ALL OTHER LANGUAGES");
+                that.drawBarChart()});
     }
 
     /**
