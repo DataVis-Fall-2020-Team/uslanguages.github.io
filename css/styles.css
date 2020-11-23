@@ -31,6 +31,8 @@ body {
 
 }
 
+
+
 .categoryLegend {
     font-family: "Domine";
 }
@@ -48,15 +50,18 @@ body {
 }
 
 
+
+
 h1, h2 {
     font-weight: 700;
     text-align: right;
     line-height: 32px;
 }
 
-h1 {
-    font-size: 35px;
+p {
+    font-size: 1.3em;
 }
+
 
 strong {
     color: rgb(243, 18, 194);
@@ -140,6 +145,26 @@ line {
     fill:  darkgrey;
     stroke: black;
     stroke-width: 1;
+}
+
+button {
+    display:inline-block;
+    padding:0.2em 0.8em;
+    margin:0 0.1em 0.1em 0;
+    border:0.16em solid rgba(255,255,255,0);
+    border-radius:1em;
+    box-sizing: border-box;
+    text-decoration:none;
+    font-family:'Roboto',sans-serif;
+    font-weight:300;
+    color:#FFFFFF;
+    text-shadow: 0 0.04em 0.04em rgba(0,0,0,0.35);
+    text-align:center;
+    transition: all 0.2s;
+    background-color:#f14ebd;
+}
+button:hover{
+    border-color: rgba(255,255,255,1);
 }
 
 

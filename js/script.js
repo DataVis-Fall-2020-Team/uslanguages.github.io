@@ -58,7 +58,7 @@ loadData().then(data => {
         }
             
         let my_categories = dataset[1].map(x => x.Group).filter(distinct);
-        const colors = ["#6a3d9a","#ff7f00","#e7298a","#66a61e","#1b9e77"];
+        const colors = ["#e7298a","#66a61e","#1b9e77", "#6a3d9a", "#ff7f00"];
         
         // Color scale
         let my_colorScale = d3.scaleOrdinal() 
