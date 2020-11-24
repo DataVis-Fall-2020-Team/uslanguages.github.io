@@ -32,7 +32,7 @@ let StateInfo = [
 	    id:"AK",
 	    name: "Alaska",
 	    class:"states",
-        center:[110.548, 510.984],
+        center:[115.548, 484.984], //original center: [110.548, 510.984],
 	    paths:
 	    ["M 158.07671,453.67502 L 157.75339,539.03215 L 159.36999,540.00211 L 162.44156,540.16377 "+
 			 "L 163.8965,539.03215 L 166.48308,539.03215 L 166.64475,541.94205 L 173.59618,548.73182 "+
@@ -901,7 +901,7 @@ let StateInfo = [
         id:"MN",
         name:"Minnesota",
         class:"states",
-        center:[523.431, 116.889],
+        center:[507.431, 116.889], //original center: [523.431, 116.889],
         paths:["M 475.23781,128.82439 L 474.78056,120.36535 L 472.95158,113.04943 L 471.1226,99.560705 " +
          "L 470.66535,89.729927 L 468.83637,86.300584 L 467.23601,81.270889 L 467.23601,70.982869 " +
          "L 467.92187,67.096282 L 466.10094,61.644615 L 496.23336,61.679886 L 496.55668,53.435202 " +
@@ -930,7 +930,7 @@ let StateInfo = [
         id:"OK",
         name:"Oklahoma",
         class:"states",
-        center:[437.603, 359.267],
+        center:[457.603, 359.267], //original center: [437.603, 359.267],
         paths:["M 380.34313,320.82146 L 363.65895,319.54815 L 362.77873,330.50058 L 383.24411,331.65746 " +
          "L 415.29966,332.96106 L 412.96506,357.37971 L 412.50781,375.21228 L 412.73644,376.81264 " +
          "L 417.08027,380.4706 L 419.13787,381.61371 L 419.82374,381.38509 L 420.50961,379.32748 " +
@@ -952,7 +952,7 @@ let StateInfo = [
         id:"TX",
         name:"Texas",
         class:"states",
-        center:[409.099, 447.545],
+        center:[419.099, 437.545],//original center: [409.099, 447.545],
         paths:[
             "M 361.46423,330.57358 L 384.15502,331.65952 L 415.24771,332.80264 L 412.9131,356.25844 " +
              "L 412.61634,374.41196 L 412.68448,376.49375 L 417.02831,380.31218 L 419.01496,381.75934 " +
@@ -1122,7 +1122,7 @@ let StateInfo = [
         id:"ID",
         name:"Idaho",
         class:"states",
-        center:[200.151, 141.528], //Original Center: [200.151, 111.528],
+        center:[200.151, 151.528], //Original Center: [200.151, 111.528],
         paths:[
             "M 148.47881,176.48395 L 157.24968,141.26323 L 158.62142,137.03371 L 161.13626,131.08953 " +
             "L 159.87884,128.8033 L 157.36398,128.91761 L 156.56381,127.88881 L 157.02106,126.7457 " +
@@ -1178,7 +1178,7 @@ let StateInfo = [
         id:"NV",
         name:"Nevada",
         class:"states",
-        center:[140.352, 251.339],
+        center:[140.352, 231.339], //original center: [140.352, 251.339],
         paths:[
             "M 196.39273,185.57552 L 172.75382,314.39827 L 170.92158,314.74742 L 169.34882,317.1536 " +
             "L 166.97588,317.16429 L 165.50393,314.42082 L 162.88546,314.0424 L 162.11454,312.93477 " +
@@ -1286,7 +1286,7 @@ let StateInfo = [
         id:"PR",
         name:"Puerto Rico",
         class:"territory",
-        center:[595.700, 536.250],
+        center:[590.700, 523.250], //original center: [595.700, 536.250],
         paths:[
                 "M569.2,530.2l0.9-2.1l1.7,0.4l1.7,1.3l7.3,0.9l7.3-0.4h3l2.6,0.9l1.7-1.3h2.1l5.1, " +
                 "0.4l5.1,1.3 l1.7,1.7h3l0.4,2.6l-0.4,1.7l-3.4,0.4l-2.1,0.9l-0.9,2.1l-1.3,2.1l-2.6, " +
@@ -1310,14 +1310,41 @@ let StateInfo = [
 class US_Map{
     // Creates a US_Map object showing language distribution
     constructor(data){
+        let that = this;
         //console.log(data); //355 languages, 51 states/territories
         this.data=data;
+
+        //Add centers and languages per state to the data
+        this.mapData = data.map(d=>{
+            d.StateId = StateInfo.find(a=>a.name==d.State).id,
+            d.StateCenter = StateInfo.find(a=>a.name==d.State).center,
+            d.StateLanguages = that.getLanguagesPerState(d.State),
+            d.LanguageIndex = that.getLanguageIndexPerState(d.State, d.Language);
+            return d;
+        });
+
+        console.log(this.mapData);
+
+        /*this.mapSimulation = d3.forceSimulation()
+            .force("charge", d3.forceManyBody().strength(5))
+            .force("center", d3.forceCenter(500, 500))
+            .force("collide", d3.forceCollide().radius(3));
+            //.force("center", d3.forceCenter(StateInfo.filter(d=>d.center)));*/
+
         this.lastIndex = 0;
         this.lastId = "";
 
-        //this.drawStates();
         this.drawBubbles();
         this.states = [];
+    }
+
+    getLanguagesPerState(state){
+        return this.data.filter(d=>d.State == state);
+    }
+
+    getLanguageIndexPerState(state, language){
+        let languages = this.getLanguagesPerState(state);
+        return languages.findIndex(a=>a.Language==language);
     }
 
     //used to draw the states if they aren't hard-coded
@@ -1341,31 +1368,70 @@ class US_Map{
 
     //Draws the language bubbles
     drawBubbles(){
+        let that = this;
+
         let stateMap = d3.select("#map").append("g");
-        let bubbles = stateMap.selectAll("circle")
-            .data(this.data)
+        let mapBubbles = stateMap.selectAll("circle")
+            .data(this.mapData)
             .join("circle")
-            .attr("fill", "gray")
-            .attr("r", 3)
-            .attr("cx", d=>StateInfo.find(a=>a.name==d.State).center[0])
-            .attr("cy", d=>StateInfo.find(a=>a.name==d.State).center[1])
+            .attr("fill", d=>colorScale(d.Group))
+            .attr("stroke", "black")
+            .attr("r", 2)
+            .attr("cx", d=>d.StateCenter[0])
+            .attr("cy", d=>d.StateCenter[1])
             .attr("transform", function(d,i){
-                if(i==1) console.log(d); //this.GetBubbleTranslation(d.id, i);
-                return "translate(0,0)";
+                let trans = that.GetBubbleTranslation(d);
+                return "translate("+trans[0]+","+trans[1]+")";
             })
-            .attr("class", function(d){
-                let si = StateInfo.find(f=>f.name == d.State).id;
-                return si;
+            .attr("class", d=>d.StateId);
+            /*.call(d3.drag()
+                    .on("start", this.dragstarted)
+                    .on("drag", this.dragged)
+                    .on("end", this.dragended));*/
+
+        /*this.mapSimulation.nodes(mapBubbles);
+        //simulation.force("center", d3.forceCenter(d.StateCenter[0], d.StateCenter[1]));
+        this.mapSimulation.on("tick", function(){
+            mapBubbles.attr("cx", function(d) {
+                return d.StateCenter[0];
+            })
+            .attr("cy", function(d){
+                return d.StateCenter[1];
             });
+        });*/
+
+        //console.log(mapBubbles);
     }
 
-    GetBubbleTranslation(stateName, index){
-        console.log(stateId);
+    dragstarted(d) {
+        if (!d3.event.active) this.mapSimulation.alphaTarget(0.3).restart();
+        d.fx = d.StateCenter[0];
+        d.fy = d.StateCenter[1];
+    }
 
-        if(stateId != this.lastId){
-            this.lastIndex = index;
-            this.lastId = stateId;
-        }
+    dragged(d) {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+    }
+
+    dragended(d) {
+        if (!d3.event.active) this.mapSimulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+    }
+
+    GetBubbleTranslation(d){
+        //console.log(newIndex);
+        let radius = 2;
+        let degree = 20/3.14;
+        let modulus = 4;
+        //if(d.StateLanguages.length()%4)
+
+        let newX = radius^(d.LanguageIndex%modulus) * Math.cos(degree*d.LanguageIndex)*10;
+        let newY = radius^(d.LanguageIndex%modulus) * Math.sin(degree*d.LanguageIndex)*10;
+
+        //console.log(radius, degree, newX, newY);
+        return [newX, newY];
     }
 
     /*
