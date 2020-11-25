@@ -176,7 +176,7 @@ div.tooltip {
 }
 
 /* Map Styles */
-div.us_map{
+#us_map{
     height: 100vh;
     width: 100vw;
 }
@@ -186,6 +186,7 @@ div.us_map{
     width:1000px;
     position:fixed;
     margin-left:300px;
+    margin-top: 100px;
 }
 
 .state, .territory{
@@ -205,4 +206,75 @@ div.us_map{
      stroke:#a9a9a9;
      fill:none;
      stroke-width:2;
+}
+
+/* Slider Styles */
+/*
+    Resources:
+    https://www.tutorialspoint.com/how-to-create-custom-range-sliders-with-css-and-javascript
+    https://codepen.io/trevanhetzel/pen/rOVrGK
+    https://stackoverflow.com/questions/33699852/show-tick-positions-in-custom-range-input
+*/
+#map_filters{
+    position:fixed;
+    margin-left: 450px;
+    margin-top: 40px;
+}
+
+#map_filters .slider {
+    -webkit-appearance:none;
+    position:relative;
+	display: flex;
+    background: #99ccff; /* light blue */
+    border-radius: 25px;
+    outline: none;
+    width: 550px;
+    height: 10px;
+    margin-top: 0px;
+    margin-left: 40px;
+}
+
+#map_filters .slider::-webkit-slider-thumb {
+    -webkit-appearance:none;
+    appearance: none;
+    background: #66b3ff; /* medium blue */
+     border: 3px solid #4da6ff;
+    border-radius: 50%;
+    cursor: pointer;
+    height: 30px;
+    width: 30px;
+}
+
+#map_filters .range-labels{
+    margin: 15px 0px 0px 0px;
+    padding: 0;
+    list-style: none;
+}
+
+#map_filters .range-labels li{
+    position: relative;
+    float: left;
+    width: 127px;
+    text-align: center;
+    color: #b2b2b2;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#map_filters #marks {
+    position:relative;
+    display: flex;
+	justify-content: space-between;
+	width: 550px; /*595px;*/
+    left: 40px;
+	top: 15px;
+	/* disable click events */
+	pointer-events:none;
+}
+
+#map_filters #marks option{
+    background: #99ccff; /* light blue */
+    border-radius: 50%;
+    width: 20px;
+    height: 15px;
 }

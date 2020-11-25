@@ -91,7 +91,8 @@ loadData().then(data => {
             // .attr('position', 'relative')
 
         // Viz #2 - Map
-        d3.select("#map").style('opacity',0)
+        d3.select("#map").style('opacity',0);
+        d3.select("#map_filters").style('opacity', 0);
 
         // Viz #3 - Barchart 1
         d3.select('#graphic')
@@ -148,6 +149,7 @@ loadData().then(data => {
             d3.select('.divchart2').transition().style('opacity',0)
         } // End bar2 if statement
         if (chartType !== "map"){
+            d3.select("#map_filters").style('opacity', 0);
             d3.select('#map').transition().style('opacity',0)
         } // End map if statement
     } // End function clean()
@@ -179,7 +181,8 @@ loadData().then(data => {
     function draw_map(){
 
         clean('map')
-        let svg = d3.select("#map").style('opacity',0.8);
+        d3.select("#map_filters").style('opacity', 1);
+        let svg = d3.select("#map").style('opacity',1);
 
         svg.selectAll('.state')
             .transition()
