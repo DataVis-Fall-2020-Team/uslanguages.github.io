@@ -2,12 +2,13 @@
 let dataset, dataset_updated
 let simulation, nodes, clusters
 let views = {} //dictionary to store view objects
+let map_data, path, projection
 
 // --------------------------------------------
         // Import the data
 // --------------------------------------------
 
-loadData().then(data => {
+loadData().then(function(data){
     dataset = data
     
     setTimeout(setup_page(), 100) 
@@ -15,6 +16,7 @@ loadData().then(data => {
  
  async function loadData() {
     try {
+        // State Data
         const stateData = await d3.csv('./data/LanguageData_States.csv', function (d){ 
             return {
                 Group: d.Group,
@@ -26,6 +28,8 @@ loadData().then(data => {
             }
         });
         console.log('State Data Loaded:', stateData);
+
+        // National Data
         const nationalData = await d3.csv('./data/National_Languages.csv', function(d){
             return {
                 Group: d.Group,
@@ -39,12 +43,22 @@ loadData().then(data => {
         console.log('National Data Loaded');
         dataset_updated = nationalData.filter(d => d.Group != 'Total')
 
+        // Mapping Data
+        
+        // JSON taken from: https://github.com/DataVis-Fall-2020-Team/MappingAPI/tree/master/data/geojson
+        map_data = await d3.json("data/us-states.json");
+
         return [stateData, nationalData];
     }
     catch{
         console.log("Data not loaded");
     }
  }
+
+ // Used template found on: http://dataviscourse.net/tutorials/lectures/lecture-maps/
+async function usMap(){
+
+}
 
 // --------------------------------------------
         // Setup the scales 
@@ -156,7 +170,7 @@ loadData().then(data => {
         views['bar1'] = new Barchart(dataset[0], svg);
 
         // Viz #2 Map
-        views['map'] = new US_Map(dataset[0]);
+        views['map'] = new US_Map(dataset[0], map_data);
         
         // Viz #1 Megacluster setup
         views['cluster'] = new cluster(svg);
