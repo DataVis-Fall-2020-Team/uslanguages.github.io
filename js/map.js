@@ -3,7 +3,7 @@ let StateInfo = [
         postal_code:"HI",
         name:"Hawaii",
         class:"states",
-        center:[289.911, 546.387],
+        center:[331.911, 567.387], //original center: [289.911, 546.387],
         paths:
 	    [
 	      "M 233.08751,519.30948 L 235.02744,515.75293 L 237.2907,515.42961 L 237.61402,516.23791 " +
@@ -181,7 +181,7 @@ let StateInfo = [
 	    postal_code:"NH",
 	    name: "New Hampshire",
 	    class:"states",
-        center:[868.846, 122.021],
+        center:[865.846, 127.021], //original center: [868.846, 122.021],
 		paths:[
 		        "M 880.79902,142.42476 L 881.66802,141.34826 L 882.75824,138.05724 L 880.21516,137.14377 " +
 		        "L 879.73017,134.07221 L 875.85032,132.94059 L 875.527,130.19235 L 868.25225,106.75153 " +
@@ -288,7 +288,7 @@ let StateInfo = [
 	    postal_code:"ME",
 	    name:"Maine",
 	    class:"states",
-        center:[895.337, 88.265],
+        center:[890.337, 85.265],  //original center: [895.337, 88.265],
 	    paths:[
 	        "M 922.83976,78.830719 L 924.77969,80.932305 L 927.04294,84.650496 L 927.04294,86.590422 " +
 			"L 924.94135,91.278575 L 923.00142,91.925217 L 919.60655,94.996766 L 914.75674,100.49322 " +
@@ -420,7 +420,7 @@ let StateInfo = [
         postal_code:"MD",
         name:"Maryland",
         class:"states",
-        center:[800.702, 247.322],
+        center:[810.702, 237.322], //original center: [800.702, 247.322],
         paths:["M 839.79175,252.41476 L 833.7832,253.6186 L 828.6403,253.73606 L 826.79674,246.81373 " +
          "L 824.87193,237.64441 L 822.29931,231.45596 L 821.01093,227.05763 L 813.50491,228.67999 " +
          "L 798.6287,231.50331 L 761.17727,239.05421 L 762.30857,244.06587 L 763.27853,249.72398 " +
@@ -452,7 +452,7 @@ let StateInfo = [
         postal_code:"VA",
         name:"Virginia",
         class:"states",
-        center:[770.713, 279.294],
+        center:[785.713, 284.294], //original center: [770.713, 279.294],
         paths:["M 831.63885,266.06892 L 831.49494,264.12189 L 837.94837,261.57201 L 837.17796,264.78985 " +
          "L 834.25801,268.56896 L 833.83992,273.15478 L 834.30167,276.54522 L 832.4737,281.52338 " +
          "L 830.30943,283.43952 L 828.83909,278.79871 L 829.28498,273.3496 L 830.87198,269.16653 " +
@@ -480,7 +480,7 @@ let StateInfo = [
         postal_code:"WV",
         name:"West Virginia",
         class:"states",
-        center:[752.922, 261.184],
+        center:[742.922, 271.184], //original center: [752.922, 261.184],
         paths:["M 761.18551,238.96731 L 762.29752,243.91184 L 763.38096,249.94317 L 765.51125,247.36283 " +
          "L 767.77449,244.29127 L 770.31287,243.67572 L 771.76782,242.22078 L 773.54609,239.63421 " +
          "L 774.99107,240.28085 L 777.90096,239.95753 L 780.48754,237.85594 L 782.49443,236.40268 " +
@@ -648,7 +648,7 @@ let StateInfo = [
         postal_code:"DC",
         name:"District of Columbia",
         class:"territory",
-        center:[804.894, 248.577],
+        center:[799.894, 250.577], //original center: [804.894, 248.577],
         paths:[
             "M 805.81945,250.84384 L 803.96117,249.01967 L 802.72854,248.33338 L 804.17155,246.31091 " +
             "L 807.06064,248.25941 L 805.81945,250.84384 z"
@@ -658,7 +658,7 @@ let StateInfo = [
         postal_code:"MA",
         name:"Massachusetts",
         class:"states",
-        center:[874.017, 158.644],
+        center:[864.017, 157.664], //original center: [874.017, 158.644],
         paths:["M 899.62349,173.25394 L 901.79541,172.56806 L 902.25267,170.85339 L 903.28147,170.9677 " +
          "L 904.31027,173.25394 L 903.05285,173.71118 L 899.16625,173.8255 L 899.62349,173.25394 z " +
          "M 890.24995,174.05412 L 892.53617,171.42495 L 894.13654,171.42495 L 895.96553,172.911 " +
@@ -1286,7 +1286,7 @@ let StateInfo = [
         postal_code:"PR",
         name:"Puerto Rico",
         class:"territory",
-        center:[590.700, 523.250], //original center: [595.700, 536.250],
+        center:[585.700, 536.250], //original center: [595.700, 536.250],
         paths:[
                 "M569.2,530.2l0.9-2.1l1.7,0.4l1.7,1.3l7.3,0.9l7.3-0.4h3l2.6,0.9l1.7-1.3h2.1l5.1, " +
                 "0.4l5.1,1.3 l1.7,1.7h3l0.4,2.6l-0.4,1.7l-3.4,0.4l-2.1,0.9l-0.9,2.1l-1.3,2.1l-2.6, " +
@@ -1309,10 +1309,11 @@ let StateInfo = [
 
 class US_Map{
     // Creates a US_Map object showing language distribution
-    constructor(data){
+    constructor(data, svg){
         let that = this;
         //console.log(data); //355 languages, 51 states/territories
         this.data=data;
+        this.svg=svg.append("g").attr("id", "us_map");
 
         //Add centers and languages per state to the data
         this.mapData = this.data.map((d,i)=>{
@@ -1323,10 +1324,11 @@ class US_Map{
             return d;
         });
 
-        this.lastIndex = 0;
-        this.lastId = "";
+        let uniqueLanguages = new Set(d3.map(this.mapData, d=>d.Language));
+        this.AllLanguages = Array.from(uniqueLanguages);
 
-        this.drawBubbles();
+        this.drawStates();
+        this.drawBubbles("all");//["Cajun","French"]);
         this.states = [];
     }
 
@@ -1341,16 +1343,15 @@ class US_Map{
 
     //used to draw the states if they aren't hard-coded
     drawStates(){
-        let stateMap = d3.select(".us_map")
-            .append("svg")
-            .attr("id", "map")
-            .append("g");
+        let stateMap = this.svg.append("g")
+            .attr("id", "map_states");
 
         let stateGroups = stateMap.selectAll("g")
             .data(StateInfo)
             .join("g")
             .attr("class", d=>d.class)
-            .attr("id", d=>d.name);
+            .attr("id", d=>d.name)
+            .attr("transform", "translate(0,140)");
 
         let statePaths = stateGroups.selectAll("path")
             .data(d=>d.paths)
@@ -1359,31 +1360,54 @@ class US_Map{
     }
 
     //Draws the language bubbles
-    drawBubbles(){
-        let that = this;
+    drawBubbles(languages){
+        // Filter Data based on selected language(s)
+        if(languages == "all"){
+            languages=this.AllLanguages; //["English", "Spanish", "French Creole"];
+        }
+        else if(languages == "none"){
+            languages="";
+        }
 
-        let stateMap = d3.select("#map").append("g");
+        let dataF = this.mapData.filter(d=>languages.includes(d.Language));
+
+        let stateMap = this.svg.append("g")
+            .attr("id", "map_circles");
+
+        //let stateMap = d3.select("#map").append("g");
         let mapBubbles = stateMap.selectAll("circle")
-            .data(this.mapData)
+            .data(dataF)
             .join("circle")
-            .attr("fill", "transparent")
-            .attr("stroke", "transparent")
-            //.attr("fill", d=>colorScale(d.Group))
-            //.attr("stroke", "black")
-            .attr("r", 2)
+            //.attr("fill", "transparent")
+            //.attr("stroke", "transparent")
+            .attr("fill", d=>colorScale(d.Group))
+            .attr("stroke", "black")
+            .attr("r", d=>scaleSize_map(d.Speakers))
             .attr("cx", d=>d.StateCenter[0])
             .attr("cy", d=>d.StateCenter[1])
+            .attr("transform", "translate(0,140)")
             /*.attr("transform", function(d,i){
                 let trans = that.GetBubbleTranslation(d);
                 return "translate("+trans[0]+","+trans[1]+")";
             })*/
-            .attr("class", d=>d.StateId);
+            .attr("class", d=>d.StateId)
+            .classed("state_bubbles", true);
 
-        stateMap.select("#map")
-            .selectAll("circle").on("mouseover", function(){
-                //this.attr("r", 5);
-                console.log(this);
-            });
+        // Mouse over
+        let tooltip = d3.select('#tooltip-bar2')
+        d3.selectAll('.state_bubbles')
+            .on('mouseover', function(d){
+                tooltip
+                    .style('visibility', 'visible')
+                    .style("top", d3.event.pageY -10 + 'px')
+                    .style("left", d3.event.pageX + 25 + 'px')
+
+                    .html("<p style=font-size:20px>" + d.Group + "</p> \
+                           <p>" + d.Subgroup + "</p> \
+                           <p>" + d.Language + ": " + d.Speakers +"</p>"
+                    );
+                console.log(d.Group, d.Subgroup, d.Language, d.Speakers);
+        }) // End mouseover listener
     }
 
     GetBubbleTranslation(d){

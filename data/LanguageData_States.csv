@@ -2869,7 +2869,6 @@ ASIAN AND PACIFIC ISLAND LANGUAGES,Other Asian languages,Tibetan,Massachusetts,7
 ASIAN AND PACIFIC ISLAND LANGUAGES,Other Asian languages,Burmese,Massachusetts,"1,010",324,785,320
 ASIAN AND PACIFIC ISLAND LANGUAGES,Other Asian languages,Karen,Massachusetts,50,78,50,78
 ASIAN AND PACIFIC ISLAND LANGUAGES,Other Asian languages,Tagalog,Massachusetts,"8,214",925,"2,481",492
-ASIAN AND PACIFIC ISLAND LANGUAGES,Other Asian languages,Other Pacific Island languages,Massachusetts,"2,022",456,552,178
 ASIAN AND PACIFIC ISLAND LANGUAGES,Other Asian languages,Indonesian,Massachusetts,"1,045",372,270,153
 ASIAN AND PACIFIC ISLAND LANGUAGES,Other Asian languages,Balinese,Massachusetts,,,,
 ASIAN AND PACIFIC ISLAND LANGUAGES,Other Asian languages,Malay,Massachusetts,350,135,65,63
@@ -3098,7 +3097,6 @@ OTHER INDO-EUROPEAN LANGUAGES,Yiddish,Yiddish,Minnesota,145,81,,
 OTHER INDO-EUROPEAN LANGUAGES,Other West Germanic languages,Pennsylvania Dutch,Minnesota,795,214,380,149
 OTHER INDO-EUROPEAN LANGUAGES,Other West Germanic languages,Dutch,Minnesota,"1,315",212,170,54
 OTHER INDO-EUROPEAN LANGUAGES,Other West Germanic languages,Afrikaans,Minnesota,300,113,45,40
-OTHER INDO-EUROPEAN LANGUAGES,Other West Germanic languages,Scandinavian languages,Minnesota,"7,965",403,877,118
 OTHER INDO-EUROPEAN LANGUAGES,Other West Germanic languages,Swedish,Minnesota,"2,440",353,210,66
 OTHER INDO-EUROPEAN LANGUAGES,Other West Germanic languages,Danish,Minnesota,770,181,135,55
 OTHER INDO-EUROPEAN LANGUAGES,Other West Germanic languages,Norwegian,Minnesota,"4,665",340,530,100
@@ -3868,7 +3866,6 @@ OTHER INDO-EUROPEAN LANGUAGES,Other Indic languages,Marathi,New Hampshire,305,21
 OTHER INDO-EUROPEAN LANGUAGES,Other Indic languages,Oriya,New Hampshire,50,70,,
 OTHER INDO-EUROPEAN LANGUAGES,Other Indic languages,Nepali,New Hampshire,"1,990",562,"1,550",461
 OTHER INDO-EUROPEAN LANGUAGES,Other Indic languages,Sinhalese,New Hampshire,,,,
-OTHER INDO-EUROPEAN LANGUAGES,Other Indic languages,Other Indo-European languages,New Hampshire,"1,545",367,389,176
 OTHER INDO-EUROPEAN LANGUAGES,Other Indic languages,Jamaican Creole,New Hampshire,40,48,,
 OTHER INDO-EUROPEAN LANGUAGES,Other Indic languages,Krio,New Hampshire,35,49,35,49
 OTHER INDO-EUROPEAN LANGUAGES,Other Indic languages,Romanian,New Hampshire,720,247,135,86
@@ -7048,7 +7045,7 @@ ALL OTHER LANGUAGES,Other and unspecified languages,Caucasian,Kansas,,,,
 ALL OTHER LANGUAGES,Other and unspecified languages,Syriac,Kansas,,,,
 ALL OTHER LANGUAGES,Other and unspecified languages,Mayan languages,Kansas,165,153,165,153
 ALL OTHER LANGUAGES,Other and unspecified languages,Uncodable,Kansas,90,60,,
-OTHER INDO-EUROPEAN LANGUAGES,English,English,Kentucky,3879829,4073,,
+ENGLISH,English,English,Kentucky,3879829,4073,,
 SPANISH AND SPANISH CREOLE,Spanish,Spanish,Kentucky,104471,2443,49237,1702
 OTHER INDO-EUROPEAN LANGUAGES,"French (incl. Patois, Cajun)",French,Kentucky,7995,807,1825,316
 OTHER INDO-EUROPEAN LANGUAGES,"French (incl. Patois, Cajun)",Patois,Kentucky,35,34,,

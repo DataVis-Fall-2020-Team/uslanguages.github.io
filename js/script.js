@@ -107,10 +107,6 @@ loadData().then(data => {
             .attr('opacity', 1)
             // .attr('position', 'relative')
 
-        // Viz #2 - Map
-        d3.select("#map").style('opacity',0)
-        //d3.select("#map_filters").style('opacity', 0);
-        
         // Simulation setup
         simulation = d3.forceSimulation(dataset_updated)
 
@@ -157,7 +153,7 @@ loadData().then(data => {
         views['bar1'] = new Barchart(dataset[0], svg);
 
         // Viz #2 Map
-        views['map'] = new US_Map(dataset[0]);
+        views['map'] = new US_Map(dataset[0], svg);
         
         // Viz #1 Megacluster setup
         views['cluster'] = new cluster(svg);
@@ -179,9 +175,10 @@ loadData().then(data => {
         let svg = d3.select('#vis').select('svg')
         if (chartType !== "cluster"){
             if (chartType !== "map"){
-            //svg.selectAll('circle').transition().style('opacity',0)
-            d3.select("#cluster").transition().style('opacity', 0)
-            views['cluster'].clearEventHandlers();
+                //svg.selectAll('circle').transition().style('opacity',0)
+                d3.select("#cluster").transition().style('opacity', 0)
+                views['cluster'].clearEventHandlers();
+                //d3.select("#us_map").transition().style('opacity',0);
             } 
         } // End cluster if statement
 
@@ -198,9 +195,10 @@ loadData().then(data => {
         } // End bar2 if statement
 
         if (chartType !== "map"){
-            d3.select("#map_filters").style('opacity', 0);
-            d3.select('#map').transition().style('opacity',0)
+            //views['map'].clearEventHandlers();
+            d3.select("#us_map").transition().style('opacity',0);
         } // End map if statement
+
     } // End function clean()
 
 
@@ -266,19 +264,17 @@ loadData().then(data => {
 
     function draw_map(){
         simulation.stop()
-
         // Draw the map
         clean('map')
-        d3.select("#map").raise();
-
-        d3.select("#map").style('opacity',1)
-        let svg = d3.select("#map").style('opacity',1);
+        d3.select("#us_map").raise();
+        d3.select("#us_map").style('opacity',1);
 
         //Move the bubbles
 
         // views['cluster'].tooltip()  // Doesn't put tooltip back
 
         d3.select("#cluster")
+            .attr("height", 300)
             .transition()
             .style('opacity',1)
 
