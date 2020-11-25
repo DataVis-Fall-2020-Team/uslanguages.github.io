@@ -1,6 +1,6 @@
 let StateInfo = [
     {
-        id:"HI",
+        postal_code:"HI",
         name:"Hawaii",
         class:"states",
         center:[289.911, 546.387],
@@ -29,7 +29,7 @@ let StateInfo = [
 		]
 	},
 	{
-	    id:"AK",
+	    postal_code:"AK",
 	    name: "Alaska",
 	    class:"states",
         center:[115.548, 484.984], //original center: [110.548, 510.984],
@@ -134,7 +134,7 @@ let StateInfo = [
 		 ]
 	},
 	{
-	    id:"FL",
+	    postal_code:"FL",
 	    name:"Florida",
 	    class:"states",
         center: [762.812, 485.401], //original center: [722.812, 505.401],
@@ -178,7 +178,7 @@ let StateInfo = [
 		]
 	},
 	{
-	    id:"NH",
+	    postal_code:"NH",
 	    name: "New Hampshire",
 	    class:"states",
         center:[868.846, 122.021],
@@ -195,7 +195,7 @@ let StateInfo = [
 				]
 	},
 	{
-	    id: "path57",
+	    postal_code: "path57",
 	    name:"path57",
 	    class: "frame",
         center:[0,0],
@@ -204,7 +204,7 @@ let StateInfo = [
 	    ]
 	},
 	{
-	    id:"MI",
+	    postal_code:"MI",
 	    name:"Michigan",
 	    class:"states",
         center:[657.837, 168.537], //Original Center: [632.837, 143.537],
@@ -269,7 +269,7 @@ let StateInfo = [
 			]
 	},
 	{
-	    id:"VT",
+	    postal_code:"VT",
 	    name:"Vermont",
 	    class:"states",
         center:[846.906, 126.772],
@@ -285,7 +285,7 @@ let StateInfo = [
 	        ]
 	},
 	{
-	    id:"ME",
+	    postal_code:"ME",
 	    name:"Maine",
 	    class:"states",
         center:[895.337, 88.265],
@@ -319,7 +319,7 @@ let StateInfo = [
 	    ]
 	},
     {
-        id:"RI",
+        postal_code:"RI",
         name:"Rhode Island",
         class:"states",
         center:[877.601, 170.494],
@@ -330,7 +330,7 @@ let StateInfo = [
         ]
     },
     {
-        id:"NY",
+        postal_code:"NY",
         name:"New York",
         class:"states",
         center:[809.729, 154.751],
@@ -364,7 +364,7 @@ let StateInfo = [
              ]
         },
     {
-        id:"PA",
+        postal_code:"PA",
         name:"Pennsylvania",
         class:"states",
         center:[785.098, 209.203],
@@ -383,7 +383,7 @@ let StateInfo = [
          ]
     },
     {
-        id:"NJ",
+        postal_code:"NJ",
         name:"New Jersey",
         class:"states",
         center:[836.423, 215.782],
@@ -404,7 +404,7 @@ let StateInfo = [
          ]
     },
     {
-        id:"DE",
+        postal_code:"DE",
         name:"Delaware",
         class:"states",
         center:[830.352, 239.108],
@@ -417,7 +417,7 @@ let StateInfo = [
          ]
     },
     {
-        id:"MD",
+        postal_code:"MD",
         name:"Maryland",
         class:"states",
         center:[800.702, 247.322],
@@ -449,7 +449,7 @@ let StateInfo = [
          ]
     },
     {
-        id:"VA",
+        postal_code:"VA",
         name:"Virginia",
         class:"states",
         center:[770.713, 279.294],
@@ -477,7 +477,7 @@ let StateInfo = [
          "L 831.37142,288.35835 L 834.97904,294.37028 z"]
     },
     {
-        id:"WV",
+        postal_code:"WV",
         name:"West Virginia",
         class:"states",
         center:[752.922, 261.184],
@@ -506,7 +506,7 @@ let StateInfo = [
          ]
     },
     {
-        id:"OH",
+        postal_code:"OH",
         name:"Ohio",
         class:"states",
         center:[702.439, 234.482],
@@ -529,7 +529,7 @@ let StateInfo = [
          "L 738.23486,212.69009 L 735.32497,193.32832 z"]
      },
     {
-        id:"IN",
+        postal_code:"IN",
         name:"Indiana",
         class:"states",
         center:[645.523, 254.627],
@@ -548,7 +548,7 @@ let StateInfo = [
          "L 628.07226,297.45004 L 622.47943,298.42 L 619.56954,299.97132 z"]
      },
     {
-        id:"IL",
+        postal_code:"IL",
         name:"Illinois",
         class:"states",
         center:[591.947, 259.189],
@@ -575,7 +575,7 @@ let StateInfo = [
          "L 616.95138,304.53743 L 618.38398,303.55647 L 619.54145,300.34244 z"]
     },
     {
-        id:"CT",
+        postal_code:"CT",
         name:"Connecticut",
         class:"states",
         center:[859.256, 178.603],
@@ -585,7 +585,7 @@ let StateInfo = [
          "L 858.35226,184.62821 L 861.10048,183.17327 L 866.27362,182.04165 L 874.06831,178.86288 z"]
      },
     {
-        id:"WI",
+        postal_code:"WI",
         name:"Wisconsin",
         class:"states",
         center:[576.466, 151.859],
@@ -614,7 +614,7 @@ let StateInfo = [
          "L 615.06589,197.36866 z"]
      },
     {
-        id:"NC",
+        postal_code:"NC",
         name:"North Carolina",
         class:"states",
         center:[770.255, 328.158],
@@ -645,7 +645,7 @@ let StateInfo = [
          "L 840.30279,327.68377 L 839.25199,327.52211 z"]
     },
     {
-        id:"DC",
+        postal_code:"DC",
         name:"District of Columbia",
         class:"territory",
         center:[804.894, 248.577],
@@ -655,7 +655,7 @@ let StateInfo = [
             ]
      },
     {
-        id:"MA",
+        postal_code:"MA",
         name:"Massachusetts",
         class:"states",
         center:[874.017, 158.644],
@@ -677,7 +677,7 @@ let StateInfo = [
          "L 844.3718,154.24837 L 848.66107,153.35923 L 855.45082,152.06593 z"]
     },
     {
-        id:"TN",
+        postal_code:"TN",
         name:"Tennessee",
         class:"states",
         center:[659.663, 337.782],
@@ -696,7 +696,7 @@ let StateInfo = [
          "L 723.09826,313.95909 L 704.73897,316.34591 L 696.67788,318.25411 z"]
      },
     {
-        id:"AR",
+        postal_code:"AR",
         name:"Arkansas",
         class:"states",
         center:[551.327, 369.690],
@@ -712,7 +712,7 @@ let StateInfo = [
          "L 590.92884,352.37416 L 591.4791,350.35496 L 592.75858,346.30835 L 593.82477,343.05296 z"]
     },
     {
-        id:"MO",
+        postal_code:"MO",
         name:"Missouri",
         class:"states",
         center:[545.071, 293.211],
@@ -733,7 +733,7 @@ let StateInfo = [
          "L 560.15572,261.94231 L 557.8695,254.62638 L 557.63921,250.40106 L 558.44022,248.11316 z"]
      },
     {
-        id:"GA",
+        postal_code:"GA",
         name:"Georgia",
         class:"states",
         center:[718.981, 399.656],
@@ -757,7 +757,7 @@ let StateInfo = [
          "L 714.79598,352.66009 L 714.16204,350.56287 L 672.29229,355.5518 z"]
     },
     {
-        id:"SC",
+        postal_code:"SC",
         name:"South Carolina",
         class:"states",
         center:[755.853, 375.702],
@@ -777,7 +777,7 @@ let StateInfo = [
          "L 767.04487,406.8716 L 764.94328,408.16488 z"]
     },
     {
-        id:"KY",
+        postal_code:"KY",
         name:"Kentucky",
         class:"states",
         center:[661.591, 298.384],
@@ -806,7 +806,7 @@ let StateInfo = [
          "L 725.9944,295.2707 z"]
      },
     {
-        id:"AL",
+        postal_code:"AL",
         name:"Alabama",
         class:"states",
         center:[659.505, 409.437],
@@ -824,7 +824,7 @@ let StateInfo = [
          "L 635.99462,457.82915 L 634.70134,460.57738 L 634.0547,460.41572 L 631.30647,460.41572 z"]
     },
     {
-        id:"LA",
+        postal_code:"LA",
         name:"Louisiana",
         class:"states",
         center:[551.886, 449.477], //Original Center: [571.886, 449.477],
@@ -859,7 +859,7 @@ let StateInfo = [
          "L 610.1938,465.55485 L 609.1327,463.14258 L 607.96706,459.16125 z"]
       },
     {
-        id:"MS",
+        postal_code:"MS",
         name:"Mississippi",
         class:"states",
         center:[600.787, 412.370],
@@ -878,7 +878,7 @@ let StateInfo = [
          "L 627.32621,427.19665 L 630.07445,445.94929 L 631.55882,459.34458 z"]
      },
     {
-        id:"IA",
+        postal_code:"IA",
         name:"Iowa",
         class:"states",
         center:[525.556, 213.824],
@@ -898,7 +898,7 @@ let StateInfo = [
          "L 565.45392,198.24889 L 568.5332,198.75194 L 569.19154,199.5843 z"]
      },
     {
-        id:"MN",
+        postal_code:"MN",
         name:"Minnesota",
         class:"states",
         center:[507.431, 116.889], //original center: [523.431, 116.889],
@@ -927,7 +927,7 @@ let StateInfo = [
          "L 473.63744,133.39685 L 475.00918,132.02511 L 475.23781,128.82439 z"]
      },
     {
-        id:"OK",
+        postal_code:"OK",
         name:"Oklahoma",
         class:"states",
         center:[457.603, 359.267], //original center: [437.603, 359.267],
@@ -949,7 +949,7 @@ let StateInfo = [
          "L 449.67324,324.25081 L 404.63433,322.19319 L 380.34313,320.82146 z"]
      },
     {
-        id:"TX",
+        postal_code:"TX",
         name:"Texas",
         class:"states",
         center:[419.099, 437.545],//original center: [409.099, 447.545],
@@ -1004,7 +1004,7 @@ let StateInfo = [
          ]
       },
     {
-        id:"NM",
+        postal_code:"NM",
         name:"New Mexico",
         class:"states",
         center:[302.917, 369.994],
@@ -1016,7 +1016,7 @@ let StateInfo = [
         ]
       },
     {
-        id:"KS",
+        postal_code:"KS",
         name:"Kansas",
         class:"states",
         center:[443.933, 290.401],
@@ -1030,7 +1030,7 @@ let StateInfo = [
          ]
      },
     {
-        id:"NE",
+        postal_code:"NE",
         name:"Nebraska",
         class:"states",
         center:[423.970, 223.233],
@@ -1048,7 +1048,7 @@ let StateInfo = [
          ]
     },
     {
-        id:"SD",
+        postal_code:"SD",
         name:"South Dakota",
         class:"states",
         center:[417.283, 164.198],
@@ -1066,7 +1066,7 @@ let StateInfo = [
          ]
      },
     {
-        id:"ND",
+        postal_code:"ND",
         name:"North Dakota",
         class:"states",
         center:[418.804, 90.965],
@@ -1079,7 +1079,7 @@ let StateInfo = [
          ]
     },
     {
-        id:"WY",
+        postal_code:"WY",
         name:"Wyoming",
         class:"states",
         center:[299.963, 180.840],
@@ -1089,7 +1089,7 @@ let StateInfo = [
         ]
     },
     {
-        id:"MT",
+        postal_code:"MT",
         name:"Montana",
         class:"states",
         center:[280.629, 87.084],
@@ -1109,7 +1109,7 @@ let StateInfo = [
          ]
      },
     {
-        id:"CO",
+        postal_code:"CO",
         name:"Colorado",
         class:"states",
         center:[322.134, 271.480],
@@ -1119,7 +1119,7 @@ let StateInfo = [
         ]
      },
     {
-        id:"ID",
+        postal_code:"ID",
         name:"Idaho",
         class:"states",
         center:[200.151, 151.528], //Original Center: [200.151, 111.528],
@@ -1144,7 +1144,7 @@ let StateInfo = [
 
     },
     {
-        id:"UT",
+        postal_code:"UT",
         name:"Utah",
         class:"states",
         center:[223.747, 247.898],
@@ -1155,7 +1155,7 @@ let StateInfo = [
         ]
     },
     {
-        id:"AZ",
+        postal_code:"AZ",
         name:"Arizona",
         class:"states",
         center:[200.731, 363.678],
@@ -1175,7 +1175,7 @@ let StateInfo = [
         ]
      },
     {
-        id:"NV",
+        postal_code:"NV",
         name:"Nevada",
         class:"states",
         center:[140.352, 231.339], //original center: [140.352, 251.339],
@@ -1188,7 +1188,7 @@ let StateInfo = [
         ]
     },
     {
-        id:"OR",
+        postal_code:"OR",
         name:"Oregon",
         class:"states",
         center:[105.020, 117.957],
@@ -1209,7 +1209,7 @@ let StateInfo = [
         ]
     },
     {
-        id:"WA",
+        postal_code:"WA",
         name:"Washington",
         class:"states",
         center:[124.881, 49.738],
@@ -1241,7 +1241,7 @@ let StateInfo = [
         ]
      },
     {
-        id:"CA",
+        postal_code:"CA",
         name:"California",
         class:"states",
         center:[71.416, 265.706], //original center: [91.416, 265.706],
@@ -1283,7 +1283,7 @@ let StateInfo = [
          ]
     },
     {
-        id:"PR",
+        postal_code:"PR",
         name:"Puerto Rico",
         class:"territory",
         center:[590.700, 523.250], //original center: [595.700, 536.250],
@@ -1297,7 +1297,7 @@ let StateInfo = [
             ]
     },
     {
-        id:"path58",
+        postal_code:"path58",
         name:"path58",
         class:"frame",
         center:[-1,-1],
@@ -1315,21 +1315,13 @@ class US_Map{
         this.data=data;
 
         //Add centers and languages per state to the data
-        this.mapData = data.map(d=>{
-            d.StateId = StateInfo.find(a=>a.name==d.State).id,
+        this.mapData = this.data.map((d,i)=>{
+            d.StateId = StateInfo.find(a=>a.name==d.State).postal_code,
             d.StateCenter = StateInfo.find(a=>a.name==d.State).center,
             d.StateLanguages = that.getLanguagesPerState(d.State),
             d.LanguageIndex = that.getLanguageIndexPerState(d.State, d.Language);
             return d;
         });
-
-        console.log(this.mapData);
-
-        /*this.mapSimulation = d3.forceSimulation()
-            .force("charge", d3.forceManyBody().strength(5))
-            .force("center", d3.forceCenter(500, 500))
-            .force("collide", d3.forceCollide().radius(3));
-            //.force("center", d3.forceCenter(StateInfo.filter(d=>d.center)));*/
 
         this.lastIndex = 0;
         this.lastId = "";
@@ -1374,63 +1366,34 @@ class US_Map{
         let mapBubbles = stateMap.selectAll("circle")
             .data(this.mapData)
             .join("circle")
-            .attr("fill", d=>colorScale(d.Group))
-            .attr("stroke", "black")
+            .attr("fill", "transparent")
+            .attr("stroke", "transparent")
+            //.attr("fill", d=>colorScale(d.Group))
+            //.attr("stroke", "black")
             .attr("r", 2)
             .attr("cx", d=>d.StateCenter[0])
             .attr("cy", d=>d.StateCenter[1])
-            .attr("transform", function(d,i){
+            /*.attr("transform", function(d,i){
                 let trans = that.GetBubbleTranslation(d);
                 return "translate("+trans[0]+","+trans[1]+")";
-            })
+            })*/
             .attr("class", d=>d.StateId);
-            /*.call(d3.drag()
-                    .on("start", this.dragstarted)
-                    .on("drag", this.dragged)
-                    .on("end", this.dragended));*/
 
-        /*this.mapSimulation.nodes(mapBubbles);
-        //simulation.force("center", d3.forceCenter(d.StateCenter[0], d.StateCenter[1]));
-        this.mapSimulation.on("tick", function(){
-            mapBubbles.attr("cx", function(d) {
-                return d.StateCenter[0];
-            })
-            .attr("cy", function(d){
-                return d.StateCenter[1];
+        stateMap.select("#map")
+            .selectAll("circle").on("mouseover", function(){
+                //this.attr("r", 5);
+                console.log(this);
             });
-        });*/
-
-        //console.log(mapBubbles);
-    }
-
-    dragstarted(d) {
-        if (!d3.event.active) this.mapSimulation.alphaTarget(0.3).restart();
-        d.fx = d.StateCenter[0];
-        d.fy = d.StateCenter[1];
-    }
-
-    dragged(d) {
-        d.fx = d3.event.x;
-        d.fy = d3.event.y;
-    }
-
-    dragended(d) {
-        if (!d3.event.active) this.mapSimulation.alphaTarget(0);
-        d.fx = null;
-        d.fy = null;
     }
 
     GetBubbleTranslation(d){
-        //console.log(newIndex);
         let radius = 2;
         let degree = 20/3.14;
         let modulus = 4;
-        //if(d.StateLanguages.length()%4)
 
         let newX = radius^(d.LanguageIndex%modulus) * Math.cos(degree*d.LanguageIndex)*10;
         let newY = radius^(d.LanguageIndex%modulus) * Math.sin(degree*d.LanguageIndex)*10;
 
-        //console.log(radius, degree, newX, newY);
         return [newX, newY];
     }
 
@@ -1441,7 +1404,7 @@ class US_Map{
     */
     getStateLocation(stateName, valType){
         let state = StateInfo.find(d=>d.name == stateName);
-        let stateId = "#"+state.id;
+        let stateId = "#"+state.postal_code;
         let stateGroup = d3.selectAll(stateId)._groups[0][0];
 
         //https://stackoverflow.com/questions/40268326/find-center-of-svg-shape

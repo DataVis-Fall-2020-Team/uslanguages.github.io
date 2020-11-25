@@ -109,7 +109,7 @@ loadData().then(data => {
 
         // Viz #2 - Map
         d3.select("#map").style('opacity',0)
-        d3.select("#map_filters").style('opacity', 0);
+        //d3.select("#map_filters").style('opacity', 0);
         
         // Simulation setup
         simulation = d3.forceSimulation(dataset_updated)
