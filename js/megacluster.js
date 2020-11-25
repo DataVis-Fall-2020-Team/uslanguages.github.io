@@ -57,7 +57,7 @@ class cluster {
 
         // Mouse out
         d3.selectAll('circle').on('mouseout.cluster', () => {
-            // tooltip.style('visibility', 'hidden')
+            tooltip.style('visibility', 'hidden')
         }) // End mouseout listener
 
     } // End of tooltip function
