@@ -37,8 +37,8 @@ class cluster {
                 console.log("mouseover in cluster")
         tooltip
             .style('visibility', 'visible')
-            .style("top", d3.event.pageY -10 + 'px')
-            .style("left", d3.event.pageX + 25 + 'px')
+        .style("top", d3.event.target.attributes['cy'].value+ 'px')
+        .style("left", d3.event.target.attributes['cx'].value+ 'px')
             
             .html("<p style=font-size:20px>" + d.Group + "</p> \
                    <p>" + d.Subgroup + "</p> \
@@ -51,13 +51,13 @@ class cluster {
         d3.selectAll('circle')
         .on('mousemove.cluster', () => {
             tooltip
-            .style("top", d3.event.pageY -10 + 'px')
-            .style("left", d3.event.pageX -300 + 'px')
+            .style("top", d3.event.target.attributes['cy'].value+ 'px')
+            .style("left", d3.event.target.attributes['cx'].value+ 'px')
         }) // End mousemove listener
 
         // Mouse out
         d3.selectAll('circle').on('mouseout.cluster', () => {
-            tooltip.style('visibility', 'hidden')
+            // tooltip.style('visibility', 'hidden')
         }) // End mouseout listener
 
     } // End of tooltip function

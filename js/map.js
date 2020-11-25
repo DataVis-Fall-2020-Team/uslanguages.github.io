@@ -28,6 +28,10 @@ class US_Map {
         .attr('stroke', 'gray')
         .classed('map_paths', true)
     }
-// usMap()
+    // clearEventHandlers(){
+    //     d3.selectAll('circle').on('mousemove.cluster', null);
+    //     d3.selectAll('circle').on('mouseover.cluster', null);
+    //     d3.selectAll('circle').on('mouseout.cluster', null);
+    // }
 
 }

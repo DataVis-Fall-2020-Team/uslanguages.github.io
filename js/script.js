@@ -85,9 +85,9 @@ async function usMap(){
     function scaleSize(input){ 
         
         let my_scaleSize = d3.scalePow() 
-            .exponent(.15) // Smaller exponent = bigger circles
+            .exponent(.4) // Smaller exponent = bigger circles
             .domain([1, 232000000])
-            .range([1,65])
+            .range([1,250])
             .nice()
         return my_scaleSize(input)
     }
@@ -178,8 +178,8 @@ async function usMap(){
         // Define each tick of simulation
         simulation.on('tick', () => {
             d3.selectAll('.cluster_circles')
-                .attr('cx', (d) => d.x + 225)
-                .attr('cy', (d) => d.y + 225)
+                .attr('cx', (d) => d.x + 275)
+                .attr('cy', (d) => d.y + 250)
      }) 
 
     } // End setup_page function
@@ -212,6 +212,7 @@ async function usMap(){
 
         if (chartType !== "map"){
             d3.select('#map').transition().style('opacity',0)
+            // views['map'].clearEventHandlers();
         } // End map if statement
     } // End function clean()
 
@@ -224,7 +225,7 @@ async function usMap(){
     function draw_cluster(){
         // console.log("CAN YOU SEE THIS YET?")
         //Stop simulation
-        simulation.stop()
+        // simulation.stop()
         
         clean('cluster') // Turns off opacity for all other charts
         
@@ -247,7 +248,8 @@ async function usMap(){
         .force("collide", d3.forceCollide().radius(function(d){
             return scaleSize(d.Speakers) + 3
         }))
-        .alphaDecay(.05)
+        .alphaDecay(0.0228)
+        .velocityDecay(.4)
 
 
         clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:100, y:110}
@@ -281,29 +283,39 @@ async function usMap(){
 
         // Draw the map
         clean('map')
-        d3.select("#map").raise();
 
         d3.selectAll("#map").style('opacity',1)
+        views['cluster'].tooltip()
+
 
         //Move the bubbles
 
         // views['cluster'].tooltip()  // Doesn't put tooltip back
 
-        d3.select("#cluster")
-            .transition()
-            .style('opacity',1)
+        // d3.select("#cluster")
+        //     .data(dataset_updated)
+        //     .transition()
+        //     .attr('r', d => scaleSize_map(d.Speakers))
 
         d3.selectAll('.cluster_circles')
+            .transition()
+            .duration(1000)
             .attr('r',d=> scaleSize_map(d.Speakers))
 
-        simulation.alpha(0.9).restart()
+        d3.select('#cluster')
+            .style('opacity',1)
+
+
+        simulation.alpha(1).restart()
 
         simulation
+            // .transition()
             .force("cluster", clustering)
             .force("collide", d3.forceCollide().radius(function(d){
                 return scaleSize_map(d.Speakers)
             }))
-            .alphaDecay(.1)
+            .alphaDecay(.01)
+            .velocityDecay(.9)
 
         let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-100, y: -100}
         , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:50, y: -100}
@@ -321,6 +333,9 @@ async function usMap(){
               node.vy -= (node.y - cluster.y) * k;
               }
           }
+        
+    //   d3.select("#map").raise();
+
 
     } // end draw_map function  
 
