@@ -1324,12 +1324,15 @@ class US_Map{
             return d;
         });
 
+        // https://appdividend.com/2019/04/11/how-to-get-distinct-values-from-array-in-javascript/
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from
         let uniqueLanguages = new Set(d3.map(this.mapData, d=>d.Language));
         this.AllLanguages = Array.from(uniqueLanguages);
 
         this.drawStates();
-        this.drawBubbles("all");//["Cajun","French"]);
-        this.states = [];
+        this.drawBubbles("French");//["Cajun","French"]);
+        //this.map_brush();
+        this.tooltip();
     }
 
     getLanguagesPerState(state){
@@ -1386,28 +1389,48 @@ class US_Map{
             .attr("cx", d=>d.StateCenter[0])
             .attr("cy", d=>d.StateCenter[1])
             .attr("transform", "translate(0,140)")
-            /*.attr("transform", function(d,i){
-                let trans = that.GetBubbleTranslation(d);
-                return "translate("+trans[0]+","+trans[1]+")";
-            })*/
             .attr("class", d=>d.StateId)
             .classed("state_bubbles", true);
+    }
+
+    tooltip() {
+
+        // Create tooltip
+        let tooltip = d3.select('#tooltip-bar2')
 
         // Mouse over
-        let tooltip = d3.select('#tooltip-bar2')
-        d3.selectAll('.state_bubbles')
-            .on('mouseover', function(d){
-                tooltip
-                    .style('visibility', 'visible')
-                    .style("top", d3.event.pageY -10 + 'px')
-                    .style("left", d3.event.pageX + 25 + 'px')
+        d3.selectAll('.state_bubbles').on('mouseover', function(d){
+            console.log("mouseover in map")
+            tooltip
+                .style('visibility', 'visible')
+                .style("top", d3.event.pageY -10 + 'px')
+                .style("left", d3.event.pageX + 25 + 'px')
 
-                    .html("<p style=font-size:20px>" + d.Group + "</p> \
-                           <p>" + d.Subgroup + "</p> \
-                           <p>" + d.Language + ": " + d.Speakers +"</p>"
-                    );
-                console.log(d.Group, d.Subgroup, d.Language, d.Speakers);
+                .html("<p style=font-size:20px>" + d.Group + "</p> \
+                       <p>" + d.Subgroup + "</p> \
+                       <p>" + d.Language + ": " + d.Speakers +"</p>"
+                )
+
         }) // End mouseover listener
+
+        // Mouse move
+        d3.selectAll('.state_bubbles')
+        .on('mousemove', () => {
+            tooltip
+            .style("top", d3.event.pageY -10 + 'px')
+            .style("left", d3.event.pageX -300 + 'px')
+        }) // End mousemove listener
+
+        // Mouse out
+        d3.selectAll('.state_bubbles').on('mouseout', () => {
+            tooltip.style('visibility', 'hidden')
+        }) // End mouseout listener
+    }
+
+    clearEventHandlers(){
+        d3.selectAll('.state_bubbles').on('mousemove', null);
+        d3.selectAll('.state_bubbles').on('mouseover', null);
+        d3.selectAll('.state_bubbles').on('mouseout', null);
     }
 
     GetBubbleTranslation(d){

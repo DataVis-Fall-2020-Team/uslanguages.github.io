@@ -203,18 +203,6 @@ text {
 
 
 /* Map Styles */
-
-#map_states{
-    /*height:1000px;
-    width:1000px;*/
-}
-
-#us_map{
-    /*height: 100vh;
-    width: 100vw;*/
-    /*margin-left:500px;*/
-}
-
 .states, .territory{
     fill:gray;
     stroke:#ffffff;
@@ -224,9 +212,22 @@ text {
     stroke-dasharray:none;
 }
 
-
 .frame{
      stroke:#a9a9a9;
      fill:none;
      stroke-width:2;
 }
+
+/*  Brush Styles */
+.regular {
+    fill: #5ea3df;
+}
+
+.highlight {
+    fill: #f54a19;
+}
+
+.border-box {
+            stroke: black;
+            fill: none;
+        }
