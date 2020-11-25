@@ -23,15 +23,19 @@
 			a
 		</div> -->
 		
-		<div id="tooltip"></div>
 		<div id="graphic">
 			<div id="sections">
 				<section class="step">
 					<h1>Which languages are spoken in the U.S.?</h1>
 					<p>By Janaan Lake, Andreas Martinson, Rachel Berghout</a></p>
-					<!-- <p>
-						Here is a bunch of text about the visualization on the right. It's soooooooooooooooooooooooooooooooooo important and has coolio tooltips.
-					</p> -->
+					<p>
+						The visualization on the right shows each language in the United States represented by a circle. The largest circle is English in purple, followed by Spanish in orange.
+						Each color represents a different language group. The U.S. language totals in order of size are: English, Spanish & Spanish Creole, Other Indo-European Languages, 
+						Asian and Pacific Island Languages, and finally a 'catch-all' group called 'All Other Languages'. Hover over each circle to see a tooltip of that language with some details
+						about the population size that speaks that language. 
+
+						In the next visualization, we will look at the distribution of these languages across the U.S. Scroll down to see the distribution of languages broken out by state.
+					</p>
 					
 				</section>
 				<section class="step">
@@ -44,11 +48,36 @@
 				</section>
 				<section class="step">
 					<h2>Which states have the most language diversity?</h2>
+					<br>
+					<p> West Virginia and Mississippi are the least diverse states, while 
+						Puerto Rico and California have the largest percentage of foreign speakers.
+						<button id="showEnglishSort">Click</button> to see.</p>
+					<br>
+					<p> Spanish is most commonly found in Puerto Rico and the Southwest while the 
+						Northeast has the smallest percentage of Spanish speakers.
+						<button id="showSpanishSort">Click</button> to see.</p>
+					<br>
+					<p>Native American Languages are most commonly found in New Mexico and Alaska.
+						<button id="showNativeAmericanSort">Click</button> to see.</p>
+					<br>
+					<p>Click each bar to sort the states by that language group.  Click
+						state names to sort alphabetically.</p>
 	
 					
 				</section>
 				<section class="step">
 					<h2>Which foreign language speakers are the most fluent in English?</h2>
+					<br>
+					<p> Scandinavian and Native American speakers are more fluent in English, while
+						Vietnamse and Korean speakers are least fluent.  <button id="showSubgroupSort">Click</button> to see.
+					</p>
+					<br>
+					<br> 
+					<p> <button id="showNativeAmerican">Click</button> to see how the different Native American languages compare. </p>
+					<br>
+					<p> Click on each bar to drill down to the next level and see more detail.  Double
+						click to return.  
+					</p>
 					
 					
 				</section>
@@ -58,21 +87,8 @@
 	
 			</div>
 		</div>
-
-    <!-- Janaan's merge items -- change as needed -->
-    <div class="content">
-
-
-          <!-- <div class="barchart">
-            <table id="table-body">
-            </table>
-          </div> -->
-          <div class="divchart">
-          </div>
-          <div class="divchart2">
-			
-
-		  </div>
+		<div class="content">
+		</div>
 		  <div id="us_map">
 			  <!-- https://simplemaps.com/resources/svg-maps -->
 			  <!-- Puerto Rico: https://commons.wikimedia.org/wiki/File:Blank_USA,_w_territories.svg -->
@@ -1072,6 +1088,7 @@
     </div>
 
 		 <script src="https://d3js.org/d3.v5.js"></script>
+
 		 <script src = 'https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js'></script>
 
 		<script src="https://d3js.org/d3-force.v2.min.js"></script>

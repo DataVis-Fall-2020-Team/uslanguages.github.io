@@ -1,6 +1,6 @@
 Group,Subgroup,Language,Speakers,Margin of Error,nonEnglishSpeakers,Margin of Error.1
 Total,Total,Total Speakers,"291,484,482","3,346","25,148,900","63,553"
-English,English,English,"231,122,908","108,816","231122908",(X)
+English,English,English,"231,122,908","108,816",231122908,(X)
 SPANISH AND SPANISH CREOLE,SPANISH AND SPANISH CREOLE,Spanish,"37,458,470","64,494","16,344,440","40,610"
 SPANISH AND SPANISH CREOLE,SPANISH AND SPANISH CREOLE,Ladino,130,62,25,23
 SPANISH AND SPANISH CREOLE,SPANISH AND SPANISH CREOLE,Pachuco,(D),(D),(D),(D)
@@ -76,14 +76,14 @@ OTHER INDO-EUROPEAN LANGUAGES,Other Indo-European languages,Kurdish,"17,020","1,
 OTHER INDO-EUROPEAN LANGUAGES,Other Indo-European languages,Balochi,185,182,85,96
 OTHER INDO-EUROPEAN LANGUAGES,Other Indo-European languages,Tadzhik,435,347,350,270
 OTHER INDO-EUROPEAN LANGUAGES,Other Indo-European languages,Ossete,50,48,(D),(D)
-ASIAN AND PACIFIC ISLAND LANGUAGES,"Chinese (incl. Cantonese, Mandarin, other Chinese languages4)",Chinese,"1,867,485","13,875","1,054,885","8,578"
-ASIAN AND PACIFIC ISLAND LANGUAGES,"Chinese (incl. Cantonese, Mandarin, other Chinese languages4)",Hakka,"1,350",307,840,263
-ASIAN AND PACIFIC ISLAND LANGUAGES,"Chinese (incl. Cantonese, Mandarin, other Chinese languages4)","Kan, Hsiang",50,65,(D),(D)
-ASIAN AND PACIFIC ISLAND LANGUAGES,"Chinese (incl. Cantonese, Mandarin, other Chinese languages4)",Cantonese,"458,840","6,487","257,625","4,433"
-ASIAN AND PACIFIC ISLAND LANGUAGES,"Chinese (incl. Cantonese, Mandarin, other Chinese languages4)",Mandarin,"487,250","7,953","240,810","5,571"
-ASIAN AND PACIFIC ISLAND LANGUAGES,"Chinese (incl. Cantonese, Mandarin, other Chinese languages4)",Fuchow,"1,450",455,"1,175",418
-ASIAN AND PACIFIC ISLAND LANGUAGES,"Chinese (incl. Cantonese, Mandarin, other Chinese languages4)",Formosan,"77,675","2,687","44,140","1,939"
-ASIAN AND PACIFIC ISLAND LANGUAGES,"Chinese (incl. Cantonese, Mandarin, other Chinese languages4)",Wu,"2,670",466,"1,375",287
+ASIAN AND PACIFIC ISLAND LANGUAGES,"Chinese (incl. Cantonese, Mandarin, other Chinese languages)",Chinese,"1,867,485","13,875","1,054,885","8,578"
+ASIAN AND PACIFIC ISLAND LANGUAGES,"Chinese (incl. Cantonese, Mandarin, other Chinese languages)",Hakka,"1,350",307,840,263
+ASIAN AND PACIFIC ISLAND LANGUAGES,"Chinese (incl. Cantonese, Mandarin, other Chinese languages)","Kan, Hsiang",50,65,(D),(D)
+ASIAN AND PACIFIC ISLAND LANGUAGES,"Chinese (incl. Cantonese, Mandarin, other Chinese languages)",Cantonese,"458,840","6,487","257,625","4,433"
+ASIAN AND PACIFIC ISLAND LANGUAGES,"Chinese (incl. Cantonese, Mandarin, other Chinese languages)",Mandarin,"487,250","7,953","240,810","5,571"
+ASIAN AND PACIFIC ISLAND LANGUAGES,"Chinese (incl. Cantonese, Mandarin, other Chinese languages)",Fuchow,"1,450",455,"1,175",418
+ASIAN AND PACIFIC ISLAND LANGUAGES,"Chinese (incl. Cantonese, Mandarin, other Chinese languages)",Formosan,"77,675","2,687","44,140","1,939"
+ASIAN AND PACIFIC ISLAND LANGUAGES,"Chinese (incl. Cantonese, Mandarin, other Chinese languages)",Wu,"2,670",466,"1,375",287
 ASIAN AND PACIFIC ISLAND LANGUAGES,Japanese,Japanese,"449,475","7,214","194,436","4,164"
 ASIAN AND PACIFIC ISLAND LANGUAGES,Korean,Korean,"1,117,343","11,453","617,905","7,120"
 ASIAN AND PACIFIC ISLAND LANGUAGES,"Mon-Khmer, Cambodian","Mon-Khmer, Cambodian","212,167","6,281","109,633","4,140"

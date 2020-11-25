@@ -5,6 +5,7 @@
     font-weight: 600;
     text-transform: capitalize;
     fill: #787878;
+    display: inline-block;
 
 }
 
@@ -16,6 +17,8 @@ body {
     /* background-color: rgb(248, 247, 242); */
     overflow-x: hidden;
     position: relative;
+    background-color: rgb(243, 236, 236);
+
 }
 
 #sections {
@@ -25,7 +28,10 @@ body {
     top: 60px;
     z-index: 90;
     margin-right: 50px;
+
 }
+
+
 
 .categoryLegend {
     font-family: "Domine";
@@ -44,18 +50,21 @@ body {
 }
 
 
+
+
 h1, h2 {
     font-weight: 700;
     text-align: right;
     line-height: 32px;
 }
 
-h1 {
-    font-size: 35px;
+p {
+    font-size: 1.3em;
 }
 
+
 strong {
-    color: rgb(245, 155, 155);
+    color: rgb(243, 18, 194);
 }
 
 #graphic {
@@ -80,23 +89,9 @@ strong {
     stroke: 'red'
 }
 
-/* #tooltip {
-    position: absolute;
-    display: none;
-    background: rgba(0, 0, 0, .7);
-    border-radius: 3px;
-    box-shadow: -3px 3px 15px #939393;
-    color: white;
-    padding: 6px;
-    font-family: "Merriweather";
-    font-size: 1.1em;
-    max-width: 400px;
-    z-index: 100;
-} */
-
-svg circle:hover{
+/* svg circle:hover{
     cursor: pointer;
-}
+} */
 
 .swatch {
     fill: #939393;
@@ -107,73 +102,105 @@ svg circle:hover{
 }
 
 a {
-    color: rgb(221, 0, 255);
+    color: rgb(221, 33, 250);
     text-decoration: none;
 }
 
 img {
     display: none;
 }
-.barchart text{
-    font-size: 15px;
-}
-
-.english {
-    fill: #ffa600;
-}
-.spanish {
-    fill: #ff6361;
-}
-.europe {
-    fill: #bc5090;
-}
-.asian {
-    fill: #58508d;
-}
-.other {
-    fill: #003f5c;
-}
 
 line {
     stroke: black;
 
 }
+
 .hover {
     stroke: black;
+    stroke-width: 1;
+    opacity: 0.7;
 }
-
-.divchart2 {
+#barchart1 {
     position: fixed;
+    margin-left: 500px;
 }
 
-div.tooltip {
-    position: absolute;
-    text-align-last: center;
-    width: auto;
-    height: auto;
-    background: white;
-    border-radius: 2px;
-    pointer-events: none;
-    font-size: 12;
-    font-weight: bold;
-    stroke: black;
+#barchart2 {
+    position: fixed;
+    margin-left: 500px;
 }
-.tooltip h1 {
+
+#sortLabel.clicked{
+   
+   font-size: 1.1em;
+   text-align: center;
+   color: rgb(243, 18, 194);
+}
+
+#sortLabelButton {
+    fill:  lightgrey;
+}
+
+#sortLabelButton.clicked {
+    fill:  darkgrey;
+    stroke: black;
+    stroke-width: 1;
+}
+
+button {
+    display:inline-block;
+    padding:0.2em 0.8em;
+    margin:0 0.1em 0.1em 0;
+    border:0.16em solid rgba(255,255,255,0);
+    border-radius:1em;
+    box-sizing: border-box;
+    text-decoration:none;
+    font-family:'Roboto',sans-serif;
+    font-weight:300;
+    color:#FFFFFF;
+    text-shadow: 0 0.04em 0.04em rgba(0,0,0,0.35);
+    text-align:center;
+    transition: all 0.2s;
+    background-color:#f14ebd;
+}
+button:hover{
+    border-color: rgba(255,255,255,1);
+}
+
+
+#tooltip-bar2 {
+    position: absolute;
+    background: silver;
+    text-align: left;
+    max-width: 300px;
+    border-radius: 5px;
+    color: black;
+    font-size: 1.1em;
+    font-family:  "Comic Sans MS", cursive, sans-serif;
+    stroke: black;
+    box-shadow: -3px 3px 15 px lightgrey;
+    opacity: 0.8;
+    pointer-events: none;
     margin: 2px;
-    font-size: 20px;
-    font: ariel;
-    font-weight: bold;
+    
+}
+#tooltip-bar2 h2{
+    margin: 2px;
+    font-size: 1.5em;
+    font-style: bold;
+    text-align: left;
+}
+
+text {
+    font-size: 10px;
+    font-family:  "Comic Sans MS", cursive, sans-serif;
+    stroke: black;
 }
 
 .hidden{
     display: none;
 }
 
-.labels {
-    fill: black;
-    font-size: 12;
-    font-weight: bold;
-}
 
 /* Map Styles */
 #us_map{
