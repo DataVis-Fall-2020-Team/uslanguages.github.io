@@ -96,8 +96,6 @@ loadData().then(data => {
     // Setup the page 
     function setup_page(){
         
-        
-        console.log("here is the national dataset", dataset_updated)
         // Create the SVG
         let svg = d3.select("#vis")
             .style('margin-left', '500px')
@@ -109,6 +107,7 @@ loadData().then(data => {
 
         // Viz #2 - Map
         d3.select("#map").style('opacity',0)
+        console.log("dataset_updatedd", dataset_updated);
         
         // Simulation setup
         simulation = d3.forceSimulation(dataset_updated)
@@ -186,7 +185,7 @@ loadData().then(data => {
         } // End cluster if statement
 
         if (chartType !== "bar1"){
-            d3.select('#barchart1').transition().style('opacity',0)
+            d3.select('#barchart1').transition(300).style('opacity',0)
             views['bar1'].clearEventHandlers();
             d3.select("#tooltip-bar2").style('visibility', 'hidden');
         } // End bar1 if statement
@@ -318,7 +317,6 @@ loadData().then(data => {
         simulation.stop()
         
         clean('bar1')
-        console.log('Check')
 
         d3.select("#barchart1").raise();
         d3.select('#barchart1')
@@ -326,20 +324,92 @@ loadData().then(data => {
             .style('opacity',.8)
         views['bar1'].attachEventHandlers();
 
-        simulation.alpha(0.9).restart()
-
     } // end draw2 function    
 
+    // Draw 2nd Barchart
     function draw_bar2(){
-    
+        d3.select("#tooltip-bar2")
+            .style("opacity", 0);
         clean('bar2')
         d3.select("#barchart2").raise();
-        d3.select('#barchart2')
-            .transition()
-            .style('margin-left', '500px')
-            .style('opacity',.8)
-        views['bar2'].attachEventHandlers();
+        d3.select("#barchart2").attr("pointer-events", "none");
         
+        views['bar2'].reset();
+        d3.select('#barchart2')
+                .transition()
+                .style('margin-left', '500px')
+                .style('opacity',1);
+        d3.select("#bar-rects")
+            .style("opacity", 0);
+        
+
+        let data = views['bar1'].getDataForTransition().filter(obj=>obj.group != "ENGLISH");
+
+        let map = [{group: "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x: 254, y:360}
+            , {group: "OTHER INDO-EUROPEAN LANGUAGES", number:1, x:152, y:246}
+            , {group: "SPANISH AND SPANISH CREOLE", number:2, x:50, y:330}
+            , {group: "ENGLISH",number:3, x:0, y:200}
+            , {group: "ALL OTHER LANGUAGES", number:4, x: 356, y:240}
+        ]
+    
+        let rects = d3.select("#barchart2").append("g").attr("class", "simRects");
+
+        //draw the transition rects in barchart2 view
+        rects.selectAll("rect")
+            .data(data)
+            .join("rect")
+            .attr("x", d=>d.startX)
+            .attr("y", d=>d.startY)
+            .attr("height", d=>d.height)
+            .attr("width", d=>d.width)
+            .attr('fill',d => colorScale(d.group));
+        
+        let count = 0;
+        let callbackFunction = function(){
+            count++;
+            if (count === 130){
+                d3.select(".simRects")
+                    .style("opacity", 0)
+                d3.select("#bar-rects")
+                    .style("opacity", 1)
+                d3.select(".simRects").remove();
+                d3.select("#barchart2").attr("pointer-events", "auto");
+
+                views['bar2'].attachEventHandlers();
+
+
+            }
+        }   
+
+        rects.selectAll("rect")
+                .transition()
+                .delay(500)
+                .duration(800)
+                //move bars to the left
+                .attr("x", function(d){
+                    let object = map.filter(obj => obj.group === d.group);
+                    return object[0].x;})
+                .transition()
+                .duration(800)
+                //adjust width to match bar width in view 2
+                .attr("width", 100)
+                //drop into bars
+                .transition()
+                .delay(function(d,i) {
+                    if (i < 100) return i * 10;
+                    else return 0;})
+                .duration(100)
+                .attr("y", function(d,i){
+                    let object = map.filter(obj => obj.group === d.group);
+                    if (d.startY < object[0].y)
+                        return d.startY + object[0].y
+                    else return d.startY;
+                })
+                .on("end", callbackFunction);
+        
+        
+
+    
     } // end draw3 function   
 
  

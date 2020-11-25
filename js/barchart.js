@@ -40,6 +40,7 @@ class Barchart{
     constructor(data, svg){
         
         this.stateData = this.sumData(data);
+        console.log("state data in barchart1 constructor:", this.stateData);
         this.svg = svg;
         this.margin = { top: 20, right: 10, bottom: 20, left: 10};
         this.barWidth = 500;
@@ -156,8 +157,6 @@ class Barchart{
                     .attr("class", "stateRects");
                 });
     }
-
-    
 
     /**
      * Function that attaches the sort handlers to the barchart visualization
@@ -317,6 +316,33 @@ class Barchart{
         d3.selectAll(".stateNames").on("click", null);
         d3.selectAll(".stateRects").on("click", null);
 
+    }
+
+    /**
+     * Function that returns an array of data objects.
+     * The objects are the data that can be used to render the bars for the transition
+     * from barchart 1 to barchart 2.
+     * Each data object has the following fields:
+     *      {    startX: int - the x position of the rect,
+     *           startY: int - the y position of the rect,
+     *           height: int - the height of the rect,
+     *           width: int - the width of the rect,
+     *           group: string - {"ENGLISH", "SPANISH AND SPANISH CREOLE","OTHER INDO-EUROPEAN LANGUAGES", "ASIAN AND PACIFIC ISLAND LANGUAGES", "ALL OTHER LANGUAGES"}
+     */
+    getDataForTransition(){
+        let data = [];
+        d3.selectAll(".stateRects")
+            .each(function(){
+                let node = {
+                    "startX": +d3.select(this).attr("x"),
+                    "startY": +d3.select(this).attr("y"),
+                    "height": +d3.select(this).attr("height"),
+                    "width": +d3.select(this).attr("width"),
+                    "group": d3.select(this).data()[0]["group"],
+                }
+                data.push(node)
+            });
+        return data;
     }
 
 }

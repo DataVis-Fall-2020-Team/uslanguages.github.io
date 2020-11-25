@@ -26,11 +26,6 @@ class BarChart2{
         this.isSorted = false;  
         this.drawChart();
         this.updateBarChart();
-        
-
-        //call sort function
-        //this.currentLevel = "language"
-        //this.sort();
     }
 
     /**
@@ -139,7 +134,6 @@ class BarChart2{
         //These must be attached after every update so that each rect has an 
         //event handler attached to it
         this.attachMouseEventHandlers();
-
     }
 
     /**
@@ -235,7 +229,6 @@ class BarChart2{
         let barWidth;
 
         //calculate language width first
-
         if (this.currentLevel === "language"){
 
             barWidth = (this.width - (groupWidth + this.barWidth["gap"]) * numGroups  
@@ -285,35 +278,11 @@ class BarChart2{
      */
     attachMouseEventHandlers(){
         let that = this;
-        
-        //https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
-        function numberWithCommas(x) {
-            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
         d3.select("#bar-rects").selectAll("rect")
             .on("mouseover", function(d) {
                 d3.select(this).classed("hover", true);
-                let level = d3.select(this).data()[0]["level"];
-                let x = parseInt(d3.select(this).attr("x")) + 20;
-                let y = parseInt(d3.select(this).attr("y")) - 50;
-                if (x > 350)
-                    x -= 150;
-                if (y > 650)
-                    y -= 150;
-                if (y < 100)
-                    y += 150;
-                d3.select("#tooltip-bar2")
-                    .style("left", x + "px")
-                    .style("top", y + "px")
-                    .style('visibility', 'visible')
-                    .style("opacity", function(){
-                        if (level != that.currentLevel)
-                            return 0.2;
-                        else return 1.0})
-                    .html(`<h2>${d.name}</h2> 
-                        <strong>Percentage:</strong> ${d3.format(",.2r")(d.percentage * 100)}%
-                        <br> <strong>Total Speakers:</strong> ${numberWithCommas(d.totalSpeakers)}`);
-            })
+                that.renderTooltip(d3.select(this), d);
+             })
             .on("mouseout", function(d) {
                 d3.select(".hover").classed("hover", false)
                 d3.select("#tooltip-bar2")
@@ -326,6 +295,43 @@ class BarChart2{
                 .on("mouseout", function() {
                     d3.select(this).classed("hover", false);})
     }
+    
+    /**
+     * Function that renders the tooltip
+     * @param {selection} selection - the d3 selection
+     * @param {*} d - data object bound to d3 selection
+     */
+    renderTooltip(selection, d){
+        let that = this;
+        //https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        console.log("selection in renderTooltip function:", selection);
+        //let level = d3.select(selection).data()[0]["level"];
+        let level = d.level;
+
+        let x = parseInt(selection.attr("x")) + 20;
+        let y = parseInt(selection.attr("y")) - 50;
+        if (x > 350)
+            x -= 150;
+        if (y > 650)
+            y -= 150;
+        if (y < 100)
+            y += 150;
+        d3.select("#tooltip-bar2")
+            .style("left", x + "px")
+            .style("top", y + "px")
+            .style('visibility', 'visible')
+            .style("opacity", function(){
+                if (level != that.currentLevel)
+                    return 0.2;
+                else return 1.0})
+            .html(`<h2>${d.name}</h2> 
+                <strong>Percentage:</strong> ${d3.format(",.2r")(d.percentage * 100)}%
+                <br> <strong>Total Speakers:</strong> ${numberWithCommas(d.totalSpeakers)}`);
+        }
 
     /**
      * Function that attaches the click handlers for the click and doubleclick events
@@ -444,6 +450,10 @@ class BarChart2{
         });
     }
 
+    /**
+     * Function that attaches the handlers to the "click" buttons in the storytelling
+     * section of the barchart
+     */
     attachStorytellingHandlers(){
         let that = this;
         d3.select("#showSubgroupSort")
@@ -453,6 +463,22 @@ class BarChart2{
                 d3.select("#sortLabelButton")
                     .classed("clicked", true);
                 that.sort();
+                d3.select("#barchart2").attr("pointer-events", "none");
+                setTimeout(function(){
+                    let selection = d3.select("#Scandinavianlanguages")
+                    .classed("hover", true);
+                    let data = selection.data()[0];
+                    that.renderTooltip(selection, data);
+                }, 500);
+
+                setTimeout(function(){
+                    let selection = d3.select("#Vietnamese")
+                    .classed("hover", true);
+                    let data = selection.data()[0];
+                    that.renderTooltip(selection, data);
+                    d3.select("#barchart2").attr("pointer-events", "auto");
+
+                }, 2000);
             });
         
         d3.select("#showNativeAmerican")
@@ -510,6 +536,27 @@ class BarChart2{
         };
 
         this.currentData.sort(sortDescending);
+        this.updateBarChart();
+   }
+
+   /**
+     * Function that returns the data bound to the group-level view.
+     * This is the view that is shown when the barchart is first rendered.
+     */
+    getBasicData(){
+        return this.tree.treeSelectionToArray(this.tree.root, "down");
+
+    }
+
+   /**
+    * Function that resets the view to the original view
+    * (Grouping level)
+    */
+    reset(){
+        this.direction = "down";
+        this.currentData = this.tree.treeSelectionToArray(this.tree.root, this.direction);
+        this.currentLevel = "group";  
+        this.isSorted = false;  
         this.updateBarChart();
    }
 }
