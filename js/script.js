@@ -165,8 +165,8 @@ loadData().then(data => {
         // Define each tick of simulation
         simulation.on('tick', () => {
             d3.selectAll('.cluster_circles')
-                .attr('cx', (d) => d.x + 300)
-                .attr('cy', (d) => d.y + 300)
+                .attr('cx', (d) => d.x + 225)
+                .attr('cy', (d) => d.y + 225)
      }) 
 
     } // End setup_page function
