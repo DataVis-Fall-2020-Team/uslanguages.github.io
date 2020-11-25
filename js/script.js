@@ -269,7 +269,7 @@ loadData().then(data => {
         clean('map')
         d3.select("#map").raise();
 
-        d3.select("#map").style('opacity',1)
+        d3.selectAll("#map").style('opacity',1)
 
         //Move the bubbles
 
@@ -291,11 +291,11 @@ loadData().then(data => {
             }))
             .alphaDecay(.1)
 
-        let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-100, y:-200}
-        , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:50, y:-200}
-        , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:200, y:-200}
-        , {'Group':"English",number:3, x:350, y:-200}
-        , {'Group':"ALL OTHER LANGUAGES", number:4, x: 500, y:-200}
+        let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-100, y: -100}
+        , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:50, y: -100}
+        , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:200, y: -100}
+        , {'Group':"English",number:3, x:350, y: -100}
+        , {'Group':"ALL OTHER LANGUAGES", number:4, x: 500, y: -100}
       ]
 
       // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
