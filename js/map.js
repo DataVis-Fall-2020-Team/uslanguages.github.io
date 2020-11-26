@@ -1372,10 +1372,12 @@ class US_Map{
         }
 
         let dataF = this.mapData.filter(d=>languages.includes(d.Language));
-
-        let stateMap = this.svg.append("g")
-            .attr("id", "map_circles");
-
+        if(this.svg.select("#map_circles").empty()){
+            this.svg.append("g")
+                .attr("id", "map_circles");
+        }
+        let stateMap = this.svg.select("#map_circles");
+        console.log(this.svg.select("#map_circles"));
         let mapBubbles = stateMap.selectAll("circle")
             .data(dataF)
             .join("circle")
@@ -1399,8 +1401,8 @@ class US_Map{
             console.log("mouseover in map")
             tooltip
                 .style('visibility', 'visible')
-                .style("top", d3.event.pageY -10 + 'px')
-                .style("left", d3.event.pageX + 25 + 'px')
+                .style("top", d3.event.target.attributes['cy'].value+ 'px')
+                .style("left", d3.event.target.attributes['cx'].value+ 'px')
 
                 .html("<p style=font-size:20px>" + d.Group + "</p> \
                        <p>" + d.Subgroup + "</p> \
@@ -1413,8 +1415,8 @@ class US_Map{
         d3.selectAll('.state_bubbles')
         .on('mousemove', () => {
             tooltip
-            .style("top", d3.event.pageY -10 + 'px')
-            .style("left", d3.event.pageX -300 + 'px')
+                .style("top", d3.event.target.attributes['cy'].value+ 'px')
+                .style("left", d3.event.target.attributes['cx'].value+ 'px')
         }) // End mousemove listener
 
         // Mouse out

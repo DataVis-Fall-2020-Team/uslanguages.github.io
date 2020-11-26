@@ -7,7 +7,7 @@ class cluster {
             .style('opacity', 1)
 
         this.draw_circles()
-        this.map_brush()
+        //this.map_brush()
         this.tooltip()
 
     } // End constructor call
@@ -35,8 +35,8 @@ class cluster {
                 console.log("mouseover in cluster")
         tooltip
             .style('visibility', 'visible')
-            .style("top", d3.event.pageY -10 + 'px')
-            .style("left", d3.event.pageX + 25 + 'px')
+            .style("top", d3.event.target.attributes['cy'].value+ 'px')
+            .style("left", d3.event.target.attributes['cx'].value+ 'px')
             
             .html("<p style=font-size:20px>" + d.Group + "</p> \
                    <p>" + d.Subgroup + "</p> \
@@ -49,8 +49,8 @@ class cluster {
         d3.selectAll('.cluster_circles')
         .on('mousemove', () => {
             tooltip
-            .style("top", d3.event.pageY -10 + 'px')
-            .style("left", d3.event.pageX -300 + 'px')
+            .style("top", d3.event.target.attributes['cy'].value+ 'px')
+            .style("left", d3.event.target.attributes['cx'].value+ 'px')
         }) // End mousemove listener
 
         // Mouse out
@@ -66,12 +66,17 @@ class cluster {
         d3.selectAll('circle').on('mouseout.cluster', null);
     }
 
-    map_brush(){
+    map_brush(active){
         let that = this;
         let height = 200;
         let width = 900;
         let marginX = 230;
         let marginY = 225;
+
+        if(!active){
+            height = 1;
+            width = 1;
+        }
 
         const brushGroup = d3.select("#cluster").append("g")
             .classed("brush", true);
@@ -80,10 +85,10 @@ class cluster {
         const brush = d3.brush()
             .extent([[0,0], [width, height]])
             .on("start", function(){
-                nodes
-                    .classed("regular", false);
+                nodes.classed("regular", false);
+                updateOtherViews([]);
             })
-            .on("brush end", function(){
+            .on("brush", function(){
                 const selection = d3.brushSelection(this);
                 const selectedPoints = [];
                 if(selection){
@@ -99,6 +104,30 @@ class cluster {
                         }
                     });
                     nodes.classed("regular", true);
+                    if (selectedPoints.length > 0) {
+                        nodes
+                            .filter((d, i) => selectedPoints.includes(d.index))
+                            .classed("regular", false);
+                    }
+                }
+            })
+            .on("end", function(){
+                const selection = d3.brushSelection(this);
+                const selectedPoints = [];
+                if(selection){
+                    const [[left, top], [right, bottom]] = selection;
+                    dataset_updated.forEach((d, i) => {
+                        if (
+                            d.x >= left-marginX &&
+                            d.x <= right-marginX &&
+                            d.y <= bottom-marginY &&
+                            d.y >= top-marginY
+                        ) {
+                            selectedPoints.push(i);
+                        }
+                    });
+                    nodes.classed("regular", true);
+                    //Update Other Views here to not bog down brush
                     updateOtherViews(selectedPoints);
                     if (selectedPoints.length > 0) {
                         nodes
@@ -108,5 +137,6 @@ class cluster {
                 }
             });
         brushGroup.call(brush);
+
     }
 } // End cluster class

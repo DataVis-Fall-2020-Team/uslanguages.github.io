@@ -264,7 +264,7 @@ loadData().then(data => {
 
         // clustering()
 
-    
+        views['cluster'].map_brush(false);
     } // end draw0 function
 
     function draw_map(){
@@ -273,7 +273,7 @@ loadData().then(data => {
         clean('map')
         d3.select("#us_map").raise();
         d3.select("#us_map").style('opacity',1);
-        views['map'].tooltip()
+        views['map'].tooltip();
         //Move the bubbles
 
         // views['cluster'].tooltip()  // Doesn't put tooltip back
@@ -295,14 +295,14 @@ loadData().then(data => {
             .alphaDecay(.1)
 
         let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-100, y:-150}
-        , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:50, y:-140}
-        , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:200, y:-140}
-        , {'Group':"English",number:3, x:350, y:-132}
-        , {'Group':"ALL OTHER LANGUAGES", number:4, x: 500, y:-130}
-      ]
+            , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:50, y:-140}
+            , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:200, y:-140}
+            , {'Group':"English",number:3, x:350, y:-132}
+            , {'Group':"ALL OTHER LANGUAGES", number:4, x: 500, y:-130}
+        ]
 
-      // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
-      function clustering(alpha) {
+        // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
+        function clustering(alpha) {
           for (let i = 0, n = dataset_updated.length, node, cluster, k = alpha * 1; i < n; ++i) {
               node = dataset_updated[i];
               cluster = clusters[node.number];
@@ -311,6 +311,7 @@ loadData().then(data => {
               }
           }
 
+        views['cluster'].map_brush(true);
     } // end draw_map function  
 
     // Draw 2nd Viz
