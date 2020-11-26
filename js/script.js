@@ -193,12 +193,19 @@ loadData().then(data => {
         } // End bar2 if statement
 
         if (chartType !== "map"){
-            //views['map'].clearEventHandlers();
             d3.select("#us_map").transition().style('opacity',0);
+            views['map'].clearEventHandlers();
         } // End map if statement
 
     } // End function clean()
 
+// --------------------------------------------
+        // Update Other Views
+// --------------------------------------------
+
+    function updateOtherViews(selectedPoints){
+        views['map'].updateView(selectedPoints);
+    }
 
 // --------------------------------------------
         // Draw the visualizations
@@ -266,13 +273,12 @@ loadData().then(data => {
         clean('map')
         d3.select("#us_map").raise();
         d3.select("#us_map").style('opacity',1);
-
+        views['map'].tooltip()
         //Move the bubbles
 
         // views['cluster'].tooltip()  // Doesn't put tooltip back
 
         d3.select("#cluster")
-            .attr("height", 300)
             .transition()
             .style('opacity',1)
 
@@ -288,11 +294,11 @@ loadData().then(data => {
             }))
             .alphaDecay(.1)
 
-        let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-100, y:-200}
-        , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:50, y:-200}
-        , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:200, y:-200}
-        , {'Group':"English",number:3, x:350, y:-200}
-        , {'Group':"ALL OTHER LANGUAGES", number:4, x: 500, y:-200}
+        let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-100, y:-150}
+        , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:50, y:-140}
+        , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:200, y:-140}
+        , {'Group':"English",number:3, x:350, y:-132}
+        , {'Group':"ALL OTHER LANGUAGES", number:4, x: 500, y:-130}
       ]
 
       // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
