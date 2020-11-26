@@ -11,7 +11,7 @@ let map_data, path, projection
 loadData().then(function(data){
     dataset = data
     
-    setTimeout(setup_page(), 100) 
+    setTimeout(setup_page(), 100)
  })
  
  async function loadData() {
@@ -119,10 +119,6 @@ async function usMap(){
             .attr('opacity', 1)
             // .attr('position', 'relative')
 
-        // Viz #2 - Map
-        d3.select("#map").style('opacity',0)
-        console.log("dataset_updatedd", dataset_updated);
-        
         // Simulation setup
         simulation = d3.forceSimulation(dataset_updated)
 
@@ -135,7 +131,6 @@ async function usMap(){
           }))
         //   .velocityDecay(.7)
         // .alphaDecay(.05) // Speed of cooling the simulation
-        
 
           clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:100, y:110}
           , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:120, y:120}
@@ -192,9 +187,10 @@ async function usMap(){
         let svg = d3.select('#vis').select('svg')
         if (chartType !== "cluster"){
             if (chartType !== "map"){
-            //svg.selectAll('circle').transition().style('opacity',0)
-            d3.select("#cluster").transition().style('opacity', 0)
-            views['cluster'].clearEventHandlers();
+                //svg.selectAll('circle').transition().style('opacity',0)
+                d3.select("#cluster").transition().style('opacity', 0)
+                views['cluster'].clearEventHandlers();
+                //d3.select("#us_map").transition().style('opacity',0);
             } 
         } // End cluster if statement
 
@@ -213,9 +209,18 @@ async function usMap(){
         if (chartType !== "map"){
             d3.select('#map').transition().style('opacity',0)
             // views['map'].clearEventHandlers();
+
         } // End map if statement
+
     } // End function clean()
 
+// --------------------------------------------
+        // Update Other Views
+// --------------------------------------------
+
+    function updateOtherViews(selectedPoints){
+        views['map'].updateView(selectedPoints);
+    }
 
 // --------------------------------------------
         // Draw the visualizations
@@ -280,13 +285,12 @@ async function usMap(){
 
     function draw_map(){
         simulation.stop()
-
         // Draw the map
         clean('map')
 
         d3.selectAll("#map").style('opacity',1)
         views['cluster'].tooltip()
-
+//         d3.select("#us_map").raise();
 
         //Move the bubbles
 
@@ -314,6 +318,7 @@ async function usMap(){
             .force("collide", d3.forceCollide().radius(function(d){
                 return scaleSize_map(d.Speakers)
             }))
+
             .alphaDecay(.01)
             .velocityDecay(.9)
 
@@ -322,6 +327,7 @@ async function usMap(){
         , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:200, y: -100}
         , {'Group':"English",number:3, x:350, y: -100}
         , {'Group':"ALL OTHER LANGUAGES", number:4, x: 500, y: -100}
+
       ]
 
       // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
