@@ -1,6 +1,7 @@
 // Set global variables
 let dataset, dataset_updated
 let simulation, nodes, clusters
+let map_data, path, projection
 let views = {} //dictionary to store view objects
 
 // --------------------------------------------
@@ -39,6 +40,9 @@ loadData().then(data => {
         console.log('National Data Loaded');
         dataset_updated = nationalData.filter(d => d.Group != 'Total')
 
+        // Mapping Data
+        // JSON taken from: https://github.com/DataVis-Fall-2020-Team/MappingAPI/tree/master/data/geojson
+        map_data = await d3.json("data/us-states.json");
         return [stateData, nationalData];
     }
     catch{
@@ -86,6 +90,20 @@ loadData().then(data => {
             .range([1,30])
             .nice()
         return my_scaleSize_map(input)
+    }
+
+    function scaleCentersY_map(input){
+        let scaleCenters = d3.scaleLinear()
+            .domain([0,1000])
+            .range([0,900]);
+        return scaleCenters(input);
+    }
+
+    function scaleCentersX_map(input){
+        let scaleCenters=d3.scaleLinear()
+            .domain([0,1000])
+            .range([0,895]);
+        return scaleCenters(input);
     }
     // ----------------------------------------------------------------
 
@@ -151,7 +169,9 @@ loadData().then(data => {
         views['bar1'] = new Barchart(dataset[0], svg);
 
         // Viz #2 Map
-        views['map'] = new US_Map(dataset[0], svg);
+        views['map'] = new US_Map(dataset[0], map_data, svg);
+        views['map'].updateStateOpacity(0);
+
         
         // Viz #1 Megacluster setup
         views['cluster'] = new cluster(svg);
@@ -273,6 +293,7 @@ loadData().then(data => {
         clean('map')
         d3.select("#us_map").raise();
         d3.select("#us_map").style('opacity',1);
+        views['map'].updateStateOpacity(1);
         views['map'].tooltip();
         //Move the bubbles
 
