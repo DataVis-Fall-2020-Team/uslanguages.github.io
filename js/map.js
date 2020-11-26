@@ -1330,8 +1330,7 @@ class US_Map{
         this.AllLanguages = Array.from(uniqueLanguages);
 
         this.drawStates();
-        this.drawBubbles("French");//["Cajun","French"]);
-        //this.map_brush();
+        this.drawBubbles("none");//["Cajun","French"]);
         this.tooltip();
     }
 
@@ -1377,12 +1376,9 @@ class US_Map{
         let stateMap = this.svg.append("g")
             .attr("id", "map_circles");
 
-        //let stateMap = d3.select("#map").append("g");
         let mapBubbles = stateMap.selectAll("circle")
             .data(dataF)
             .join("circle")
-            //.attr("fill", "transparent")
-            //.attr("stroke", "transparent")
             .attr("fill", d=>colorScale(d.Group))
             .attr("stroke", "black")
             .attr("r", d=>scaleSize_map(d.Speakers))
@@ -1431,6 +1427,19 @@ class US_Map{
         d3.selectAll('.state_bubbles').on('mousemove', null);
         d3.selectAll('.state_bubbles').on('mouseover', null);
         d3.selectAll('.state_bubbles').on('mouseout', null);
+    }
+
+    updateView(selectedPoints){
+        //get languages from points
+        if(selectedPoints.length > 0){
+            let selectedData = dataset_updated.filter((d,i)=>selectedPoints.includes(i));
+            let languages = [... new Set(selectedData.map(d=>d.Language))];
+            this.drawBubbles(languages);
+        }
+        else{
+            //doesn't work...Why?
+            this.drawBubbles("none");
+        }
     }
 
     GetBubbleTranslation(d){

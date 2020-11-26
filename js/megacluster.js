@@ -1,14 +1,10 @@
 class cluster {
     constructor(svg){
         this.svg = svg
-        
-        
-
         this.svg
             .append("g")
             .attr("id", "cluster")
             .style('opacity', 1)
-
 
         this.draw_circles()
         this.map_brush()
@@ -80,9 +76,13 @@ class cluster {
         const brushGroup = d3.select("#cluster").append("g")
             .classed("brush", true);
 
-        console.log(dataset_updated);
+        //console.log(dataset_updated);
         const brush = d3.brush()
             .extent([[0,0], [width, height]])
+            .on("start", function(){
+                nodes
+                    .classed("regular", false);
+            })
             .on("brush end", function(){
                 const selection = d3.brushSelection(this);
                 const selectedPoints = [];
@@ -98,13 +98,12 @@ class cluster {
                             selectedPoints.push(i);
                         }
                     });
-                    nodes.classed("highlight", false);
-                    //this.updateOtherViews(selectedPoints);
-                    console.log(selectedPoints);
+                    nodes.classed("regular", true);
+                    updateOtherViews(selectedPoints);
                     if (selectedPoints.length > 0) {
                         nodes
                             .filter((d, i) => selectedPoints.includes(d.index))
-                            .classed("highlight", true);
+                            .classed("regular", false);
                     }
                 }
             });

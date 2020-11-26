@@ -199,6 +199,13 @@ loadData().then(data => {
 
     } // End function clean()
 
+// --------------------------------------------
+        // Update Other Views
+// --------------------------------------------
+
+    function updateOtherViews(selectedPoints){
+        views['map'].updateView(selectedPoints);
+    }
 
 // --------------------------------------------
         // Draw the visualizations

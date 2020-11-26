@@ -220,14 +220,6 @@ text {
 
 /*  Brush Styles */
 .regular {
-    fill: #5ea3df;
+    /*fill: #5ea3df;*/
+    fill: lightgrey;
 }
-
-.highlight {
-    fill: #f54a19;
-}
-
-.border-box {
-            stroke: black;
-            fill: none;
-        }
