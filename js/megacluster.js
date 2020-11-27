@@ -7,7 +7,7 @@ class cluster {
             .style('opacity', 1)
 
         this.draw_circles()
-        this.map_brush()
+        //this.map_brush()
         this.tooltip()
 
     } // End constructor call
@@ -34,9 +34,8 @@ class cluster {
             .on('mouseover', function(d){
                 console.log("mouseover in cluster")
         tooltip
-            .style('visibility', 'visible')
-        .style("top", d3.event.target.attributes['cy'].value+ 'px')
-        .style("left", d3.event.target.attributes['cx'].value+ 'px')
+            .style("top", d3.event.target.attributes['cy'].value+ 'px')
+            .style("left", d3.event.target.attributes['cx'].value+ 'px')
             
             .html("<p style=font-size:20px>" + d.Group + "</p> \
                    <p>" + d.Subgroup + "</p> \
@@ -66,47 +65,76 @@ class cluster {
         d3.selectAll('circle').on('mouseout.cluster', null);
     }
 
-    map_brush(){
+    map_brush(active){
         let that = this;
         let height = 200;
         let width = 900;
-        let marginX = 230;
-        let marginY = 225;
+        let marginX = 280;
+        let marginY = 250;
 
-        const brushGroup = d3.select("#cluster").append("g")
-            .classed("brush", true);
+        if(!active){
+            d3.selectAll(".brush").remove();
+        }
+        else{
+            const brushGroup = d3.select("#cluster").append("g")
+                .classed("brush", true);
 
-        //console.log(dataset_updated);
-        const brush = d3.brush()
-            .extent([[0,0], [width, height]])
-            .on("start", function(){
-                nodes
-                    .classed("regular", false);
-            })
-            .on("brush end", function(){
-                const selection = d3.brushSelection(this);
-                const selectedPoints = [];
-                if(selection){
-                    const [[left, top], [right, bottom]] = selection;
-                    dataset_updated.forEach((d, i) => {
-                        if (
-                            d.x >= left-marginX &&
-                            d.x <= right-marginX &&
-                            d.y <= bottom-marginY &&
-                            d.y >= top-marginY
-                        ) {
-                            selectedPoints.push(i);
+            //console.log(dataset_updated);
+            const brush = d3.brush()
+                .extent([[0,0], [width, height]])
+                .on("start", function(){
+                    nodes.classed("regular", false);
+                    updateOtherViews([]);
+                })
+                .on("brush", function(){
+                    const selection = d3.brushSelection(this);
+                    const selectedPoints = [];
+                    if(selection){
+                        const [[left, top], [right, bottom]] = selection;
+                        dataset_updated.forEach((d, i) => {
+                            if (
+                                d.x >= left-marginX &&
+                                d.x <= right-marginX &&
+                                d.y <= bottom-marginY &&
+                                d.y >= top-marginY
+                            ) {
+                                selectedPoints.push(i);
+                            }
+                        });
+                        nodes.classed("regular", true);
+                        if (selectedPoints.length > 0) {
+                            nodes
+                                .filter((d, i) => selectedPoints.includes(d.index))
+                                .classed("regular", false);
                         }
-                    });
-                    nodes.classed("regular", true);
-                    updateOtherViews(selectedPoints);
-                    if (selectedPoints.length > 0) {
-                        nodes
-                            .filter((d, i) => selectedPoints.includes(d.index))
-                            .classed("regular", false);
                     }
-                }
-            });
-        brushGroup.call(brush);
+                })
+                .on("end", function(){
+                    const selection = d3.brushSelection(this);
+                    const selectedPoints = [];
+                    if(selection){
+                        const [[left, top], [right, bottom]] = selection;
+                        dataset_updated.forEach((d, i) => {
+                            if (
+                                d.x >= left-marginX &&
+                                d.x <= right-marginX &&
+                                d.y <= bottom-marginY &&
+                                d.y >= top-marginY
+                            ) {
+                                selectedPoints.push(i);
+                            }
+                        });
+                        nodes.classed("regular", true);
+                        //Update Other Views here to not bog down brush
+                        updateOtherViews(selectedPoints);
+                        if (selectedPoints.length > 0) {
+                            nodes
+                                .filter((d, i) => selectedPoints.includes(d.index))
+                                .classed("regular", false);
+                        }
+                    }
+                });
+            brushGroup.call(brush);
+        }
     }
 } // End cluster class
