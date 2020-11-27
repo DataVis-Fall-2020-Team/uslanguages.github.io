@@ -1,0 +1,211 @@
+{
+  "Notes": "These centers were calculated using the algorythm getStateLocation() in map.js using a different set of states. Some centers were then tweaked slightly in order to make them look better.",
+  "Alabama": [
+    659.505,
+    409.437
+  ],
+  "Alaska": [
+    100.548,
+    490.984
+  ],
+  "Arizona": [
+    200.731,
+    363.678
+  ],
+  "Arkansas": [
+    551.327,
+    369.690
+  ],
+  "California": [
+    61.416,
+    265.706
+  ],
+  "Colorado": [
+    322.134,
+    271.480
+  ],
+  "Connecticut": [
+    869.256,
+    178.603
+  ],
+  "Delaware": [
+    840.352,
+    239.108
+  ],
+  "District of Columbia": [
+    810.894,
+    250.577
+  ],
+  "Florida": [
+    762.812,
+    485.401
+  ],
+  "Georgia": [
+    718.981,
+    399.656
+  ],
+  "Hawaii": [
+    306.911,
+    567.387
+  ],
+  "Idaho": [
+    190.151,
+    151.528
+  ],
+  "Illinois": [
+    601.947,
+    259.189
+  ],
+  "Indiana": [
+    655.523,
+    254.627
+  ],
+  "Iowa": [
+    525.556,
+    213.824
+  ],
+  "Kansas": [
+    443.933,
+    290.401
+  ],
+  "Kentucky": [
+    671.591,
+    298.384
+  ],
+  "Louisiana": [
+    551.886,
+    449.477
+  ],
+  "Maine": [
+    900.337,
+    85.265
+  ],
+  "Maryland": [
+    810.702,
+    237.322
+  ],
+  "Massachusetts": [
+    874.017,
+    157.664
+  ],
+  "Michigan": [
+    667.837,
+    168.537
+  ],
+  "Minnesota": [
+    507.431,
+    116.889
+  ],
+  "Mississippi": [
+    600.787,
+    412.370
+  ],
+  "Missouri": [
+    545.071,
+    293.211
+  ],
+  "Montana": [
+    280.629,
+    87.084
+  ],
+  "Nebraska": [
+    423.970,
+    223.233
+  ],
+  "Nevada": [
+    130.352,
+    231.339
+  ],
+  "New Hampshire": [
+    875.846,
+    127.021
+  ],
+  "New Jersey": [
+    846.423,
+    215.782
+  ],
+  "New Mexico": [
+    302.917,
+    369.994
+  ],
+  "New York": [
+    809.729,
+    154.751
+  ],
+  "North Carolina": [
+    770.255,
+    328.158
+  ],
+  "North Dakota": [
+    418.804,
+    90.965
+  ],
+  "Ohio": [
+    702.439,
+    234.482
+  ],
+  "Oklahoma": [
+    457.603,
+    359.267
+  ],
+  "Oregon": [
+    105.020,
+    117.957
+  ],
+  "Pennsylvania": [
+    785.098,
+    209.203
+  ],
+  "Puerto Rico": [
+    585.700,
+    575.250
+  ],
+  "Rhode Island": [
+    887.601,
+    170.494
+  ],
+  "South Carolina": [
+    755.853,
+    375.702
+  ],
+  "South Dakota": [
+    417.283,
+    154.198
+  ],
+  "Tennessee": [
+    659.663,
+    347.782
+  ],
+  "Texas": [
+    419.099,
+    437.545
+  ],
+  "Utah": [
+    223.747,
+    247.898
+  ],
+  "Vermont": [
+    856.906,
+    126.772
+  ],
+  "Virginia": [
+    785.713,
+    284.294
+  ],
+  "Washington": [
+    124.881,
+    49.738
+  ],
+  "West Virginia": [
+    742.922,
+    271.184
+  ],
+  "Wisconsin": [
+    576.466,
+    151.859
+  ],
+  "Wyoming": [
+    299.963,
+    180.840
+  ]
+}

@@ -1,7 +1,7 @@
 // Set global variables
 let dataset, dataset_updated
 let simulation, nodes, clusters
-let map_data, path, projection
+let map_data, map_center_data, path, projection
 let views = {} //dictionary to store view objects
 
 // --------------------------------------------
@@ -43,6 +43,7 @@ loadData().then(data => {
         // Mapping Data
         // JSON taken from: https://github.com/DataVis-Fall-2020-Team/MappingAPI/tree/master/data/geojson
         map_data = await d3.json("data/us-states.json");
+        map_center_data = await d3.json("data/state-centers.json");
         return [stateData, nationalData];
     }
     catch{
@@ -169,7 +170,7 @@ loadData().then(data => {
         views['bar1'] = new Barchart(dataset[0], svg);
 
         // Viz #2 Map
-        views['map'] = new US_Map(dataset[0], map_data, svg);
+        views['map'] = new US_Map([dataset[0],map_data,map_center_data], svg);
         views['map'].updateStateOpacity(0);
 
         
@@ -215,6 +216,7 @@ loadData().then(data => {
         if (chartType !== "map"){
             d3.select("#us_map").transition().style('opacity',0);
             views['map'].clearEventHandlers();
+            views['cluster'].map_brush(false);
         } // End map if statement
 
     } // End function clean()
@@ -238,7 +240,6 @@ loadData().then(data => {
         simulation.stop()
         
         clean('cluster') // Turns off opacity for all other charts
-        
         // let svg = d3.select("#vis")
         //     .select('svg')
         
@@ -284,7 +285,6 @@ loadData().then(data => {
 
         // clustering()
 
-        views['cluster'].map_brush(false);
     } // end draw0 function
 
     function draw_map(){
@@ -294,7 +294,7 @@ loadData().then(data => {
         d3.select("#us_map").raise();
         d3.select("#us_map").style('opacity',1);
         views['map'].updateStateOpacity(1);
-        views['map'].tooltip();
+        //views['map'].tooltip();
         //Move the bubbles
 
         // views['cluster'].tooltip()  // Doesn't put tooltip back

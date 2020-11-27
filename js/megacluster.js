@@ -74,69 +74,68 @@ class cluster {
         let marginY = 225;
 
         if(!active){
-            height = 1;
-            width = 1;
+            d3.selectAll(".brush").remove();
         }
+        else{
+            const brushGroup = d3.select("#cluster").append("g")
+                .classed("brush", true);
 
-        const brushGroup = d3.select("#cluster").append("g")
-            .classed("brush", true);
-
-        //console.log(dataset_updated);
-        const brush = d3.brush()
-            .extent([[0,0], [width, height]])
-            .on("start", function(){
-                nodes.classed("regular", false);
-                updateOtherViews([]);
-            })
-            .on("brush", function(){
-                const selection = d3.brushSelection(this);
-                const selectedPoints = [];
-                if(selection){
-                    const [[left, top], [right, bottom]] = selection;
-                    dataset_updated.forEach((d, i) => {
-                        if (
-                            d.x >= left-marginX &&
-                            d.x <= right-marginX &&
-                            d.y <= bottom-marginY &&
-                            d.y >= top-marginY
-                        ) {
-                            selectedPoints.push(i);
+            //console.log(dataset_updated);
+            const brush = d3.brush()
+                .extent([[0,0], [width, height]])
+                .on("start", function(){
+                    nodes.classed("regular", false);
+                    updateOtherViews([]);
+                })
+                .on("brush", function(){
+                    const selection = d3.brushSelection(this);
+                    const selectedPoints = [];
+                    if(selection){
+                        const [[left, top], [right, bottom]] = selection;
+                        dataset_updated.forEach((d, i) => {
+                            if (
+                                d.x >= left-marginX &&
+                                d.x <= right-marginX &&
+                                d.y <= bottom-marginY &&
+                                d.y >= top-marginY
+                            ) {
+                                selectedPoints.push(i);
+                            }
+                        });
+                        nodes.classed("regular", true);
+                        if (selectedPoints.length > 0) {
+                            nodes
+                                .filter((d, i) => selectedPoints.includes(d.index))
+                                .classed("regular", false);
                         }
-                    });
-                    nodes.classed("regular", true);
-                    if (selectedPoints.length > 0) {
-                        nodes
-                            .filter((d, i) => selectedPoints.includes(d.index))
-                            .classed("regular", false);
                     }
-                }
-            })
-            .on("end", function(){
-                const selection = d3.brushSelection(this);
-                const selectedPoints = [];
-                if(selection){
-                    const [[left, top], [right, bottom]] = selection;
-                    dataset_updated.forEach((d, i) => {
-                        if (
-                            d.x >= left-marginX &&
-                            d.x <= right-marginX &&
-                            d.y <= bottom-marginY &&
-                            d.y >= top-marginY
-                        ) {
-                            selectedPoints.push(i);
+                })
+                .on("end", function(){
+                    const selection = d3.brushSelection(this);
+                    const selectedPoints = [];
+                    if(selection){
+                        const [[left, top], [right, bottom]] = selection;
+                        dataset_updated.forEach((d, i) => {
+                            if (
+                                d.x >= left-marginX &&
+                                d.x <= right-marginX &&
+                                d.y <= bottom-marginY &&
+                                d.y >= top-marginY
+                            ) {
+                                selectedPoints.push(i);
+                            }
+                        });
+                        nodes.classed("regular", true);
+                        //Update Other Views here to not bog down brush
+                        updateOtherViews(selectedPoints);
+                        if (selectedPoints.length > 0) {
+                            nodes
+                                .filter((d, i) => selectedPoints.includes(d.index))
+                                .classed("regular", false);
                         }
-                    });
-                    nodes.classed("regular", true);
-                    //Update Other Views here to not bog down brush
-                    updateOtherViews(selectedPoints);
-                    if (selectedPoints.length > 0) {
-                        nodes
-                            .filter((d, i) => selectedPoints.includes(d.index))
-                            .classed("regular", false);
                     }
-                }
-            });
-        brushGroup.call(brush);
-
+                });
+            brushGroup.call(brush);
+        }
     }
 } // End cluster class
