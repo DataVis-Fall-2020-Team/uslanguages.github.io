@@ -69,8 +69,8 @@ class cluster {
         let that = this;
         let height = 200;
         let width = 900;
-        let marginX = 230;
-        let marginY = 225;
+        let marginX = 280;
+        let marginY = 250;
 
         if(!active){
             d3.selectAll(".brush").remove();

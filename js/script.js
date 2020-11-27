@@ -3,7 +3,6 @@ let dataset, dataset_updated
 let simulation, nodes, clusters
 let map_data, map_center_data, path, projection
 let views = {} //dictionary to store view objects
-let map_data, path, projection
 
 // --------------------------------------------
         // Import the data
@@ -303,7 +302,7 @@ async function usMap(){
         d3.select("#us_map").raise();
         d3.select("#us_map").style('opacity',1);
         views['map'].updateStateOpacity(1);
-        //views['map'].tooltip();
+        views['map'].tooltip();
 		
         //Move the bubbles
 
@@ -334,11 +333,11 @@ async function usMap(){
             .alphaDecay(.01)
             .velocityDecay(.9)
 
-        let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-100, y:-150}
-            , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:50, y:-140}
-            , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:200, y:-140}
-            , {'Group':"English",number:3, x:350, y:-132}
-            , {'Group':"ALL OTHER LANGUAGES", number:4, x: 500, y:-130}
+        let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-100, y:-160}
+            , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:30, y:-150}
+            , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:170, y:-150}
+            , {'Group':"English",number:3, x:300, y:-142}
+            , {'Group':"ALL OTHER LANGUAGES", number:4, x: 430, y:-140}
         ]
 
 

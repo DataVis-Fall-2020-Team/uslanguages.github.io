@@ -1,4 +1,3 @@
-//TODO: modify state centers, possibly put them in a different file
 //TODO: figure out why tooltips for map aren't working
 //TODO: Write up blurb
 //TODO: Maybe: add some storytelling?
@@ -28,7 +27,11 @@ class US_Map{
 
         this.drawStates();
         this.drawBubbles("none");//["Cajun","French"]);
-        //this.tooltip();
+        this.tooltip();
+    }
+
+    getLanguagesPerState(state){
+        return this.data.filter(d=>d.State == state);
     }
 
     getLanguageIndexPerState(state, language){
