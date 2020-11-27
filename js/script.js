@@ -3,12 +3,13 @@ let dataset, dataset_updated
 let simulation, nodes, clusters
 let map_data, map_center_data, path, projection
 let views = {} //dictionary to store view objects
+let map_data, path, projection
 
 // --------------------------------------------
         // Import the data
 // --------------------------------------------
 
-loadData().then(data => {
+loadData().then(function(data){
     dataset = data
     
     setTimeout(setup_page(), 100)
@@ -16,6 +17,7 @@ loadData().then(data => {
  
  async function loadData() {
     try {
+        // State Data
         const stateData = await d3.csv('./data/LanguageData_States.csv', function (d){ 
             return {
                 Group: d.Group,
@@ -27,6 +29,8 @@ loadData().then(data => {
             }
         });
         console.log('State Data Loaded:', stateData);
+
+        // National Data
         const nationalData = await d3.csv('./data/National_Languages.csv', function(d){
             return {
                 Group: d.Group,
@@ -50,6 +54,11 @@ loadData().then(data => {
         console.log("Data not loaded");
     }
  }
+
+ // Used template found on: http://dataviscourse.net/tutorials/lectures/lecture-maps/
+async function usMap(){
+
+}
 
 // --------------------------------------------
         // Setup the scales 
@@ -76,9 +85,9 @@ loadData().then(data => {
     function scaleSize(input){ 
         
         let my_scaleSize = d3.scalePow() 
-            .exponent(.15) // Smaller exponent = bigger circles
+            .exponent(.4) // Smaller exponent = bigger circles
             .domain([1, 232000000])
-            .range([1,65])
+            .range([1,250])
             .nice()
         return my_scaleSize(input)
     }
@@ -172,7 +181,6 @@ loadData().then(data => {
         // Viz #2 Map
         views['map'] = new US_Map([dataset[0],map_data,map_center_data], svg);
         views['map'].updateStateOpacity(0);
-
         
         // Viz #1 Megacluster setup
         views['cluster'] = new cluster(svg);
@@ -180,8 +188,8 @@ loadData().then(data => {
         // Define each tick of simulation
         simulation.on('tick', () => {
             d3.selectAll('.cluster_circles')
-                .attr('cx', (d) => d.x + 225)
-                .attr('cy', (d) => d.y + 225)
+                .attr('cx', (d) => d.x + 275)
+                .attr('cy', (d) => d.y + 250)
      }) 
 
     } // End setup_page function
@@ -237,7 +245,7 @@ loadData().then(data => {
     function draw_cluster(){
         // console.log("CAN YOU SEE THIS YET?")
         //Stop simulation
-        simulation.stop()
+        // simulation.stop()
         
         clean('cluster') // Turns off opacity for all other charts
         // let svg = d3.select("#vis")
@@ -259,7 +267,8 @@ loadData().then(data => {
         .force("collide", d3.forceCollide().radius(function(d){
             return scaleSize(d.Speakers) + 3
         }))
-        .alphaDecay(.05)
+        .alphaDecay(0.0228)
+        .velocityDecay(.4)
 
 
         clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:100, y:110}
@@ -295,25 +304,35 @@ loadData().then(data => {
         d3.select("#us_map").style('opacity',1);
         views['map'].updateStateOpacity(1);
         //views['map'].tooltip();
+		
         //Move the bubbles
 
         // views['cluster'].tooltip()  // Doesn't put tooltip back
 
-        d3.select("#cluster")
-            .transition()
-            .style('opacity',1)
+        // d3.select("#cluster")
+        //     .data(dataset_updated)
+        //     .transition()
+        //     .attr('r', d => scaleSize_map(d.Speakers))
 
         d3.selectAll('.cluster_circles')
+            .transition()
+            .duration(1000)
             .attr('r',d=> scaleSize_map(d.Speakers))
 
-        simulation.alpha(0.9).restart()
+        d3.select('#cluster')
+            .style('opacity',1)
+
+
+        simulation.alpha(1).restart()
 
         simulation
+            // .transition()
             .force("cluster", clustering)
             .force("collide", d3.forceCollide().radius(function(d){
                 return scaleSize_map(d.Speakers)
             }))
-            .alphaDecay(.1)
+            .alphaDecay(.01)
+            .velocityDecay(.9)
 
         let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-100, y:-150}
             , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:50, y:-140}
@@ -321,6 +340,7 @@ loadData().then(data => {
             , {'Group':"English",number:3, x:350, y:-132}
             , {'Group':"ALL OTHER LANGUAGES", number:4, x: 500, y:-130}
         ]
+
 
         // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
         function clustering(alpha) {
@@ -331,6 +351,9 @@ loadData().then(data => {
               node.vy -= (node.y - cluster.y) * k;
               }
           }
+        
+    //   d3.select("#map").raise();
+
 
         views['cluster'].map_brush(true);
     } // end draw_map function  

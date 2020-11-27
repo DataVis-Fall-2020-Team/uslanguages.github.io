@@ -34,7 +34,6 @@ class cluster {
             .on('mouseover', function(d){
                 console.log("mouseover in cluster")
         tooltip
-            .style('visibility', 'visible')
             .style("top", d3.event.target.attributes['cy'].value+ 'px')
             .style("left", d3.event.target.attributes['cx'].value+ 'px')
             

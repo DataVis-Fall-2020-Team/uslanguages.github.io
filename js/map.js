@@ -31,10 +31,6 @@ class US_Map{
         //this.tooltip();
     }
 
-    getLanguagesPerState(state){
-        return this.data.filter(d=>d.State == state);
-    }
-
     getLanguageIndexPerState(state, language){
         let languages = this.getLanguagesPerState(state);
         return languages.findIndex(a=>a.Language==language);
