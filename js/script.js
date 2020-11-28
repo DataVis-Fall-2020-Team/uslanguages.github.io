@@ -1,8 +1,9 @@
 // Set global variables
 let dataset, dataset_updated
 let simulation, nodes, clusters
-let map_data, map_center_data, path, projection
+let map_data, map_center_data, path, projection, MapData
 let views = {} //dictionary to store view objects
+let toggle_object, toggle_tracker = false
 
 // --------------------------------------------
         // Import the data
@@ -53,11 +54,6 @@ loadData().then(function(data){
         console.log("Data not loaded");
     }
  }
-
- // Used template found on: http://dataviscourse.net/tutorials/lectures/lecture-maps/
-async function usMap(){
-
-}
 
 // --------------------------------------------
         // Setup the scales 
@@ -191,6 +187,11 @@ async function usMap(){
                 .attr('cy', (d) => d.y + 250)
      }) 
 
+     // Render Toggle - Taken from Homework 6 solution
+     let toggle_div = d3.select('#map_section').append('div').attr('id','toggle_map')
+
+     toggle_object = renderToggle(toggle_div, 'Multi-select') 
+
     } // End setup_page function
 
 
@@ -286,6 +287,7 @@ async function usMap(){
               node.vy -= (node.y - cluster.y) * k;
               }
           }
+      d3.select("#cluster").raise();
 
         // simulation.force("cluster", clustering)
 
@@ -299,19 +301,13 @@ async function usMap(){
         simulation.stop()
         // Draw the map
         clean('map')
-        d3.select("#us_map").raise();
+        d3.select("#cluster").raise();
+
+        // d3.select("#us_map").raise();
         d3.select("#us_map").style('opacity',1);
         views['map'].updateStateOpacity(1);
-        views['map'].tooltip();
 		
         //Move the bubbles
-
-        // views['cluster'].tooltip()  // Doesn't put tooltip back
-
-        // d3.select("#cluster")
-        //     .data(dataset_updated)
-        //     .transition()
-        //     .attr('r', d => scaleSize_map(d.Speakers))
 
         d3.selectAll('.cluster_circles')
             .transition()
@@ -333,7 +329,7 @@ async function usMap(){
             .alphaDecay(.01)
             .velocityDecay(.9)
 
-        let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-100, y:-160}
+            let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-100, y:-160}
             , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:30, y:-150}
             , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:170, y:-150}
             , {'Group':"English",number:3, x:300, y:-142}
@@ -351,10 +347,23 @@ async function usMap(){
               }
           }
         
-    //   d3.select("#map").raise();
+    views['cluster'].tooltip();
+    views['cluster'].attach_maplisteners()
+
+    // TOGGLE
+    toggle_object.on('click.toggle', function(d){
+        if (toggle_object.node().checked){
+            views['cluster'].map_brush(true)
+
+        }
+        else {
+            views['cluster'].map_brush(false)
+            views['cluster'].attach_maplisteners();
+        }
+    })
 
 
-        views['cluster'].map_brush(true);
+
     } // end draw_map function  
 
     // Draw 2nd Viz

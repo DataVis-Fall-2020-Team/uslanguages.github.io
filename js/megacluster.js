@@ -7,12 +7,16 @@ class cluster {
             .style('opacity', 1)
 
         this.draw_circles()
-        //this.map_brush()
+        this.map_brush()
+        this.attach_maplisteners()
         this.tooltip()
+        this.toggle_tracker = false
+
 
     } // End constructor call
 
     draw_circles(){
+        console.log(MapData)
         nodes = d3.select("#cluster").append("g")
           .attr('id','cluster_group')
           .selectAll('circle')
@@ -29,40 +33,104 @@ class cluster {
         // Create tooltip    
         let tooltip = d3.select('#tooltip-bar2')
 
+        // --------------------------------------------
+        // Tooltip for the cluster
+        // --------------------------------------------  
         // Mouse over
-        d3.selectAll('.cluster_circles')
-            .on('mouseover', function(d){
-                console.log("mouseover in cluster")
-        tooltip
-            .style("top", d3.event.target.attributes['cy'].value+ 'px')
-            .style("left", d3.event.target.attributes['cx'].value+ 'px')
-            
-            .html("<p style=font-size:20px>" + d.Group + "</p> \
-                   <p>" + d.Subgroup + "</p> \
-                   <p>" + d.Language + ": " + d.Speakers +"</p>"
-            )    
-                
+        d3.selectAll('circle')
+            .on('mouseover.cluster', function(d){
+                tooltip
+                .style("top", d3.event.target.attributes['cy'].value+ 'px')
+                .style("left", d3.event.target.attributes['cx'].value+ 'px')
+                .style('visibility', 'visible')
+                .html("<p style=font-size:20px>" + d.Group + "</p> \
+                    <p>" + d.Subgroup + "</p> \
+                    <p>" + d.Language + ": " + d.Speakers +"</p>"
+                    )    
+                        
         }) // End mouseover listener
 
         // Mouse move
-        d3.selectAll('.cluster_circles')
-        .on('mousemove', () => {
+        d3.selectAll('circle')
+        .on('mousemove.cluster', (d) => {
             tooltip
             .style("top", d3.event.target.attributes['cy'].value+ 'px')
             .style("left", d3.event.target.attributes['cx'].value+ 'px')
+            // console.log(d.Language)
         }) // End mousemove listener
 
         // Mouse out
-        d3.selectAll('.cluster_circles').on('mouseout', () => {
-            tooltip.style('visibility', 'hidden')
+        d3.selectAll('circle')
+            .on('mouseout.cluster', () => {
+                tooltip.style('visibility', 'hidden')
         }) // End mouseout listener
 
     } // End of tooltip function
+
+    attach_maplisteners(){
+    // Controlling what circles show up when a state is selected
+    let circle_click = d3.selectAll('.cluster_circles')
+    let tooltip = d3.select('#tooltip-bar2')
+
+
+    circle_click.on('click.cluster', function(d){
+        d3.select('#map_circles').selectAll('circle')
+            .data(MapData.filter(x => x.Language === d.Language))
+            // .data(MapData.filter(d => d.))
+            .join("circle")
+            .attr("fill", d=>colorScale(d.Group))
+            .attr("stroke", "black")
+            //.style("opacity", 0.5)
+            .attr("r", d=>scaleSize_map(d.Speakers))
+            .attr("cx", d=>scaleCentersX_map(d.StateCenter[0]))
+            .attr("cy", d=>scaleCentersY_map(d.StateCenter[1]))
+            .attr("transform", "translate(0,140)")
+            .classed("state_bubbles", true);
+
+        // --------------------------------------------
+        // Tooltip for the map circles
+        // --------------------------------------------  
+            d3.selectAll('.state_bubbles')
+                .on('mouseover.map', function(d){
+
+                    tooltip
+                        .style("top", d3.event.target.attributes['cy'].value+ 'px')
+                        .style("left", d3.event.target.attributes['cx'].value+ 'px')
+                        .style('visibility', 'visible')
+                        .html("<p style=font-size:20px>" + d.Group + "</p> \
+                            <p>" + d.State + "</p> \
+                            <p>" + d.Language + ": " + d.Speakers +"</p>"
+                            )
+                }) // End mouseover listener
+
+            // Mouse move
+            d3.selectAll('.state_bubbles')
+            .on('mousemove.map', (d) => {
+                tooltip
+                .style("top", d3.event.target.attributes['cy'].value+ 'px')
+                .style("left", d3.event.target.attributes['cx'].value+ 'px')
+                // console.log(d.Language)
+            }) // End mousemove listener
+
+            // Mouse out
+            d3.selectAll('.state_bubbles')
+                .on('mouseout.map', () => {
+                    tooltip.style('visibility', 'hidden')
+            }) // End mouseout listener
+
+        })      
+    } // End circle click function
 
     clearEventHandlers(){
         d3.selectAll('circle').on('mousemove.cluster', null);
         d3.selectAll('circle').on('mouseover.cluster', null);
         d3.selectAll('circle').on('mouseout.cluster', null);
+
+        d3.selectAll('circle').on('mousemove.map', null);
+        d3.selectAll('circle').on('mouseover.map', null);
+        d3.selectAll('circle').on('mouseout.map', null);
+
+        d3.selectAll('circle').on('click.cluster', null);
     }
 
     map_brush(active){
@@ -137,4 +205,5 @@ class cluster {
             brushGroup.call(brush);
         }
     }
-} // End cluster class
+} //End class
+

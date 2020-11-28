@@ -7,8 +7,8 @@ class US_Map{
         //console.log(data); //355 languages, 51 states/territories
         //Get and Modify Data
         this.data=data[0];
-        this.stateData = data[1];
-        this.stateCenters=data[2];
+        this.stateData = data[1]; // map_data - this is the U.S. states json file
+        this.stateCenters=data[2]; // map_center_data - this is a json file with state center locations
         //Add centers and languages per state to the data
         let that = this;
         this.mapData = this.data.map((d,i)=>{
@@ -17,6 +17,7 @@ class US_Map{
             d.LanguageIndex = that.getLanguageIndexPerState(d.State, d.Language);
             return d;
         });
+        MapData = this.mapData
 
         // https://appdividend.com/2019/04/11/how-to-get-distinct-values-from-array-in-javascript/
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from
@@ -27,7 +28,7 @@ class US_Map{
 
         this.drawStates();
         this.drawBubbles("none");//["Cajun","French"]);
-        this.tooltip();
+        // this.tooltip();
     }
 
     getLanguagesPerState(state){
@@ -42,8 +43,8 @@ class US_Map{
     //used to draw the states if they aren't hard-coded
     drawStates(){
         projection = d3.geoAlbersUsa()
-            .translate([1000/2-75,400]) // this centers the map in the SVG element
-            .scale([1150]); // this specifies how much to zoom
+        .translate([1000/2-75,400]) // this centers the map in the SVG element
+        .scale([1150]); // this specifies how much to zoom
 
         path = d3.geoPath()
             .projection(projection);
@@ -90,6 +91,31 @@ class US_Map{
                 .attr("id", "map_circles");
         }
 
+        let uniqueStates = new Set(d3.map(this.mapData, d=>d.State));
+
+        // let new_dataset = {}
+        // let new_list = []
+
+      dataF.map((d) => {
+            [d.Speakers]
+        })
+        console.log('This is dataF', dataF)
+        // uniqueStates.forEach((g) => {
+        //     dataF.ForEach((d) => {
+        //         if (d.State = g){
+
+        //         }
+        //         console.log(d,g)
+                
+
+        //     })
+        // })
+
+        
+
+
+
+
         // Draw Bubbles
         let bubbleGroup = this.svg.select("#map_circles");
 
@@ -106,39 +132,39 @@ class US_Map{
             .classed("state_bubbles", true);
     }
 
-    tooltip() {
+    // tooltip() {
 
-        // Create tooltip
-        let tooltip = d3.select('#tooltip-bar2')
+    //     // Create tooltip
+    //     let tooltip = d3.select('#tooltip-bar2')
 
-        // Mouse over
-        d3.selectAll('.state_bubbles').on('mouseover', function(d){
-            console.log("mouseover in map");
-            tooltip
-                .style('visibility', 'visible')
-                .style("top", d3.event.target.attributes['cy'].value+ 'px')
-                .style("left", d3.event.target.attributes['cx'].value+ 'px')
+    //     // Mouse over
+    //     d3.selectAll('.state_bubbles').on('mouseover', function(d){
+    //         console.log("mouseover in map");
+    //         tooltip
+    //             .style('visibility', 'visible')
+    //             .style("top", d3.event.target.attributes['cy'].value+ 'px')
+    //             .style("left", d3.event.target.attributes['cx'].value+ 'px')
 
-                .html("<p style=font-size:20px>" + d.Group + "</p> \
-                       <p>" + d.Subgroup + "</p> \
-                       <p>" + d.Language + ": " + d.Speakers +"</p>"
-                );
+    //             .html("<p style=font-size:20px>" + d.Group + "</p> \
+    //                    <p>" + d.Subgroup + "</p> \
+    //                    <p>" + d.Language + ": " + d.Speakers +"</p>"
+    //             );
 
-        }) // End mouseover listener
+    //     }) // End mouseover listener
 
-        // Mouse move
-        d3.selectAll('.state_bubbles')
-        .on('mousemove', () => {
-            tooltip
-                .style("top", d3.event.target.attributes['cy'].value+ 'px')
-                .style("left", d3.event.target.attributes['cx'].value+ 'px')
-        }) // End mousemove listener
+    //     // Mouse move
+    //     d3.selectAll('.state_bubbles')
+    //     .on('mousemove', () => {
+    //         tooltip
+    //             .style("top", d3.event.target.attributes['cy'].value+ 'px')
+    //             .style("left", d3.event.target.attributes['cx'].value+ 'px')
+    //     }) // End mousemove listener
 
-        // Mouse out
-        d3.selectAll('.state_bubbles').on('mouseout', () => {
-            tooltip.style('visibility', 'hidden')
-        }) // End mouseout listener
-    }
+    //     // Mouse out
+    //     d3.selectAll('.state_bubbles').on('mouseout', () => {
+    //         tooltip.style('visibility', 'hidden')
+    //     }) // End mouseout listener
+    // }
 
     clearEventHandlers(){
         d3.selectAll('.state_bubbles').on('mousemove', null);
@@ -152,6 +178,7 @@ class US_Map{
             let selectedData = dataset_updated.filter((d,i)=>selectedPoints.includes(i));
             let languages = [... new Set(selectedData.map(d=>d.Language))];
             this.drawBubbles(languages);
+            console.log(languages)
         }
         else{
             //doesn't work...Why?
