@@ -104,14 +104,14 @@ async function usMap(){
     function scaleCentersY_map(input){
         let scaleCenters = d3.scaleLinear()
             .domain([0,1000])
-            .range([0,900]);
+            .range([0,940]);
         return scaleCenters(input);
     }
 
     function scaleCentersX_map(input){
         let scaleCenters=d3.scaleLinear()
             .domain([0,1000])
-            .range([0,895]);
+            .range([0,927]);
         return scaleCenters(input);
     }
     // ----------------------------------------------------------------
@@ -125,9 +125,9 @@ async function usMap(){
         
         // Create the SVG
         let svg = d3.select("#vis")
-            .style('margin-left', '500px')
+            .style('margin-left', '450px')
             .append('svg')
-            .attr('width', 1000)
+            .attr('width', 1050)
             .attr('height', 1000)
             .attr('opacity', 1)
             // .attr('position', 'relative')
@@ -333,11 +333,11 @@ async function usMap(){
             .alphaDecay(.01)
             .velocityDecay(.9)
 
-        let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-100, y:-160}
-            , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:30, y:-150}
-            , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:170, y:-150}
-            , {'Group':"English",number:3, x:300, y:-142}
-            , {'Group':"ALL OTHER LANGUAGES", number:4, x: 430, y:-140}
+        let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-120, y:-170}
+            , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:40, y:-160}
+            , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:350, y:-160}
+            , {'Group':"English",number:3, x:490, y:-160}
+            , {'Group':"ALL OTHER LANGUAGES", number:4, x: 190, y:-155}
         ]
 
 

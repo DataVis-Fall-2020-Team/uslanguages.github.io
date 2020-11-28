@@ -27,8 +27,7 @@ body {
     width: 400px;
     top: 60px;
     z-index: 90;
-    margin-right: 50px;
-
+    margin-right: 30px;
 }
 
 
@@ -82,7 +81,7 @@ strong {
     z-index: 1;
     margin-left: 0;
     height: 1000px;
-    width: 1000px;
+    width: 1050px;
 }
 
 .tick line {
@@ -216,6 +215,11 @@ text {
      stroke:#a9a9a9;
      fill:none;
      stroke-width:2;
+}
+
+.state_lines{
+    stroke: black;
+    stroke-width: 2;
 }
 
 /*  Brush Styles */

@@ -9,6 +9,11 @@ class US_Map{
         this.data=data[0];
         this.stateData = data[1];
         this.stateCenters=data[2];
+        /*this.lines=["Vermont", "New Hampshire", "Massachusetts", "Rhode Island", "Connecticut",
+                    "New Jersey", "Delaware", "Maryland", "District of Columbia"];*/
+        this.lines=[[785, 685, 260, 243],[805, 745, 260, 200],[804,904,285,217],[814,858,298,289],[797,905,303,345],
+                    [777,820,340,354],[770,890,370,425],[750,810,370,430],[744,795,376,518]];
+
         //Add centers and languages per state to the data
         let that = this;
         this.mapData = this.data.map((d,i)=>{
@@ -42,8 +47,8 @@ class US_Map{
     //used to draw the states if they aren't hard-coded
     drawStates(){
         projection = d3.geoAlbersUsa()
-            .translate([1000/2-75,400]) // this centers the map in the SVG element
-            .scale([1150]); // this specifies how much to zoom
+            .translate([1000/2-70,410]) // this centers the map in the SVG element
+            .scale([1200]); // this specifies how much to zoom
 
         path = d3.geoPath()
             .projection(projection);
@@ -66,8 +71,22 @@ class US_Map{
                 "0.4l-0.4-2.1l0.9-1.3l0.9-2.1l-0.9-2.6l-3.4-2.6l1.3-0.9L569.2,530.2z M615.9, " +
                 "541.8l-1.9,0.6l3.7,1.2 l5-1.2l1.2-1.9l-3.1,0.6L615.9,541.8z M624.6, " +
                 "537.5l-1.5-0.9l2.2-1.5l0.6,1.5L624.6,537.5z")
-            .attr("transform", "translate(-65,120)")
+            .attr("transform", "translate(-55,120)")
             .classed("states", true);
+
+         //Draw lines for smaller states to link bubbles to
+        let linesGroup = this.svg.append("g")
+            .classed("id'", "lines_group");
+
+        let that = this;
+        linesGroup.selectAll("line")
+            .data(this.lines)
+            .join("line")
+            .attr("x1", d=>d[0])
+            .attr("x2", d=>d[1])
+            .attr("y1", d=>d[2])
+            .attr("y2", d=>d[3])
+            .classed("state_lines");
     }
 
     updateStateOpacity(opacity){
@@ -93,6 +112,7 @@ class US_Map{
         // Draw Bubbles
         let bubbleGroup = this.svg.select("#map_circles");
 
+        let that = this;
         let mapBubbles = bubbleGroup.selectAll("circle")
             .data(dataF)
             .join("circle")
@@ -102,8 +122,14 @@ class US_Map{
             .attr("r", d=>scaleSize_map(d.Speakers))
             .attr("cx", d=>scaleCentersX_map(d.StateCenter[0]))
             .attr("cy", d=>scaleCentersY_map(d.StateCenter[1]))
-            .attr("transform", "translate(0,140)")
+            //.attr("transform", "translate(0,140)")
+            .attr("transform", d=>{
+                let pos = [0,0];//that.GetBubbleTranslation(d);
+                return "translate("+(pos[0]-10)+","+(pos[1]+140)+")";
+            })
             .classed("state_bubbles", true);
+
+
     }
 
     tooltip() {
