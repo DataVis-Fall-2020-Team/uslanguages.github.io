@@ -174,7 +174,7 @@ loadData().then(function(data){
         views['bar1'] = new Barchart(dataset[0], svg);
 
         // Viz #2 Map
-        views['map'] = new US_Map([dataset[0],map_data,map_center_data], svg);
+        views['map'] = new US_Map([dataset[0],map_data,map_center_data, dataset[1]], svg);
         views['map'].updateStateOpacity(0);
         
         // Viz #1 Megacluster setup

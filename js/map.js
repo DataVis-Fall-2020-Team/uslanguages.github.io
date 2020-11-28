@@ -96,27 +96,25 @@ class US_Map{
         // let new_dataset = {}
         // let new_list = []
 
-      dataF.map((d) => {
-            [d.Speakers]
-        })
         console.log('This is dataF', dataF)
-        // uniqueStates.forEach((g) => {
-        //     dataF.ForEach((d) => {
-        //         if (d.State = g){
-
-        //         }
-        //         console.log(d,g)
-                
-
-        //     })
-        // })
-
-        
+        console.log(uniqueStates)
+        let new_dataset = {}
 
 
+        if (this.dataF){
+            this.uniqueStates.forEach((g) => {
+                new_dataset.State = g
+                dataF.ForEach((d) => {
+                    if (d.State = g){
+                        new_dataset.Speakers_Total += d.Speakers
+                    }
+                })
+            })
+        }
+        console.log('This is the national data', new_dataset)
 
 
-        // Draw Bubbles
+                // Draw Bubbles
         let bubbleGroup = this.svg.select("#map_circles");
 
         let mapBubbles = bubbleGroup.selectAll("circle")
