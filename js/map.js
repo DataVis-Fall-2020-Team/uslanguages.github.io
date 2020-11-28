@@ -74,19 +74,9 @@ class US_Map{
             .attr("transform", "translate(-55,120)")
             .classed("states", true);
 
-         //Draw lines for smaller states to link bubbles to
+        //Draw lines group for smaller states to link bubbles to
         let linesGroup = this.svg.append("g")
-            .classed("id'", "lines_group");
-
-        let that = this;
-        linesGroup.selectAll("line")
-            .data(this.lines)
-            .join("line")
-            .attr("x1", d=>d[0])
-            .attr("x2", d=>d[1])
-            .attr("y1", d=>d[2])
-            .attr("y2", d=>d[3])
-            .classed("state_lines");
+            .attr("id", "lines_group");
     }
 
     updateStateOpacity(opacity){
@@ -129,6 +119,24 @@ class US_Map{
             })
             .classed("state_bubbles", true);
 
+
+         //Draw lines for smaller states to link bubbles to
+        let linesGroup = d3.select("#lines_group");
+        if(languages.length > 0){
+            linesGroup.selectAll("line")
+                .data(this.lines)
+                .join("line")
+                .attr("x1", d=>d[0])
+                .attr("x2", d=>d[1])
+                .attr("y1", d=>d[2])
+                .attr("y2", d=>d[3])
+                .classed("state_lines");
+        }
+        else{
+            linesGroup.selectAll("line")
+                .data(d=>[])
+                .join("line");
+        }
 
     }
 
