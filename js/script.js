@@ -47,17 +47,13 @@ loadData().then(function(data){
         // JSON taken from: https://github.com/DataVis-Fall-2020-Team/MappingAPI/tree/master/data/geojson
         map_data = await d3.json("data/us-states.json");
         map_center_data = await d3.json("data/state-centers.json");
+        console.log('Map Data Loaded');
         return [stateData, nationalData];
     }
     catch{
         console.log("Data not loaded");
     }
  }
-
- // Used template found on: http://dataviscourse.net/tutorials/lectures/lecture-maps/
-async function usMap(){
-
-}
 
 // --------------------------------------------
         // Setup the scales 
@@ -201,11 +197,9 @@ async function usMap(){
         let svg = d3.select('#vis').select('svg')
         if (chartType !== "cluster"){
             if (chartType !== "map"){
-                //svg.selectAll('circle').transition().style('opacity',0)
                 d3.select("#cluster").transition().style('opacity', 0)
                 views['cluster'].clearEventHandlers();
-                //d3.select("#us_map").transition().style('opacity',0);
-            } 
+            }
         } // End cluster if statement
 
         if (chartType !== "bar1"){

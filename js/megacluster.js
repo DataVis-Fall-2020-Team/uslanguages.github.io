@@ -31,29 +31,28 @@ class cluster {
 
         // Mouse over
         d3.selectAll('.cluster_circles')
-            .on('mouseover', function(d){
+            .on('mouseover.cluster', function(d){
                 console.log("mouseover in cluster")
-        tooltip
-            .style("top", d3.event.target.attributes['cy'].value+ 'px')
-            .style("left", d3.event.target.attributes['cx'].value+ 'px')
-            
-            .html("<p style=font-size:20px>" + d.Group + "</p> \
-                   <p>" + d.Subgroup + "</p> \
-                   <p>" + d.Language + ": " + d.Speakers +"</p>"
-            )    
-                
+            tooltip
+                .style("top", d3.event.target.attributes['cy'].value+ 'px')
+                .style("left", d3.event.target.attributes['cx'].value+ 'px')
+
+                .html("<p style=font-size:20px>" + d.Group + "</p> \
+                       <p>" + d.Subgroup + "</p> \
+                       <p>" + d.Language + ": " + d.Speakers +"</p>"
+                )
         }) // End mouseover listener
 
         // Mouse move
         d3.selectAll('.cluster_circles')
-        .on('mousemove', () => {
+        .on('mousemove.cluster', () => {
             tooltip
             .style("top", d3.event.target.attributes['cy'].value+ 'px')
             .style("left", d3.event.target.attributes['cx'].value+ 'px')
         }) // End mousemove listener
 
         // Mouse out
-        d3.selectAll('.cluster_circles').on('mouseout', () => {
+        d3.selectAll('.cluster_circles').on('mouseout.cluster', () => {
             tooltip.style('visibility', 'hidden')
         }) // End mouseout listener
 

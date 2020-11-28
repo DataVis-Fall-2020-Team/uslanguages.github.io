@@ -219,11 +219,15 @@ text {
 
 .state_lines{
     stroke: black;
-    stroke-width: 2;
+    stroke-width: 3;
 }
+
+/*.state_bubbles:hover{
+    fill:black;
+    r:7;
+}*/
 
 /*  Brush Styles */
 .regular {
-    /*fill: #5ea3df;*/
     fill: lightgrey;
 }

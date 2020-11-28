@@ -109,14 +109,16 @@ class US_Map{
             .attr("fill", d=>colorScale(d.Group))
             .attr("stroke", "black")
             //.style("opacity", 0.5)
-            .attr("r", d=>scaleSize_map(d.Speakers))
+            //.attr("r", d=>scaleSize_map(d.Speakers))
+            .attr("r", 2)
             .attr("cx", d=>scaleCentersX_map(d.StateCenter[0]))
             .attr("cy", d=>scaleCentersY_map(d.StateCenter[1]))
             //.attr("transform", "translate(0,140)")
             .attr("transform", d=>{
-                let pos = [0,0];//that.GetBubbleTranslation(d);
+                let pos = that.GetBubbleTranslation(d);
                 return "translate("+(pos[0]-10)+","+(pos[1]+140)+")";
             })
+            .attr("class", d=>d.Language.replace(/\s+/g,'-').toLowerCase())
             .classed("state_bubbles", true);
 
 
@@ -137,10 +139,11 @@ class US_Map{
                 .data(d=>[])
                 .join("line");
         }
-
     }
 
+    /* Create Tooltip and make language of circles grow */
     tooltip() {
+        let that = this;
 
         // Create tooltip
         let tooltip = d3.select('#tooltip-bar2')
@@ -158,6 +161,18 @@ class US_Map{
                        <p>" + d.Language + ": " + d.Speakers +"</p>"
                 );
 
+            // Grow Circle
+            let hovered_language = d.Language.replace(/\s+/g,'-').toLowerCase();
+
+            d3.selectAll("."+hovered_language)
+                .attr("r", d=>{
+                    if(d.Language == hovered_language){
+                        return scaleSize_map(d.Speakers);
+                    }
+                    else{
+                        return 2;
+                    }
+                });
         }) // End mouseover listener
 
         // Mouse move
@@ -195,11 +210,11 @@ class US_Map{
 
     GetBubbleTranslation(d){
         let radius = 2;
-        let degree = 20/3.14;
+        let degree = 15/3.14;
         let modulus = 4;
 
-        let newX = radius^(d.LanguageIndex%modulus) * Math.cos(degree*d.LanguageIndex)*10;
-        let newY = radius^(d.LanguageIndex%modulus) * Math.sin(degree*d.LanguageIndex)*10;
+        let newX = radius^(d.LanguageIndex%modulus) * Math.cos(degree*d.LanguageIndex)*8;
+        let newY = radius^(d.LanguageIndex%modulus) * Math.sin(degree*d.LanguageIndex)*8;
 
         return [newX, newY];
     }
