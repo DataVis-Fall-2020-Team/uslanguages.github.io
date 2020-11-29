@@ -1,20 +1,22 @@
 // Set global variables
 let dataset, dataset_updated
 let simulation, nodes, clusters
+let map_data, map_center_data, path, projection
 let views = {} //dictionary to store view objects
 
 // --------------------------------------------
         // Import the data
 // --------------------------------------------
 
-loadData().then(data => {
+loadData().then(function(data){
     dataset = data
     
-    setTimeout(setup_page(), 100) 
+    setTimeout(setup_page(), 100)
  })
  
  async function loadData() {
     try {
+        // State Data
         const stateData = await d3.csv('./data/LanguageData_States.csv', function (d){ 
             return {
                 Group: d.Group,
@@ -26,6 +28,8 @@ loadData().then(data => {
             }
         });
         console.log('State Data Loaded:', stateData);
+
+        // National Data
         const nationalData = await d3.csv('./data/National_Languages.csv', function(d){
             return {
                 Group: d.Group,
@@ -38,12 +42,13 @@ loadData().then(data => {
         });
         console.log('National Data Loaded');
         dataset_updated = nationalData.filter(d => d.Group != 'Total')
+        // Mapping Data
+        // JSON taken from: https://github.com/DataVis-Fall-2020-Team/MappingAPI/tree/master/data/geojson
+        map_data = await d3.json("data/us-states.json");
+        map_center_data = await d3.json("data/state-centers.json");
         const compareData = await d3.csv('./data/language_compare.csv');
         const percentageData = await d3.csv('./data/language_percentages.csv');
         const languageMap = await d3.csv('./data/language_map.csv');
-        console.log("language map loaded: ", languageMap);
-
-        console.log('Comparison Data Loaded');
 
         return [stateData, nationalData, compareData, percentageData, languageMap];
     }
@@ -51,6 +56,11 @@ loadData().then(data => {
         console.log("Data not loaded");
     }
  }
+
+ // Used template found on: http://dataviscourse.net/tutorials/lectures/lecture-maps/
+async function usMap(){
+
+}
 
 // --------------------------------------------
         // Setup the scales 
@@ -77,9 +87,9 @@ loadData().then(data => {
     function scaleSize(input){ 
         
         let my_scaleSize = d3.scalePow() 
-            .exponent(.15) // Smaller exponent = bigger circles
+            .exponent(.4) // Smaller exponent = bigger circles
             .domain([1, 232000000])
-            .range([1,65])
+            .range([1,250])
             .nice()
         return my_scaleSize(input)
     }
@@ -92,6 +102,20 @@ loadData().then(data => {
             .range([1,30])
             .nice()
         return my_scaleSize_map(input)
+    }
+
+    function scaleCentersY_map(input){
+        let scaleCenters = d3.scaleLinear()
+            .domain([0,1000])
+            .range([0,900]);
+        return scaleCenters(input);
+    }
+
+    function scaleCentersX_map(input){
+        let scaleCenters=d3.scaleLinear()
+            .domain([0,1000])
+            .range([0,895]);
+        return scaleCenters(input);
     }
     // ----------------------------------------------------------------
 
@@ -111,10 +135,6 @@ loadData().then(data => {
             .attr('opacity', 1)
             // .attr('position', 'relative')
 
-        // Viz #2 - Map
-        d3.select("#map").style('opacity',0)
-        console.log("dataset_updatedd", dataset_updated);
-        
         // Simulation setup
         simulation = d3.forceSimulation(dataset_updated)
 
@@ -127,7 +147,6 @@ loadData().then(data => {
           }))
         //   .velocityDecay(.7)
         // .alphaDecay(.05) // Speed of cooling the simulation
-        
 
           clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:100, y:110}
           , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:120, y:120}
@@ -165,7 +184,8 @@ loadData().then(data => {
         views['bar1'] = new Barchart(dataset[0], svg);
 
         // Viz #2 Map
-        views['map'] = new US_Map(dataset[0]);
+        views['map'] = new US_Map([dataset[0],map_data,map_center_data], svg);
+        views['map'].updateStateOpacity(0);
         
         // Viz #1 Megacluster setup
         views['cluster'] = new cluster(svg);
@@ -173,10 +193,9 @@ loadData().then(data => {
         // Define each tick of simulation
         simulation.on('tick', () => {
             d3.selectAll('.cluster_circles')
-                .attr('cx', (d) => d.x + 300)
-                .attr('cy', (d) => d.y + 300)
-        }) 
-
+                .attr('cx', (d) => d.x + 275)
+                .attr('cy', (d) => d.y + 250)
+     }) 
     } // End setup_page function
 
 
@@ -187,9 +206,10 @@ loadData().then(data => {
         let svg = d3.select('#vis').select('svg')
         if (chartType !== "cluster"){
             if (chartType !== "map"){
-            //svg.selectAll('circle').transition().style('opacity',0)
-            d3.select("#cluster").transition().style('opacity', 0)
-            views['cluster'].clearEventHandlers();
+                //svg.selectAll('circle').transition().style('opacity',0)
+                d3.select("#cluster").transition().style('opacity', 0)
+                views['cluster'].clearEventHandlers();
+                //d3.select("#us_map").transition().style('opacity',0);
             } 
         } // End cluster if statement
 
@@ -206,7 +226,9 @@ loadData().then(data => {
         } // End bar2 if statement
 
         if (chartType !== "map"){
-            d3.select('#map').transition().style('opacity',0)
+            d3.select("#us_map").transition().style('opacity',0);
+            views['map'].clearEventHandlers();
+            views['cluster'].map_brush(false);
         } // End map if statement
 
         if (chartType !== "area"){
@@ -217,6 +239,13 @@ loadData().then(data => {
 
     } // End function clean()
 
+// --------------------------------------------
+        // Update Other Views
+// --------------------------------------------
+
+    function updateOtherViews(selectedPoints){
+        views['map'].updateView(selectedPoints);
+    }
 
 // --------------------------------------------
         // Draw the visualizations
@@ -226,10 +255,9 @@ loadData().then(data => {
     function draw_cluster(){
         // console.log("CAN YOU SEE THIS YET?")
         //Stop simulation
-        simulation.stop()
+        // simulation.stop()
         
         clean('cluster') // Turns off opacity for all other charts
-        
         // let svg = d3.select("#vis")
         //     .select('svg')
         
@@ -249,7 +277,8 @@ loadData().then(data => {
         .force("collide", d3.forceCollide().radius(function(d){
             return scaleSize(d.Speakers) + 3
         }))
-        .alphaDecay(.05)
+        .alphaDecay(0.0228)
+        .velocityDecay(.4)
 
 
         clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:100, y:110}
@@ -275,47 +304,56 @@ loadData().then(data => {
 
         // clustering()
 
-    
     } // end draw0 function
 
     function draw_map(){
         simulation.stop()
-
         // Draw the map
         clean('map')
-        d3.select("#map").raise();
-
-        d3.select("#map").style('opacity',1)
-
+        d3.select("#us_map").raise();
+        d3.select("#us_map").style('opacity',1);
+        views['map'].updateStateOpacity(1);
+        views['map'].tooltip();
+		
         //Move the bubbles
 
         // views['cluster'].tooltip()  // Doesn't put tooltip back
 
-        d3.select("#cluster")
-            .transition()
-            .style('opacity',1)
+        // d3.select("#cluster")
+        //     .data(dataset_updated)
+        //     .transition()
+        //     .attr('r', d => scaleSize_map(d.Speakers))
 
         d3.selectAll('.cluster_circles')
+            .transition()
+            .duration(1000)
             .attr('r',d=> scaleSize_map(d.Speakers))
 
-        simulation.alpha(0.9).restart()
+        d3.select('#cluster')
+            .style('opacity',1)
+
+
+        simulation.alpha(1).restart()
 
         simulation
+            // .transition()
             .force("cluster", clustering)
             .force("collide", d3.forceCollide().radius(function(d){
                 return scaleSize_map(d.Speakers)
             }))
-            .alphaDecay(.1)
+            .alphaDecay(.01)
+            .velocityDecay(.9)
 
-        let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-100, y:-200}
-        , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:50, y:-200}
-        , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:200, y:-200}
-        , {'Group':"English",number:3, x:350, y:-200}
-        , {'Group':"ALL OTHER LANGUAGES", number:4, x: 500, y:-200}
-      ]
+        let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-100, y:-160}
+            , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:30, y:-150}
+            , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:170, y:-150}
+            , {'Group':"English",number:3, x:300, y:-142}
+            , {'Group':"ALL OTHER LANGUAGES", number:4, x: 430, y:-140}
+        ]
 
-      // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
-      function clustering(alpha) {
+
+        // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
+        function clustering(alpha) {
           for (let i = 0, n = dataset_updated.length, node, cluster, k = alpha * 1; i < n; ++i) {
               node = dataset_updated[i];
               cluster = clusters[node.number];
@@ -323,7 +361,11 @@ loadData().then(data => {
               node.vy -= (node.y - cluster.y) * k;
               }
           }
+        
+    //   d3.select("#map").raise();
 
+
+        views['cluster'].map_brush(true);
     } // end draw_map function  
 
     // Draw Horizontal Barchart
