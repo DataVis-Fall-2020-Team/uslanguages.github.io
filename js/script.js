@@ -42,12 +42,15 @@ loadData().then(function(data){
         });
         console.log('National Data Loaded');
         dataset_updated = nationalData.filter(d => d.Group != 'Total')
-
         // Mapping Data
         // JSON taken from: https://github.com/DataVis-Fall-2020-Team/MappingAPI/tree/master/data/geojson
         map_data = await d3.json("data/us-states.json");
         map_center_data = await d3.json("data/state-centers.json");
-        return [stateData, nationalData];
+        const compareData = await d3.csv('./data/language_compare.csv');
+        const percentageData = await d3.csv('./data/language_percentages.csv');
+        const languageMap = await d3.csv('./data/language_map.csv');
+
+        return [stateData, nationalData, compareData, percentageData, languageMap];
     }
     catch{
         console.log("Data not loaded");
@@ -170,6 +173,9 @@ async function usMap(){
                 }
             }
 
+        //Viz #5 Stacked Area Chart
+        views['area'] = new AreaChart(dataset[2], dataset[3], dataset[4], svg);
+
         // Viz #4 Bar Graph setup
         views['bar2'] = new BarChart2(dataset[1], svg);
         views['bar2'].clearEventHandlers();
@@ -190,7 +196,6 @@ async function usMap(){
                 .attr('cx', (d) => d.x + 275)
                 .attr('cy', (d) => d.y + 250)
      }) 
-
     } // End setup_page function
 
 
@@ -225,6 +230,12 @@ async function usMap(){
             views['map'].clearEventHandlers();
             views['cluster'].map_brush(false);
         } // End map if statement
+
+        if (chartType !== "area"){
+            d3.select('#area').transition().style('opacity',0)
+            views['area'].drawChart();
+            views['area'].clearEventHandlers();
+        } //End area if statement
 
     } // End function clean()
 
@@ -357,7 +368,7 @@ async function usMap(){
         views['cluster'].map_brush(true);
     } // end draw_map function  
 
-    // Draw 2nd Viz
+    // Draw Horizontal Barchart
     function draw_bar1(){
     
         //Stop simulation
@@ -371,9 +382,9 @@ async function usMap(){
             .style('opacity',.8)
         views['bar1'].attachEventHandlers();
 
-    } // end draw2 function    
+    } // end draw horizontal barchart function    
 
-    // Draw 2nd Barchart
+    // Draw Vertical Barchart
     function draw_bar2(){
         d3.select("#tooltip-bar2")
             .style("opacity", 0);
@@ -421,10 +432,7 @@ async function usMap(){
                     .style("opacity", 1)
                 d3.select(".simRects").remove();
                 d3.select("#barchart2").attr("pointer-events", "auto");
-
                 views['bar2'].attachEventHandlers();
-
-
             }
         }   
 
@@ -453,11 +461,24 @@ async function usMap(){
                     else return d.startY;
                 })
                 .on("end", callbackFunction);
-        
-        
-
     
-    } // end draw3 function   
+    } // end draw vertial barchcart function   
+
+    // Draw Area Chart
+    function draw_area(){
+    
+        //Stop simulation
+        simulation.stop()
+        
+        clean('area')
+
+        d3.select("#area").raise();
+        d3.select('#area')
+            .transition()
+            .style('opacity',1)
+        views['area'].attachEventHandlers();
+
+    } // end draw area chart function 
 
  
 
@@ -469,6 +490,7 @@ async function usMap(){
         draw_map,
         draw_bar1,
         draw_bar2,
+        draw_area,
     ]
     
     //All the scrolling function
