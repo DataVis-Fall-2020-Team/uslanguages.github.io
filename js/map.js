@@ -1,6 +1,6 @@
-//TODO: figure out why tooltips for map aren't working
-//TODO: Write up blurb
+//TODO: Finish writing blurb
 //TODO: Maybe: add some storytelling?
+//TODO: Add a toggle button to display bubble speaker values without hover
 class US_Map{
     // Creates a US_Map object showing language distribution
     constructor(data, svg){
@@ -47,7 +47,7 @@ class US_Map{
     //used to draw the states if they aren't hard-coded
     drawStates(){
         projection = d3.geoAlbersUsa()
-            .translate([1000/2-70,410]) // this centers the map in the SVG element
+            .translate([1000/2-50,410]) // this centers the map in the SVG element
             .scale([1200]); // this specifies how much to zoom
 
         path = d3.geoPath()
@@ -71,7 +71,7 @@ class US_Map{
                 "0.4l-0.4-2.1l0.9-1.3l0.9-2.1l-0.9-2.6l-3.4-2.6l1.3-0.9L569.2,530.2z M615.9, " +
                 "541.8l-1.9,0.6l3.7,1.2 l5-1.2l1.2-1.9l-3.1,0.6L615.9,541.8z M624.6, " +
                 "537.5l-1.5-0.9l2.2-1.5l0.6,1.5L624.6,537.5z")
-            .attr("transform", "translate(-55,120)")
+            .attr("transform", "translate(-35,120)")
             .classed("states", true);
 
         //Draw lines group for smaller states to link bubbles to
@@ -116,7 +116,7 @@ class US_Map{
             //.attr("transform", "translate(0,140)")
             .attr("transform", d=>{
                 let pos = that.GetBubbleTranslation(d);
-                return "translate("+(pos[0]-10)+","+(pos[1]+140)+")";
+                return "translate("+(pos[0]+10)+","+(pos[1]+140)+")";
             })
             .attr("class", d=>d.Language.replaceAll(" ",'_')
                 .replaceAll(",", "")
@@ -131,8 +131,8 @@ class US_Map{
             linesGroup.selectAll("line")
                 .data(this.lines)
                 .join("line")
-                .attr("x1", d=>d[0])
-                .attr("x2", d=>d[1])
+                .attr("x1", d=>d[0]+20)
+                .attr("x2", d=>d[1]+20)
                 .attr("y1", d=>d[2])
                 .attr("y2", d=>d[3])
                 .classed("state_lines");
@@ -144,20 +144,20 @@ class US_Map{
         }
 
         //Has to always be created after bubbles are created
-        this.tooltip();
+        this.attachEventHandlers();
     }
 
-    /* Create Tooltip and make language of circles grow */
-    tooltip() {
+    /* Create Event Handlers and make language of circles grow */
+    attachEventHandlers() {
         let that = this;
 
-        // Create tooltip
-        let toolBox = d3.select('#LanguageInfo')
+        // Create info box in side panel
+        let infoBox = d3.select('#LanguageInfo')
 
         // Mouse over
         d3.selectAll('.state_bubbles').on('mouseover.map', function(d){
             console.log("mouseover in map");
-            toolBox.html("<p style=font-size:20px>" + d.Group + "</p> \
+            infoBox.html("<p style=font-size:20px>" + d.Group + "</p> \
                        <p>" + d.Subgroup + "</p> \
                        <p>" + d.Language + ": " + d.Speakers +"</p>"
                 );
@@ -175,26 +175,24 @@ class US_Map{
             let max = d3.max(selection);
 
             d3.selectAll(".state_bubbles")
-                .attr("r", 2)
-                //.classed("highlight", false)
-                .classed("normal", true);
+                .attr("r", 2);
 
-            d3.selectAll("."+hovered_class)
+            let circles = d3.selectAll("."+hovered_class)
                 .attr("r", function(d1){
                     return scaleSelection_map(d1.Speakers, min, max);
                 })
-                .attr("x-index", 1)
-                //.classed("highlight", true)
-                .classed("normal", false);
+                .style("opacity", .9);
+
+            // Bring language circles to front
+            circles.raise();
+
         }) // End mouseover listener
 
         // Mouse out
         d3.selectAll('.state_bubbles').on('mouseout.map', () => {
-            toolBox.html("");
+            infoBox.html("");
             d3.selectAll(".state_bubbles")
-                .attr("r", 2)
-                //.classed("highlight", false)
-                .classed("normal", false);
+                .attr("r", 2);
         }) // End mouseout listener
     }
 

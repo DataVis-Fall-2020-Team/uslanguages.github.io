@@ -114,7 +114,7 @@ loadData().then(function(data){
     function scaleSelection_map(input, min, max){
         let scaleBubbles = d3.scaleLinear()
             .domain([min,max])
-            .range([3,40]);
+            .range([8,40]);
 
         return scaleBubbles(input);
     }
@@ -302,7 +302,7 @@ loadData().then(function(data){
         d3.select("#us_map").raise();
         d3.select("#us_map").style('opacity',1);
         views['map'].updateStateOpacity(1);
-        views['map'].tooltip();
+        views['map'].attachEventHandlers();
 		
         //Move the bubbles
 
