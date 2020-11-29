@@ -98,20 +98,20 @@ class US_Map{
 
         console.log('This is dataF', dataF)
         console.log(uniqueStates)
-        let new_dataset = {}
+        
+        let statedata_consolidated = uniqueStates
 
 
-        if (this.dataF){
-            this.uniqueStates.forEach((g) => {
-                new_dataset.State = g
+        if (dataF.length > 0){
+            statedata_consolidated.forEach((state) => {
                 dataF.ForEach((d) => {
-                    if (d.State = g){
-                        new_dataset.Speakers_Total += d.Speakers
+                    if (d.State = state){
+                        statedata_consolidated.Speakers_Total += d.Speakers
                     }
                 })
             })
         }
-        console.log('This is the national data', new_dataset)
+        console.log('This is the national data', statedata_consolidated)
 
 
                 // Draw Bubbles
