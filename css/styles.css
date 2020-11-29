@@ -182,6 +182,7 @@ button:hover{
     opacity: 0.8;
     pointer-events: none;
     margin: 2px;
+    z-index:  100;
     
 }
 #tooltip-bar2 h2{
@@ -190,6 +191,19 @@ button:hover{
     font-style: bold;
     text-align: left;
 }
+
+#sortLabelButton {
+    fill:  lightgrey;
+}
+
+#sortLabelButton.clicked {
+    fill:  darkgrey;
+    stroke: black;
+    stroke-width: 1;
+}
+.selectButtons rect{
+    fill: light-grey;
+  }
 
 text {
     font-size: 10px;
