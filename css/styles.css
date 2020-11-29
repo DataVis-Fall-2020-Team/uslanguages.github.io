@@ -18,7 +18,7 @@ body {
     overflow-x: hidden;
     position: relative;
     background-color: rgb(243, 236, 236);
-
+    padding: 0px 20px;
 }
 
 #sections {
@@ -222,12 +222,12 @@ text {
     stroke-width: 3;
 }
 
-/*.state_bubbles:hover{
-    fill:black;
-    r:7;
-}*/
-
 /*  Brush Styles */
 .regular {
     fill: lightgrey;
+}
+
+/* Bubble Hover Styles */
+.highlight {
+    fill: black;
 }

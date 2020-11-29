@@ -9,18 +9,19 @@ class US_Map{
         this.data=data[0];
         this.stateData = data[1];
         this.stateCenters=data[2];
-        /*this.lines=["Vermont", "New Hampshire", "Massachusetts", "Rhode Island", "Connecticut",
-                    "New Jersey", "Delaware", "Maryland", "District of Columbia"];*/
         this.lines=[[785, 685, 260, 243],[805, 745, 260, 200],[804,904,285,217],[814,858,298,289],[797,905,303,345],
                     [777,820,340,354],[770,890,370,425],[750,810,370,430],[744,795,376,518]];
 
         //Add centers and languages per state to the data
         let that = this;
         this.mapData = this.data.map((d,i)=>{
-            d.StateCenter = this.stateCenters[d.State],
-            d.StateLanguages = that.getLanguagesPerState(d.State),
-            d.LanguageIndex = that.getLanguageIndexPerState(d.State, d.Language);
-            return d;
+            if(d.Speakers > 0){
+                d.StateCenter = this.stateCenters[d.State],
+                d.StateLanguages = that.getLanguagesPerState(d.State),
+                d.LanguageIndex = that.getLanguageIndexPerState(d.State, d.Language);
+                return d;
+            }
+            return "";
         });
 
         // https://appdividend.com/2019/04/11/how-to-get-distinct-values-from-array-in-javascript/
@@ -32,7 +33,6 @@ class US_Map{
 
         this.drawStates();
         this.drawBubbles("none");//["Cajun","French"]);
-        this.tooltip();
     }
 
     getLanguagesPerState(state){
@@ -118,7 +118,10 @@ class US_Map{
                 let pos = that.GetBubbleTranslation(d);
                 return "translate("+(pos[0]-10)+","+(pos[1]+140)+")";
             })
-            .attr("class", d=>d.Language.replace(/\s+/g,'-').toLowerCase())
+            .attr("class", d=>d.Language.replaceAll(" ",'_')
+                .replaceAll(",", "")
+                .replaceAll("'", "-")
+                .toLowerCase())
             .classed("state_bubbles", true);
 
 
@@ -139,6 +142,9 @@ class US_Map{
                 .data(d=>[])
                 .join("line");
         }
+
+        //Has to always be created after bubbles are created
+        this.tooltip();
     }
 
     /* Create Tooltip and make language of circles grow */
@@ -146,53 +152,56 @@ class US_Map{
         let that = this;
 
         // Create tooltip
-        let tooltip = d3.select('#tooltip-bar2')
+        let toolBox = d3.select('#LanguageInfo')
 
         // Mouse over
-        d3.selectAll('.state_bubbles').on('mouseover', function(d){
+        d3.selectAll('.state_bubbles').on('mouseover.map', function(d){
             console.log("mouseover in map");
-            tooltip
-                .style('visibility', 'visible')
-                .style("top", d3.event.target.attributes['cy'].value+ 'px')
-                .style("left", d3.event.target.attributes['cx'].value+ 'px')
-
-                .html("<p style=font-size:20px>" + d.Group + "</p> \
+            toolBox.html("<p style=font-size:20px>" + d.Group + "</p> \
                        <p>" + d.Subgroup + "</p> \
                        <p>" + d.Language + ": " + d.Speakers +"</p>"
                 );
 
             // Grow Circle
-            let hovered_language = d.Language.replace(/\s+/g,'-').toLowerCase();
+            let hovered_class = d.Language.replaceAll(" ",'_')
+                .replaceAll(",", "")
+                .replaceAll("'", "-")
+                .toLowerCase();
+            console.log(d.Language, hovered_class);
 
-            d3.selectAll("."+hovered_language)
-                .attr("r", d=>{
-                    if(d.Language == hovered_language){
-                        return scaleSize_map(d.Speakers);
-                    }
-                    else{
-                        return 2;
-                    }
-                });
+            let selection = d3.map(that.data.filter(e=>e.Language == d.Language), e=>e.Speakers);
+            console.log(selection);
+            let min = d3.min(selection);
+            let max = d3.max(selection);
+
+            d3.selectAll(".state_bubbles")
+                .attr("r", 2)
+                //.classed("highlight", false)
+                .classed("normal", true);
+
+            d3.selectAll("."+hovered_class)
+                .attr("r", function(d1){
+                    return scaleSelection_map(d1.Speakers, min, max);
+                })
+                .attr("x-index", 1)
+                //.classed("highlight", true)
+                .classed("normal", false);
         }) // End mouseover listener
 
-        // Mouse move
-        d3.selectAll('.state_bubbles')
-        .on('mousemove', () => {
-            tooltip
-                .style("top", d3.event.target.attributes['cy'].value+ 'px')
-                .style("left", d3.event.target.attributes['cx'].value+ 'px')
-        }) // End mousemove listener
-
         // Mouse out
-        d3.selectAll('.state_bubbles').on('mouseout', () => {
-            tooltip.style('visibility', 'hidden')
+        d3.selectAll('.state_bubbles').on('mouseout.map', () => {
+            toolBox.html("");
+            d3.selectAll(".state_bubbles")
+                .attr("r", 2)
+                //.classed("highlight", false)
+                .classed("normal", false);
         }) // End mouseout listener
     }
 
     clearEventHandlers(){
-        d3.selectAll('.state_bubbles').on('mousemove', null);
-        d3.selectAll('.state_bubbles').on('mouseover', null);
-        d3.selectAll('.state_bubbles').on('mouseout', null);
+        d3.selectAll('.state_bubbles').on('mousemove.map', null);
+        d3.selectAll('.state_bubbles').on('mouseover.map', null);
+        d3.selectAll('.state_bubbles').on('mouseout.map', null);
     }
 
     updateView(selectedPoints){

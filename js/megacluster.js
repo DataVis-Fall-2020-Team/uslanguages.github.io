@@ -7,14 +7,14 @@ class cluster {
             .style('opacity', 1)
 
         this.draw_circles()
-        //this.map_brush()
         this.tooltip()
 
     } // End constructor call
 
     draw_circles(){
-        nodes = d3.select("#cluster").append("g")
-          .attr('id','cluster_group')
+        nodes = d3.select("#cluster")
+          //.append("g")
+          //.attr('id','cluster_group')
           .selectAll('circle')
           .data(dataset_updated)
           .join('circle')
@@ -59,9 +59,9 @@ class cluster {
     } // End of tooltip function
 
     clearEventHandlers(){
-        d3.selectAll('circle').on('mousemove.cluster', null);
-        d3.selectAll('circle').on('mouseover.cluster', null);
-        d3.selectAll('circle').on('mouseout.cluster', null);
+        d3.selectAll('.cluster_circles').on('mousemove.cluster', null);
+        d3.selectAll('.cluster_circles').on('mouseover.cluster', null);
+        d3.selectAll('.cluster_circles').on('mouseout.cluster', null);
     }
 
     map_brush(active){
@@ -73,6 +73,8 @@ class cluster {
 
         if(!active){
             d3.selectAll(".brush").remove();
+            d3.selectAll(".cluster_circles")
+                .classed("regular", false);
         }
         else{
             const brushGroup = d3.select("#cluster").append("g")

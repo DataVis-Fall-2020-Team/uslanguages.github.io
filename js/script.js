@@ -110,6 +110,14 @@ loadData().then(function(data){
             .range([0,927]);
         return scaleCenters(input);
     }
+
+    function scaleSelection_map(input, min, max){
+        let scaleBubbles = d3.scaleLinear()
+            .domain([min,max])
+            .range([3,40]);
+
+        return scaleBubbles(input);
+    }
     // ----------------------------------------------------------------
 
 // --------------------------------------------
@@ -241,10 +249,7 @@ loadData().then(function(data){
         // simulation.stop()
         
         clean('cluster') // Turns off opacity for all other charts
-        // let svg = d3.select("#vis")
-        //     .select('svg')
-        
-        //svg.selectAll('circle')
+
         d3.select("#cluster").raise();
         d3.select("#cluster")
             .transition()
@@ -293,6 +298,7 @@ loadData().then(function(data){
         simulation.stop()
         // Draw the map
         clean('map')
+        d3.select("#cluster").raise();
         d3.select("#us_map").raise();
         d3.select("#us_map").style('opacity',1);
         views['map'].updateStateOpacity(1);
