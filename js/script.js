@@ -79,9 +79,9 @@ loadData().then(function(data){
     function scaleSize(input){ 
         
         let my_scaleSize = d3.scalePow() 
-            .exponent(.2) // Smaller exponent = bigger circles
+            .exponent(.4) // Smaller exponent = bigger circles
             .domain([1, 232000000])
-            .range([1,100])
+            .range([1,250])
             .nice()
         return my_scaleSize(input)
     }
