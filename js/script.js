@@ -312,10 +312,32 @@ loadData().then(function(data){
     } // end draw0 function
 
     function draw_map(){
+
+
+    
+        // TOGGLE
+        toggle_object.on('click.toggle', function(d){
+            if (toggle_object.node().checked){
+                views['cluster'].map_brush(true)
+                d3.select("#cluster_group").raise();
+
+    
+            }
+            else {
+                views['cluster'].map_brush(false)
+                views['cluster'].attach_maplisteners();
+                d3.select("#cluster_group").raise();
+
+            }
+        })
+        views['cluster'].tooltip();
+        views['cluster'].attach_maplisteners()
+
         simulation.stop()
         // Draw the map
         clean('map')
         d3.select("#cluster").raise();
+
 
         // d3.select("#us_map").raise();
         d3.select("#us_map").style('opacity',1);
@@ -361,20 +383,7 @@ loadData().then(function(data){
               }
           }
         
-    views['cluster'].tooltip();
-    views['cluster'].attach_maplisteners()
 
-    // TOGGLE
-    toggle_object.on('click.toggle', function(d){
-        if (toggle_object.node().checked){
-            views['cluster'].map_brush(true)
-
-        }
-        else {
-            views['cluster'].map_brush(false)
-            views['cluster'].attach_maplisteners();
-        }
-    })
 
 
 
