@@ -2,6 +2,7 @@
 let dataset, dataset_updated
 let simulation, nodes, clusters
 let map_data, map_center_data, path, projection
+let map_simulation, map_nodes, map_clusters, dataset0_updated;
 let views = {} //dictionary to store view objects
 
 // --------------------------------------------
@@ -47,6 +48,7 @@ loadData().then(function(data){
         // JSON taken from: https://github.com/DataVis-Fall-2020-Team/MappingAPI/tree/master/data/geojson
         map_data = await d3.json("data/us-states.json");
         map_center_data = await d3.json("data/state-centers.json");
+        dataset0_updated = [];
         console.log('Map Data Loaded');
         return [stateData, nationalData];
     }
@@ -174,6 +176,20 @@ loadData().then(function(data){
                 }
             }
 
+        // Map Simulation Prep
+        map_clusters = [];
+        let ind = 0;
+        d3.keys(map_center_data).forEach((d,i)=>{
+            if(d!="Notes"){
+                map_clusters[ind] = {
+                    'State': d,
+                    'x': d3.values(map_center_data)[i][0],
+                    'y': d3.values(map_center_data)[i][1],
+                };
+                ind++;
+            }
+        });
+
         // Viz #4 Bar Graph setup
         views['bar2'] = new BarChart2(dataset[1], svg);
         views['bar2'].clearEventHandlers();
@@ -184,7 +200,7 @@ loadData().then(function(data){
         // Viz #2 Map
         views['map'] = new US_Map([dataset[0],map_data,map_center_data], svg);
         views['map'].updateStateOpacity(0);
-        
+
         // Viz #1 Megacluster setup
         views['cluster'] = new cluster(svg);
 
@@ -193,6 +209,8 @@ loadData().then(function(data){
             d3.selectAll('.cluster_circles')
                 .attr('cx', (d) => d.x + 275)
                 .attr('cy', (d) => d.y + 250)
+
+
      }) 
 
     } // End setup_page function
@@ -296,14 +314,16 @@ loadData().then(function(data){
 
     function draw_map(){
         simulation.stop()
+
         // Draw the map
         clean('map')
+        //Raise these views so that there's no fighting with the bar charts
         d3.select("#cluster").raise();
         d3.select("#us_map").raise();
         d3.select("#us_map").style('opacity',1);
         views['map'].updateStateOpacity(1);
         views['map'].attachEventHandlers();
-		
+
         //Move the bubbles
 
         // views['cluster'].tooltip()  // Doesn't put tooltip back
@@ -320,7 +340,6 @@ loadData().then(function(data){
 
         d3.select('#cluster')
             .style('opacity',1)
-
 
         simulation.alpha(1).restart()
 
@@ -340,7 +359,6 @@ loadData().then(function(data){
             , {'Group':"ALL OTHER LANGUAGES", number:4, x: 190, y:-155}
         ]
 
-
         // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
         function clustering(alpha) {
           for (let i = 0, n = dataset_updated.length, node, cluster, k = alpha * 1; i < n; ++i) {
@@ -350,12 +368,42 @@ loadData().then(function(data){
               node.vy -= (node.y - cluster.y) * k;
               }
           }
-        
-    //   d3.select("#map").raise();
-
 
         views['cluster'].map_brush(true);
+
     } // end draw_map function  
+
+    // Sub-function to Map, is called when map bubbles are drawn
+    function clusterMapBubbles(){
+        if(dataset0_updated.length > 0){
+            console.log("Clustering Map!");
+
+            map_simulation = d3.forceSimulation(dataset0_updated)
+                // .transition()
+                .force("cluster", map_clustering)
+                .force("collide", d3.forceCollide().radius(function(d){
+                    return 2.2;
+                }))
+                .alphaDecay(.09)
+                .velocityDecay(.7)
+
+            map_simulation.on('tick', () => {
+                d3.selectAll('.state_bubbles')
+                    .attr("cx", (d) => d.x + 0)
+                    .attr("cy", (d) => d.y + 140)
+            })
+
+            // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
+            function map_clustering(alpha) {
+                let j = map_clusters.length;
+                for (let i = 0, n = dataset0_updated.length, map_node, map_cluster, k = alpha * 1; i < n; ++i) {
+                    map_node = dataset0_updated[i];
+                    map_node.vx -= (map_node.x - map_node.StateCenter[0]) * k;
+                    map_node.vy -= (map_node.y - map_node.StateCenter[1]) * k;
+                }
+            }
+        }
+    }
 
     // Draw 2nd Viz
     function draw_bar1(){

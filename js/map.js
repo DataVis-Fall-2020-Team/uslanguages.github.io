@@ -9,14 +9,18 @@ class US_Map{
         this.data=data[0];
         this.stateData = data[1];
         this.stateCenters=data[2];
-        this.lines=[[785, 685, 260, 243],[805, 745, 260, 200],[804,904,285,217],[814,858,298,289],[797,905,303,345],
-                    [777,820,340,354],[770,890,370,425],[750,810,370,430],[744,795,376,518]];
+        this.lines=[[785, 705, 260, 225],[805, 753, 260, 200],[804,894,285,225],[814,858,298,289],[797,895,303,346],
+                    [777,827,340,360],[770,882,370,427],[750,810,370,430],[744,815,376,508]];
 
+        //console.log(this.stateCenters);
         //Add centers and languages per state to the data
         let that = this;
         this.mapData = this.data.map((d,i)=>{
             if(d.Speakers > 0){
-                d.StateCenter = this.stateCenters[d.State],
+                d.StateCenter = [
+                    scaleCentersX_map(that.stateCenters[d.State][0]),
+                    scaleCentersY_map(that.stateCenters[d.State][1])
+                ],
                 d.StateLanguages = that.getLanguagesPerState(d.State),
                 d.LanguageIndex = that.getLanguageIndexPerState(d.State, d.Language);
                 return d;
@@ -31,6 +35,7 @@ class US_Map{
 
         this.svg=svg.append("g").attr("id", "us_map");
 
+        //this.createSimulation();
         this.drawStates();
         this.drawBubbles("none");//["Cajun","French"]);
     }
@@ -85,6 +90,8 @@ class US_Map{
 
     //Draws the language bubbles
     drawBubbles(languages){
+        //this.map_simulation.stop();
+
         // Filter Data based on selected language(s)
         if(languages == "all"){
             languages=this.AllLanguages; //["English", "Spanish", "French Creole"];
@@ -93,7 +100,7 @@ class US_Map{
             languages="";
         }
 
-        let dataF = this.mapData.filter(d=>languages.includes(d.Language));
+        dataset0_updated = this.mapData.filter(d=>languages.includes(d.Language));
         if(this.svg.select("#map_circles").empty()){
             this.svg.append("g")
                 .attr("id", "map_circles");
@@ -104,20 +111,19 @@ class US_Map{
 
         let that = this;
         let mapBubbles = bubbleGroup.selectAll("circle")
-            .data(dataF)
+            .data(dataset0_updated)
             .join("circle")
             .attr("fill", d=>colorScale(d.Group))
             .attr("stroke", "black")
             //.style("opacity", 0.5)
             //.attr("r", d=>scaleSize_map(d.Speakers))
             .attr("r", 2)
-            .attr("cx", d=>scaleCentersX_map(d.StateCenter[0]))
-            .attr("cy", d=>scaleCentersY_map(d.StateCenter[1]))
-            //.attr("transform", "translate(0,140)")
+            /*.attr("cx", d=>d.StateCenter[0]+10)
+            .attr("cy", d=>d.StateCenter[1]+140)
             .attr("transform", d=>{
-                let pos = that.GetBubbleTranslation(d);
+                let pos = [0,0];//that.GetBubbleTranslation(d);
                 return "translate("+(pos[0]+10)+","+(pos[1]+140)+")";
-            })
+            })*/
             .attr("class", d=>d.Language.replaceAll(" ",'_')
                 .replaceAll(",", "")
                 .replaceAll("'", "-")
@@ -145,6 +151,8 @@ class US_Map{
 
         //Has to always be created after bubbles are created
         this.attachEventHandlers();
+        //this.startSimulation();
+        clusterMapBubbles();
     }
 
     /* Create Event Handlers and make language of circles grow */
@@ -212,6 +220,73 @@ class US_Map{
         else{
             //doesn't work...Why?
             this.drawBubbles("none");
+        }
+    }
+
+    createSimulation(){
+        // **** Map Simulation **** /
+        let that = this;
+
+        this.map_simulation = d3.forceSimulation(that.data)
+          .force("cluster", map_clustering)
+          .force("gravity", d3.forceManyBody(30))
+          .force("collide", d3.forceCollide().radius(function(d){
+              return 2; //scaleSize(d.Speakers) + 3
+          }))
+
+        this.map_clusters = [];
+        let ind = 0;
+        d3.keys(map_center_data).forEach((d,i)=>{
+            if(d!="Notes"){
+                map_clusters[ind] = {
+                    'Group': d,
+                    'number': ind,
+                    'x': scaleCentersX_map(d3.values(map_center_data)[i][0]),
+                    'y': scaleCentersY_map(d3.values(map_center_data)[i][1]),
+                };
+                ind++;
+            }
+        });
+        //console.log(map_clusters);
+
+        // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
+        function map_clustering(alpha) {
+            //console.log("DATA");
+            for (let i = 0, n = that.data.length, map_node, map_cluster, k = alpha * 1; i < n; ++i) {
+                map_node = that.data[i];
+                map_cluster = map_clusters[map_node.index];
+                if(map_cluster){
+                    //console.log(map_cluster);
+                    map_node.vx -= (map_node.x - map_cluster.x) * k;
+                    map_node.vy -= (map_node.y - map_cluster.y) * k;
+                }
+            }
+        }
+    }
+
+    startSimulation(){
+        // **** Map Simulation **** /
+        let that = this;
+        this.map_simulation.alpha(1).restart();
+        this.map_simulation
+            .force("cluster", map_clustering)
+            .force("collide", d3.forceCollide().radius(function(d){
+                return 2; //scaleSize_map(d.Speakers)
+            }))
+            .alphaDecay(.01)
+            .velocityDecay(.9)
+
+        function map_clustering(alpha) {
+            //console.log("DATA");
+            for (let i = 0, n = that.data.length, map_node, map_cluster, k = alpha * 1; i < n; ++i) {
+                map_node = that.data[i];
+                map_cluster = map_clusters[map_node.index];
+                if(map_cluster){
+                    //console.log(map_cluster);
+                    map_node.vx -= (map_node.x - map_cluster.x) * k;
+                    map_node.vy -= (map_node.y - map_cluster.y) * k;
+                }
+            }
         }
     }
 
