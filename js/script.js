@@ -123,6 +123,7 @@ loadData().then(function(data){
             .range([8,40]);
 
         return scaleBubbles(input);
+    }
 
     // Create a scale for all of the bubbles for multi-select
     function scale_multiselect_bubble(input){

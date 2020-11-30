@@ -36,7 +36,7 @@ class US_Map{
         this.svg=svg.append("g").attr("id", "us_map");
 
         this.drawStates();
-        this.drawBubbles("none"); // Input a list of languages to view
+        this.drawBubbles("none", true); // Input a list of languages to view
     }
 
     getLanguagesPerState(state){
@@ -90,59 +90,63 @@ class US_Map{
     }
 
     //Draws the language bubbles
-    drawBubbles(languages){
-        // Filter Data based on selected language(s)
-        if(languages == "all"){
-            languages=this.AllLanguages; //["English", "Spanish", "French Creole"];
-        }
-        else if(languages == "none"){
-            languages="";
-        }
+    drawBubbles(languages, multiSelect){
 
-        dataset0_updated = this.mapData.filter(d=>languages.includes(d.Language));
-        if(this.svg.select("#map_circles").empty()){
-            this.svg.append("g")
-                .attr("id", "map_circles");
-        }
-        /////////////////////////////////////////////////////////////////////////////////////////////////////
-            // Consolidate number of speakers so there is 1 bubble per state on multi-select
-        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        if(multiSelect){
+            // Filter Data based on selected language(s)
+            if(languages == "all"){
+                languages=this.AllLanguages; //["English", "Spanish", "French Creole"];
+            }
+            else if(languages == "none"){
+                languages="";
+            }
 
-        // Create a list of all of the states
-        let uniqueStates = new Set(d3.map(this.mapData, d=>d.State));
+            dataset0_updated = this.mapData.filter(d=>languages.includes(d.Language));
+            if(this.svg.select("#map_circles").empty()){
+                this.svg.append("g")
+                    .attr("id", "map_circles");
+            }
+        }else{
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
+                // Consolidate number of speakers so there is 1 bubble per state on multi-select
+            /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        // Create empty array for new values
-        let state_list = []
-        let group_list = []
+            // Create a list of all of the states
+            let uniqueStates = new Set(d3.map(this.mapData, d=>d.State));
 
-        // Create new state list with objects
-        uniqueStates.forEach((state) => {
-            state_list.push({State: state, Speakers_Total: 0, StateCenter: [0,0], Group: ""})
-        })
+            // Create empty array for new values
+            let state_list = []
+            let group_list = []
 
-        // Consolidate number of speakers so there is one bubble per state
-        if (dataF.length > 0){
-            state_list.forEach((g) => {
-                dataF.forEach((d) => {
-                    if (d.State === g.State){
-                        g.Speakers_Total += +d.Speakers // Add up the speakers
-                        g.StateCenter[0] = d.StateCenter[0] // Add state center coordinate
-                        g.StateCenter[1] = d.StateCenter[1] // Add state center coordinate
-                        g.Group = d.Group
-                        group_list.push(d.Group)
-                    }
-                })
+            // Create new state list with objects
+            uniqueStates.forEach((state) => {
+                state_list.push({State: state, Speakers_Total: 0, StateCenter: [0,0], Group: ""})
             })
+
+            // Consolidate number of speakers so there is one bubble per state
+            if (dataset0_updated.length > 0){
+                state_list.forEach((g) => {
+                    dataF.forEach((d) => {
+                        if (d.State === g.State){
+                            g.Speakers_Total += +d.Speakers // Add up the speakers
+                            g.StateCenter[0] = d.StateCenter[0] // Add state center coordinate
+                            g.StateCenter[1] = d.StateCenter[1] // Add state center coordinate
+                            g.Group = d.Group
+                            group_list.push(d.Group)
+                        }
+                    })
+                })
+            }
+
+            // Count the number of groups. If group_ct > 1, then change the color of the circles
+            let group_ct
+            group_ct = new Set(group_list)
+            group_ct = group_ct.size
+
+            // Create an array of all the speaker counts
+            map_speaker_total =  state_list.map(d => d.Speakers_Total)
+
         }
-
-        // Count the number of groups. If group_ct > 1, then change the color of the circles
-        let group_ct
-        group_ct = new Set(group_list)
-        group_ct = group_ct.size
-
-        // Create an array of all the speaker counts 
-        map_speaker_total =  state_list.map(d => d.Speakers_Total)
-
         /////////////////////////////////////////////////////////////////////////////
 
                 // Draw Bubbles
@@ -153,12 +157,12 @@ class US_Map{
             .data(dataset0_updated)
             .join("circle")
             .attr("fill", d=> {
-                if (group_ct > 1){
+                /*if (group_ct > 1){
                     return 'blue'
                 }
-                else {
+                else {*/
                     return colorScale(d.Group)
-                }
+                //}
             })
             .attr("stroke", "black")
             .style("opacity", 0.8)
@@ -283,12 +287,12 @@ class US_Map{
         if(selectedPoints.length > 0){
             let selectedData = dataset_updated.filter((d,i)=>selectedPoints.includes(i));
             let languages = [... new Set(selectedData.map(d=>d.Language))];
-            this.drawBubbles(languages);
+            this.drawBubbles(languages, true);
             console.log(languages)
         }
         else{
             //doesn't work...Why?
-            this.drawBubbles("none");
+            this.drawBubbles("none", true);
         }
     }
 
