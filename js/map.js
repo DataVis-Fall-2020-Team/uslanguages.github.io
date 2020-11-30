@@ -1,14 +1,15 @@
 //TODO: figure out why tooltips for map aren't working
 //TODO: Write up blurb
 //TODO: Maybe: add some storytelling?
+
 class US_Map{
     // Creates a US_Map object showing language distribution
     constructor(data, svg){
         //console.log(data); //355 languages, 51 states/territories
         //Get and Modify Data
         this.data=data[0];
-        this.stateData = data[1];
-        this.stateCenters=data[2];
+        this.stateData = data[1]; // map_data - this is the U.S. states json file
+        this.stateCenters=data[2]; // map_center_data - this is a json file with state center locations
         //Add centers and languages per state to the data
         let that = this;
         this.mapData = this.data.map((d,i)=>{
@@ -17,6 +18,7 @@ class US_Map{
             d.LanguageIndex = that.getLanguageIndexPerState(d.State, d.Language);
             return d;
         });
+        MapData = this.mapData
 
         // https://appdividend.com/2019/04/11/how-to-get-distinct-values-from-array-in-javascript/
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from
@@ -27,7 +29,7 @@ class US_Map{
 
         this.drawStates();
         this.drawBubbles("none");//["Cajun","French"]);
-        this.tooltip();
+        // this.tooltip();
     }
 
     getLanguagesPerState(state){
@@ -42,8 +44,8 @@ class US_Map{
     //used to draw the states if they aren't hard-coded
     drawStates(){
         projection = d3.geoAlbersUsa()
-            .translate([1000/2-75,400]) // this centers the map in the SVG element
-            .scale([1150]); // this specifies how much to zoom
+        .translate([1000/2-75,400]) // this centers the map in the SVG element
+        .scale([1150]); // this specifies how much to zoom
 
         path = d3.geoPath()
             .projection(projection);
@@ -89,56 +91,110 @@ class US_Map{
             this.svg.append("g")
                 .attr("id", "map_circles");
         }
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+            // Consolidate number of speakers so there is 1 bubble per state on multi-select
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        // Draw Bubbles
+        // Create a list of all of the states
+        let uniqueStates = new Set(d3.map(this.mapData, d=>d.State));
+
+        // Create empty array for new values
+        let state_list = []
+        let group_list = []
+
+        // Create new state list with objects
+        uniqueStates.forEach((state) => {
+            state_list.push({State: state, Speakers_Total: 0, StateCenter: [0,0], Group: ""})
+        })
+
+        // Consolidate number of speakers so there is one bubble per state
+        if (dataF.length > 0){
+            state_list.forEach((g) => {
+                dataF.forEach((d) => {
+                    if (d.State === g.State){
+                        g.Speakers_Total += +d.Speakers // Add up the speakers
+                        g.StateCenter[0] = d.StateCenter[0] // Add state center coordinate
+                        g.StateCenter[1] = d.StateCenter[1] // Add state center coordinate
+                        g.Group = d.Group
+                        group_list.push(d.Group)
+                    }
+                })
+            })
+        }
+
+        // Count the number of groups. If group_ct > 1, then change the color of the circles
+        let group_ct
+        group_ct = new Set(group_list)
+        group_ct = group_ct.size
+
+        // Create an array of all the speaker counts 
+        map_speaker_total =  state_list.map(d => d.Speakers_Total)
+
+        /////////////////////////////////////////////////////////////////////////////
+
+                // Draw Bubbles
         let bubbleGroup = this.svg.select("#map_circles");
 
         let mapBubbles = bubbleGroup.selectAll("circle")
-            .data(dataF)
+            .data(state_list)
             .join("circle")
-            .attr("fill", d=>colorScale(d.Group))
+            .attr("fill", d=> {
+                if (group_ct > 1){
+                    return 'blue'
+                }
+                else {
+                    return colorScale(d.Group)
+                }
+            })
             .attr("stroke", "black")
-            //.style("opacity", 0.5)
-            .attr("r", d=>scaleSize_map(d.Speakers))
+            .style("opacity", d => {
+                if (group_ct == 0){
+                    return 0
+                }
+                else {
+                    return 1
+                }
+            })
+            .attr("r", d=>scale_multiselect_bubble(d.Speakers_Total))
             .attr("cx", d=>scaleCentersX_map(d.StateCenter[0]))
             .attr("cy", d=>scaleCentersY_map(d.StateCenter[1]))
             .attr("transform", "translate(0,140)")
             .classed("state_bubbles", true);
     }
 
-    tooltip() {
+    // tooltip() {
 
-        // Create tooltip
-        let tooltip = d3.select('#tooltip-bar2')
+    //     // Create tooltip
+    //     let tooltip = d3.select('#tooltip-bar2')
 
-        // Mouse over
-        d3.selectAll('.state_bubbles').on('mouseover', function(d){
-            console.log("mouseover in map");
-            tooltip
-                .style('visibility', 'visible')
-                .style("top", d3.event.target.attributes['cy'].value+ 'px')
-                .style("left", d3.event.target.attributes['cx'].value+ 'px')
+    //     // Mouse over
+    //     d3.selectAll('.state_bubbles').on('mouseover', function(d){
+    //         console.log("mouseover in map");
+    //         tooltip
+    //             .style('visibility', 'visible')
+    //             .style("top", d3.event.target.attributes['cy'].value+ 'px')
+    //             .style("left", d3.event.target.attributes['cx'].value+ 'px')
 
-                .html("<p style=font-size:20px>" + d.Group + "</p> \
-                       <p>" + d.Subgroup + "</p> \
-                       <p>" + d.Language + ": " + d.Speakers +"</p>"
-                );
+    //             .html("<p style=font-size:20px>" + d.Group + "</p> \
+    //                    <p>" + d.Subgroup + "</p> \
+    //                    <p>" + d.Language + ": " + d.Speakers +"</p>"
+    //             );
 
-        }) // End mouseover listener
+    //     }) // End mouseover listener
 
-        // Mouse move
-        d3.selectAll('.state_bubbles')
-        .on('mousemove', () => {
-            tooltip
-                .style("top", d3.event.target.attributes['cy'].value+ 'px')
-                .style("left", d3.event.target.attributes['cx'].value+ 'px')
-        }) // End mousemove listener
+    //     // Mouse move
+    //     d3.selectAll('.state_bubbles')
+    //     .on('mousemove', () => {
+    //         tooltip
+    //             .style("top", d3.event.target.attributes['cy'].value+ 'px')
+    //             .style("left", d3.event.target.attributes['cx'].value+ 'px')
+    //     }) // End mousemove listener
 
-        // Mouse out
-        d3.selectAll('.state_bubbles').on('mouseout', () => {
-            tooltip.style('visibility', 'hidden')
-        }) // End mouseout listener
-    }
+    //     // Mouse out
+    //     d3.selectAll('.state_bubbles').on('mouseout', () => {
+    //         tooltip.style('visibility', 'hidden')
+    //     }) // End mouseout listener
+    // }
 
     clearEventHandlers(){
         d3.selectAll('.state_bubbles').on('mousemove', null);
@@ -152,6 +208,7 @@ class US_Map{
             let selectedData = dataset_updated.filter((d,i)=>selectedPoints.includes(i));
             let languages = [... new Set(selectedData.map(d=>d.Language))];
             this.drawBubbles(languages);
+            console.log(languages)
         }
         else{
             //doesn't work...Why?
