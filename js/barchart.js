@@ -40,7 +40,6 @@ class Barchart{
     constructor(data, svg){
         
         this.stateData = this.sumData(data);
-        console.log("state data in barchart1 constructor:", this.stateData);
         this.svg = svg;
         this.margin = { top: 20, right: 10, bottom: 20, left: 10};
         this.barWidth = 500;

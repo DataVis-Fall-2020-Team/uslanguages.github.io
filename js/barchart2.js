@@ -307,9 +307,6 @@ class BarChart2{
         function numberWithCommas(x) {
             return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
-
-        console.log("selection in renderTooltip function:", selection);
-        //let level = d3.select(selection).data()[0]["level"];
         let level = d.level;
 
         let x = parseInt(selection.attr("x")) + 20;
@@ -511,6 +508,7 @@ class BarChart2{
      * Function that clears all the event handlers for the barchart2
      */
     clearEventHandlers(){
+        console.log("Clearing event handlers in barchart2");
         d3.select("#barchart2").selectAll("rect")
             .on("mouseover", null) 
             .on("mouseout", null);
