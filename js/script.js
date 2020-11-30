@@ -2,9 +2,10 @@
 let dataset, dataset_updated
 let simulation, nodes, clusters
 let map_data, map_center_data, path, projection
-let map_simulation, map_nodes, map_clusters, dataset0_updated;
+let map_simulation, map_nodes, map_clusters, dataset0_updated
+let MapData, map_speaker_total
 let views = {} //dictionary to store view objects
-
+let toggle_object, toggle_tracker = false
 // --------------------------------------------
         // Import the data
 // --------------------------------------------
@@ -43,15 +44,18 @@ loadData().then(function(data){
         });
         console.log('National Data Loaded');
         dataset_updated = nationalData.filter(d => d.Group != 'Total')
-
         // Mapping Data
         // JSON taken from: https://github.com/DataVis-Fall-2020-Team/MappingAPI/tree/master/data/geojson
         map_data = await d3.json("data/us-states.json");
         map_center_data = await d3.json("data/state-centers.json");
         dataset0_updated = [];
-        console.log('Map Data Loaded');
-        return [stateData, nationalData];
-    }
+        //console.log('Map Data Loaded');
+        const compareData = await d3.csv('./data/language_compare.csv');
+        const percentageData = await d3.csv('./data/language_percentages.csv');
+        const languageMap = await d3.csv('./data/language_map.csv');
+
+        return [stateData, nationalData, compareData, percentageData, languageMap];
+														}
     catch{
         console.log("Data not loaded");
     }
@@ -119,6 +123,20 @@ loadData().then(function(data){
             .range([8,40]);
 
         return scaleBubbles(input);
+
+    // Create a scale for all of the bubbles for multi-select
+    function scale_multiselect_bubble(input){
+        let scale = d3.scaleLinear()
+            .domain([0,d3.max(map_speaker_total)])
+            .range([2,25]);
+        return scale(input);
+    }
+
+    function scale_singleselect_bubble(input, data){
+        let scale = d3.scaleLinear()
+            .domain([0,d3.max(data.map(d => d.Speakers))])
+            .range([2,25]);
+        return scale(input);
     }
     // ----------------------------------------------------------------
 
@@ -190,6 +208,9 @@ loadData().then(function(data){
             }
         });
 
+        //Viz #5 Stacked Area Chart
+        views['area'] = new AreaChart(dataset[2], dataset[3], dataset[4], svg);
+
         // Viz #4 Bar Graph setup
         views['bar2'] = new BarChart2(dataset[1], svg);
         views['bar2'].clearEventHandlers();
@@ -198,7 +219,7 @@ loadData().then(function(data){
         views['bar1'] = new Barchart(dataset[0], svg);
 
         // Viz #2 Map
-        views['map'] = new US_Map([dataset[0],map_data,map_center_data], svg);
+        views['map'] = new US_Map([dataset[0],map_data,map_center_data, dataset[1]], svg);
         views['map'].updateStateOpacity(0);
 
         // Viz #1 Megacluster setup
@@ -212,6 +233,12 @@ loadData().then(function(data){
 
 
      }) 
+
+     // Render Toggle - Taken from Homework 6 solution
+     let toggle_div = d3.select('#map_section').append('div').attr('id','toggle_map')
+
+     toggle_object = renderToggle(toggle_div, 'Multi-select') 
+
 
     } // End setup_page function
 
@@ -245,6 +272,12 @@ loadData().then(function(data){
             views['map'].clearEventHandlers();
             views['cluster'].map_brush(false);
         } // End map if statement
+
+        if (chartType !== "area"){
+            d3.select('#area').transition().style('opacity',0)
+            views['area'].drawChart();
+            views['area'].clearEventHandlers();
+        } //End area if statement
 
     } // End function clean()
 
@@ -303,6 +336,7 @@ loadData().then(function(data){
               node.vy -= (node.y - cluster.y) * k;
               }
           }
+      d3.select("#cluster").raise();
 
         // simulation.force("cluster", clustering)
 
@@ -313,10 +347,32 @@ loadData().then(function(data){
     } // end draw0 function
 
     function draw_map(){
+
+
+    
+        // TOGGLE
+        toggle_object.on('click.toggle', function(d){
+            if (toggle_object.node().checked){
+                views['cluster'].map_brush(true)
+                d3.select("#cluster_group").raise();
+
+    
+            }
+            else {
+                views['cluster'].map_brush(false)
+                views['cluster'].attach_maplisteners();
+                d3.select("#cluster_group").raise();
+
+            }
+        })
+        views['cluster'].tooltip();
+        views['cluster'].attach_maplisteners()
+
         simulation.stop()
 
         // Draw the map
         clean('map')
+
         //Raise these views so that there's no fighting with the bar charts
         d3.select("#cluster").raise();
         d3.select("#us_map").raise();
@@ -325,13 +381,6 @@ loadData().then(function(data){
         views['map'].attachEventHandlers();
 
         //Move the bubbles
-
-        // views['cluster'].tooltip()  // Doesn't put tooltip back
-
-        // d3.select("#cluster")
-        //     .data(dataset_updated)
-        //     .transition()
-        //     .attr('r', d => scaleSize_map(d.Speakers))
 
         d3.selectAll('.cluster_circles')
             .transition()
@@ -352,11 +401,17 @@ loadData().then(function(data){
             .alphaDecay(.01)
             .velocityDecay(.9)
 
-        let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-120, y:-170}
+        /*Old: let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-120, y:-170}
             , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:40, y:-160}
             , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:350, y:-160}
             , {'Group':"English",number:3, x:490, y:-160}
-            , {'Group':"ALL OTHER LANGUAGES", number:4, x: 190, y:-155}
+            , {'Group':"ALL OTHER LANGUAGES", number:4, x: 190, y:-155}*/
+
+            let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-100, y:-160}
+            , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:30, y:-150}
+            , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:170, y:-150}
+            , {'Group':"English",number:3, x:300, y:-142}
+            , {'Group':"ALL OTHER LANGUAGES", number:4, x: 430, y:-140}
         ]
 
         // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
@@ -403,9 +458,9 @@ loadData().then(function(data){
                 }
             }
         }
-    }
+    } // end clusterMapBubbles function  
 
-    // Draw 2nd Viz
+    // Draw Horizontal Barchart
     function draw_bar1(){
     
         //Stop simulation
@@ -419,9 +474,9 @@ loadData().then(function(data){
             .style('opacity',.8)
         views['bar1'].attachEventHandlers();
 
-    } // end draw2 function    
+    } // end draw horizontal barchart function    
 
-    // Draw 2nd Barchart
+    // Draw Vertical Barchart
     function draw_bar2(){
         d3.select("#tooltip-bar2")
             .style("opacity", 0);
@@ -469,10 +524,7 @@ loadData().then(function(data){
                     .style("opacity", 1)
                 d3.select(".simRects").remove();
                 d3.select("#barchart2").attr("pointer-events", "auto");
-
                 views['bar2'].attachEventHandlers();
-
-
             }
         }   
 
@@ -501,11 +553,24 @@ loadData().then(function(data){
                     else return d.startY;
                 })
                 .on("end", callbackFunction);
-        
-        
-
     
-    } // end draw3 function   
+    } // end draw vertial barchcart function   
+
+    // Draw Area Chart
+    function draw_area(){
+    
+        //Stop simulation
+        simulation.stop()
+        
+        clean('area')
+
+        d3.select("#area").raise();
+        d3.select('#area')
+            .transition()
+            .style('opacity',1)
+        views['area'].attachEventHandlers();
+
+    } // end draw area chart function 
 
  
 
@@ -517,6 +582,7 @@ loadData().then(function(data){
         draw_map,
         draw_bar1,
         draw_bar2,
+        draw_area,
     ]
     
     //All the scrolling function

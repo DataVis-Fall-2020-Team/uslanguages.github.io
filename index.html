@@ -31,9 +31,8 @@
 
 						In the next visualization, we will look at the distribution of these languages across the U.S. Scroll down to see the distribution of languages broken out by state.
 					</p>
-					
 				</section>
-				<section class="step">
+				<section class="step"; id='map_section'>
 					
 					<br><br>
 					<h2>Where are these languages spoken in the U.S.?</h2>
@@ -41,10 +40,10 @@
 					<p> English and Spanish are spoken in every single state, but what about the rest
 						of these languages?</p>
 					<br>
-					<p>Under Construction...</p>
-					<p>Click and hold your mouse over the bubble(s) at the top to see where they are
-						found in the United States. Then hover over any bubble on the map
-						to see how that language compares in the other states.</p>
+					<p>
+						Click on the circles at the top to show the distribution of speakers across the United States.
+						Use the toggle below to switch to multi-select. To select multiple languages, click and drag the brush across the languages you would like to see.
+						Then hover over any bubble on the map to see how that language distribution compares in the other states.</p>
 					<br>
 					<div id="LanguageInfo"></div>
 				</section>
@@ -64,8 +63,6 @@
 					<br>
 					<p>Click each bar to sort the states by that language group.  Click
 						state names to sort alphabetically.</p>
-	
-					
 				</section>
 				<section class="step">
 					<h2>Which foreign language speakers are the most fluent in English?</h2>
@@ -80,10 +77,29 @@
 					<p> Click on each bar to drill down to the next level and see more detail.  Double
 						click to return.  
 					</p>
-					
-					
 				</section>
-	
+
+				<section class="step">
+					<br><br>
+					<h2>How have the languages spoken changed over time?</h2>
+					<br>
+					<p> The total number of foreign speakers in the United States has
+						grown dramatically in the last 40 years.
+					</p>
+					<br>
+					<p> <button id="showSpanishGrowth">Click</button> to see how the Spanish language has grown as a percentage
+						of all total foreign language speakers in the United States.
+					</p>
+					<br>
+					<p> Explore the number of total number of speakers and percentage of total
+						foreign speakers in the United States over the past 40 years.  Click on
+						each language to see that language separately.  Click again to return to 
+						the combined chart.
+					</p>
+					<!-- <p>
+					 
+					</p> -->
+				</section>
 			</div>
 			<div id="vis">
 	
@@ -101,13 +117,14 @@
 		<script src="https://d3js.org/d3-timer.v2.min.js"></script>
 		<script src="https://d3js.org/d3-array.v2.min.js"></script>
 
-
+		<script src="js/render_toggle.js"></script>
 		<script src="js/barchart.js"></script>
 		<script src="js/tree.js"></script>
 		<script src="js/barchart2.js"></script>
 		<script src="js/map.js"></script>
 		<script src="js/megacluster.js"></script>
 		<script src="js/scroller.js"></script>
+		<script src="js/areachart.js"></script>
 		<script src="js/script.js"></script>
 	</body>
 </html>

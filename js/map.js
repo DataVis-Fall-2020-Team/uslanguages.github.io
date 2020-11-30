@@ -1,18 +1,17 @@
-//TODO: Finish writing blurb
 //TODO: Maybe: add some storytelling?
-//TODO: Add a toggle button to display bubble speaker values without hover
+//TODO: Add buttons to display merged bubbles
+
 class US_Map{
     // Creates a US_Map object showing language distribution
     constructor(data, svg){
         //console.log(data); //355 languages, 51 states/territories
         //Get and Modify Data
         this.data=data[0];
-        this.stateData = data[1];
-        this.stateCenters=data[2];
+        this.stateData = data[1]; // map_data - this is the U.S. states json file
+        this.stateCenters=data[2]; // map_center_data - this is a json file with state center locations
         this.lines=[[785, 705, 260, 225],[805, 753, 260, 200],[804,894,285,225],[814,858,298,289],[797,895,303,346],
                     [777,827,340,360],[770,882,370,427],[750,810,370,430],[744,815,376,508]];
 
-        //console.log(this.stateCenters);
         //Add centers and languages per state to the data
         let that = this;
         this.mapData = this.data.map((d,i)=>{
@@ -27,6 +26,7 @@ class US_Map{
             }
             return "";
         });
+        MapData = this.mapData
 
         // https://appdividend.com/2019/04/11/how-to-get-distinct-values-from-array-in-javascript/
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from
@@ -35,9 +35,8 @@ class US_Map{
 
         this.svg=svg.append("g").attr("id", "us_map");
 
-        //this.createSimulation();
         this.drawStates();
-        this.drawBubbles("none");//["Cajun","French"]);
+        this.drawBubbles("none"); // Input a list of languages to view
     }
 
     getLanguagesPerState(state){
@@ -54,6 +53,8 @@ class US_Map{
         projection = d3.geoAlbersUsa()
             .translate([1000/2-50,410]) // this centers the map in the SVG element
             .scale([1200]); // this specifies how much to zoom
+        /*.translate([1000/2-75,400]) // this centers the map in the SVG element
+        .scale([1150]); // this specifies how much to zoom*/
 
         path = d3.geoPath()
             .projection(projection);
@@ -103,15 +104,62 @@ class US_Map{
             this.svg.append("g")
                 .attr("id", "map_circles");
         }
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+            // Consolidate number of speakers so there is 1 bubble per state on multi-select
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        // Draw Bubbles
+        // Create a list of all of the states
+        let uniqueStates = new Set(d3.map(this.mapData, d=>d.State));
+
+        // Create empty array for new values
+        let state_list = []
+        let group_list = []
+
+        // Create new state list with objects
+        uniqueStates.forEach((state) => {
+            state_list.push({State: state, Speakers_Total: 0, StateCenter: [0,0], Group: ""})
+        })
+
+        // Consolidate number of speakers so there is one bubble per state
+        if (dataF.length > 0){
+            state_list.forEach((g) => {
+                dataF.forEach((d) => {
+                    if (d.State === g.State){
+                        g.Speakers_Total += +d.Speakers // Add up the speakers
+                        g.StateCenter[0] = d.StateCenter[0] // Add state center coordinate
+                        g.StateCenter[1] = d.StateCenter[1] // Add state center coordinate
+                        g.Group = d.Group
+                        group_list.push(d.Group)
+                    }
+                })
+            })
+        }
+
+        // Count the number of groups. If group_ct > 1, then change the color of the circles
+        let group_ct
+        group_ct = new Set(group_list)
+        group_ct = group_ct.size
+
+        // Create an array of all the speaker counts 
+        map_speaker_total =  state_list.map(d => d.Speakers_Total)
+
+        /////////////////////////////////////////////////////////////////////////////
+
+                // Draw Bubbles
         let bubbleGroup = this.svg.select("#map_circles");
 
         let that = this;
         let mapBubbles = bubbleGroup.selectAll("circle")
             .data(dataset0_updated)
             .join("circle")
-            .attr("fill", d=>colorScale(d.Group))
+            .attr("fill", d=> {
+                if (group_ct > 1){
+                    return 'blue'
+                }
+                else {
+                    return colorScale(d.Group)
+                }
+            })
             .attr("stroke", "black")
             .style("opacity", 0.8)
             .attr("r", 2)
@@ -120,6 +168,34 @@ class US_Map{
                 .replaceAll("'", "-")
                 .toLowerCase())
             .classed("state_bubbles", true);
+			
+			/*Andreas's code
+			let mapBubbles = bubbleGroup.selectAll("circle")
+            .data(state_list)
+            .join("circle")
+            .attr("fill", d=> {
+                if (group_ct > 1){
+                    return 'blue'
+                }
+                else {
+                    return colorScale(d.Group)
+                }
+            })
+            .attr("stroke", "black")
+            .style("opacity", d => {
+                if (group_ct == 0){
+                    return 0
+                }
+                else {
+                    return 1
+                }
+            })
+            .attr("r", d=>scale_multiselect_bubble(d.Speakers_Total))
+            .attr("cx", d=>scaleCentersX_map(d.StateCenter[0]))
+            .attr("cy", d=>scaleCentersY_map(d.StateCenter[1]))
+            .attr("transform", "translate(0,140)")
+            .classed("state_bubbles", true);
+			*/
 
 
          //Draw lines for smaller states to link bubbles to
@@ -208,6 +284,7 @@ class US_Map{
             let selectedData = dataset_updated.filter((d,i)=>selectedPoints.includes(i));
             let languages = [... new Set(selectedData.map(d=>d.Language))];
             this.drawBubbles(languages);
+            console.log(languages)
         }
         else{
             //doesn't work...Why?
