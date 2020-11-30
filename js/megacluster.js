@@ -76,16 +76,16 @@ class cluster {
     circle_click.on('click.cluster', function(d){
         d3.select('#map_circles').selectAll('circle')
             .data(MapData.filter(x => x.Language === d.Language))
-            // .data(MapData.filter(d => d.))
             .join("circle")
             .attr("fill", d=>colorScale(d.Group))
             .attr("stroke", "black")
-            //.style("opacity", 0.5)
-            .attr("r", d=>scaleSize_map(d.Speakers))
+            .style("opacity", 1)
+            .attr("r", d=>scale_singleselect_bubble(d.Speakers, MapData.filter(x => x.Language === d.Language)))
             .attr("cx", d=>scaleCentersX_map(d.StateCenter[0]))
             .attr("cy", d=>scaleCentersY_map(d.StateCenter[1]))
             .attr("transform", "translate(0,140)")
             .classed("state_bubbles", true);
+
 
         // --------------------------------------------
         // Tooltip for the map circles

@@ -1,6 +1,7 @@
 //TODO: figure out why tooltips for map aren't working
 //TODO: Write up blurb
 //TODO: Maybe: add some storytelling?
+
 class US_Map{
     // Creates a US_Map object showing language distribution
     constructor(data, svg){
@@ -90,40 +91,71 @@ class US_Map{
             this.svg.append("g")
                 .attr("id", "map_circles");
         }
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+            // Consolidate number of speakers so there is 1 bubble per state on multi-select
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        // Create a list of all of the states
         let uniqueStates = new Set(d3.map(this.mapData, d=>d.State));
 
-        // let new_dataset = {}
-        // let new_list = []
+        // Create empty array for new values
+        let state_list = []
+        let group_list = []
 
-        console.log('This is dataF', dataF)
-        console.log(uniqueStates)
-        
-        let statedata_consolidated = uniqueStates
+        // Create new state list with objects
+        uniqueStates.forEach((state) => {
+            state_list.push({State: state, Speakers_Total: 0, StateCenter: [0,0], Group: ""})
+        })
 
-
+        // Consolidate number of speakers so there is one bubble per state
         if (dataF.length > 0){
-            statedata_consolidated.forEach((state) => {
-                dataF.ForEach((d) => {
-                    if (d.State = state){
-                        statedata_consolidated.Speakers_Total += d.Speakers
+            state_list.forEach((g) => {
+                dataF.forEach((d) => {
+                    if (d.State === g.State){
+                        g.Speakers_Total += +d.Speakers // Add up the speakers
+                        g.StateCenter[0] = d.StateCenter[0] // Add state center coordinate
+                        g.StateCenter[1] = d.StateCenter[1] // Add state center coordinate
+                        g.Group = d.Group
+                        group_list.push(d.Group)
                     }
                 })
             })
         }
-        console.log('This is the national data', statedata_consolidated)
 
+        // Count the number of groups. If group_ct > 1, then change the color of the circles
+        let group_ct
+        group_ct = new Set(group_list)
+        group_ct = group_ct.size
+
+        // Create an array of all the speaker counts 
+        map_speaker_total =  state_list.map(d => d.Speakers_Total)
+
+        /////////////////////////////////////////////////////////////////////////////
 
                 // Draw Bubbles
         let bubbleGroup = this.svg.select("#map_circles");
 
         let mapBubbles = bubbleGroup.selectAll("circle")
-            .data(dataF)
+            .data(state_list)
             .join("circle")
-            .attr("fill", d=>colorScale(d.Group))
+            .attr("fill", d=> {
+                if (group_ct > 1){
+                    return 'blue'
+                }
+                else {
+                    return colorScale(d.Group)
+                }
+            })
             .attr("stroke", "black")
-            //.style("opacity", 0.5)
-            .attr("r", d=>scaleSize_map(d.Speakers))
+            .style("opacity", d => {
+                if (group_ct == 0){
+                    return 0
+                }
+                else {
+                    return 1
+                }
+            })
+            .attr("r", d=>scale_multiselect_bubble(d.Speakers_Total))
             .attr("cx", d=>scaleCentersX_map(d.StateCenter[0]))
             .attr("cy", d=>scaleCentersY_map(d.StateCenter[1]))
             .attr("transform", "translate(0,140)")

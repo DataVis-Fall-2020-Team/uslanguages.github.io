@@ -1,10 +1,9 @@
 // Set global variables
 let dataset, dataset_updated
 let simulation, nodes, clusters
-let map_data, map_center_data, path, projection, MapData
+let map_data, map_center_data, path, projection, MapData, map_speaker_total
 let views = {} //dictionary to store view objects
 let toggle_object, toggle_tracker = false
-
 // --------------------------------------------
         // Import the data
 // --------------------------------------------
@@ -80,9 +79,9 @@ loadData().then(function(data){
     function scaleSize(input){ 
         
         let my_scaleSize = d3.scalePow() 
-            .exponent(.4) // Smaller exponent = bigger circles
+            .exponent(.2) // Smaller exponent = bigger circles
             .domain([1, 232000000])
-            .range([1,250])
+            .range([1,100])
             .nice()
         return my_scaleSize(input)
     }
@@ -109,6 +108,21 @@ loadData().then(function(data){
             .domain([0,1000])
             .range([0,895]);
         return scaleCenters(input);
+    }
+
+    // Create a scale for all of the bubbles for multi-select
+    function scale_multiselect_bubble(input){
+        let scale = d3.scaleLinear()
+            .domain([0,d3.max(map_speaker_total)])
+            .range([2,25]);
+        return scale(input);
+    }
+
+    function scale_singleselect_bubble(input, data){
+        let scale = d3.scaleLinear()
+            .domain([0,d3.max(data.map(d => d.Speakers))])
+            .range([2,25]);
+        return scale(input);
     }
     // ----------------------------------------------------------------
 
