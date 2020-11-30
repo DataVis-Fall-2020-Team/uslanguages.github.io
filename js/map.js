@@ -90,8 +90,6 @@ class US_Map{
 
     //Draws the language bubbles
     drawBubbles(languages){
-        //this.map_simulation.stop();
-
         // Filter Data based on selected language(s)
         if(languages == "all"){
             languages=this.AllLanguages; //["English", "Spanish", "French Creole"];
@@ -115,15 +113,8 @@ class US_Map{
             .join("circle")
             .attr("fill", d=>colorScale(d.Group))
             .attr("stroke", "black")
-            //.style("opacity", 0.5)
-            //.attr("r", d=>scaleSize_map(d.Speakers))
+            .style("opacity", 0.8)
             .attr("r", 2)
-            /*.attr("cx", d=>d.StateCenter[0]+10)
-            .attr("cy", d=>d.StateCenter[1]+140)
-            .attr("transform", d=>{
-                let pos = [0,0];//that.GetBubbleTranslation(d);
-                return "translate("+(pos[0]+10)+","+(pos[1]+140)+")";
-            })*/
             .attr("class", d=>d.Language.replaceAll(" ",'_')
                 .replaceAll(",", "")
                 .replaceAll("'", "-")
@@ -151,7 +142,6 @@ class US_Map{
 
         //Has to always be created after bubbles are created
         this.attachEventHandlers();
-        //this.startSimulation();
         clusterMapBubbles();
     }
 
@@ -165,20 +155,13 @@ class US_Map{
         // Mouse over
         d3.selectAll('.state_bubbles').on('mouseover.map', function(d){
             console.log("mouseover in map");
-            infoBox.html("<p style=font-size:20px>" + d.Group + "</p> \
-                       <p>" + d.Subgroup + "</p> \
-                       <p>" + d.Language + ": " + d.Speakers +"</p>"
-                );
-
             // Grow Circle
             let hovered_class = d.Language.replaceAll(" ",'_')
                 .replaceAll(",", "")
                 .replaceAll("'", "-")
                 .toLowerCase();
-            console.log(d.Language, hovered_class);
 
             let selection = d3.map(that.data.filter(e=>e.Language == d.Language), e=>e.Speakers);
-            console.log(selection);
             let min = d3.min(selection);
             let max = d3.max(selection);
 
@@ -189,10 +172,18 @@ class US_Map{
                 .attr("r", function(d1){
                     return scaleSelection_map(d1.Speakers, min, max);
                 })
-                .style("opacity", .9);
+                .style("opacity", 1);
 
             // Bring language circles to front
             circles.raise();
+
+            // Print Info to Side-Panel
+            let htmlText = "<p style=font-size:20px><b>Language:</b> " + d.Language
+                            + "</p><p><b>Sub-group:</b> " + d.Subgroup
+                            //+ "</p><p><b>Group:</b> " + d.Group + "</p>";
+                            + "</p><p style=text-transform:capitalize><b>Group:</b> " + d.Group.toLowerCase() + "</p>";
+
+            infoBox.html(htmlText);
 
         }) // End mouseover listener
 
@@ -200,7 +191,8 @@ class US_Map{
         d3.selectAll('.state_bubbles').on('mouseout.map', () => {
             infoBox.html("");
             d3.selectAll(".state_bubbles")
-                .attr("r", 2);
+                .attr("r", 2)
+                .style("opacity", .8);
         }) // End mouseout listener
     }
 
@@ -220,73 +212,6 @@ class US_Map{
         else{
             //doesn't work...Why?
             this.drawBubbles("none");
-        }
-    }
-
-    createSimulation(){
-        // **** Map Simulation **** /
-        let that = this;
-
-        this.map_simulation = d3.forceSimulation(that.data)
-          .force("cluster", map_clustering)
-          .force("gravity", d3.forceManyBody(30))
-          .force("collide", d3.forceCollide().radius(function(d){
-              return 2; //scaleSize(d.Speakers) + 3
-          }))
-
-        this.map_clusters = [];
-        let ind = 0;
-        d3.keys(map_center_data).forEach((d,i)=>{
-            if(d!="Notes"){
-                map_clusters[ind] = {
-                    'Group': d,
-                    'number': ind,
-                    'x': scaleCentersX_map(d3.values(map_center_data)[i][0]),
-                    'y': scaleCentersY_map(d3.values(map_center_data)[i][1]),
-                };
-                ind++;
-            }
-        });
-        //console.log(map_clusters);
-
-        // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
-        function map_clustering(alpha) {
-            //console.log("DATA");
-            for (let i = 0, n = that.data.length, map_node, map_cluster, k = alpha * 1; i < n; ++i) {
-                map_node = that.data[i];
-                map_cluster = map_clusters[map_node.index];
-                if(map_cluster){
-                    //console.log(map_cluster);
-                    map_node.vx -= (map_node.x - map_cluster.x) * k;
-                    map_node.vy -= (map_node.y - map_cluster.y) * k;
-                }
-            }
-        }
-    }
-
-    startSimulation(){
-        // **** Map Simulation **** /
-        let that = this;
-        this.map_simulation.alpha(1).restart();
-        this.map_simulation
-            .force("cluster", map_clustering)
-            .force("collide", d3.forceCollide().radius(function(d){
-                return 2; //scaleSize_map(d.Speakers)
-            }))
-            .alphaDecay(.01)
-            .velocityDecay(.9)
-
-        function map_clustering(alpha) {
-            //console.log("DATA");
-            for (let i = 0, n = that.data.length, map_node, map_cluster, k = alpha * 1; i < n; ++i) {
-                map_node = that.data[i];
-                map_cluster = map_clusters[map_node.index];
-                if(map_cluster){
-                    //console.log(map_cluster);
-                    map_node.vx -= (map_node.x - map_cluster.x) * k;
-                    map_node.vy -= (map_node.y - map_cluster.y) * k;
-                }
-            }
         }
     }
 
