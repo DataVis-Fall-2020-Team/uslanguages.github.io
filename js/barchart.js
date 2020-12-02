@@ -168,10 +168,7 @@ class Barchart{
     renderTooltip(selection, d){
         let that = this;
 
-        //https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
-        function numberWithCommas(x) {
-            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
+
 
         let state = d3.select(selection).data()[0]["state"];
             let index = that.stateData.findIndex(obj => obj.state === state);

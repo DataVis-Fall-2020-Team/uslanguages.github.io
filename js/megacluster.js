@@ -42,10 +42,17 @@ class cluster {
         // --------------------------------------------  
         // Mouse over
         d3.selectAll('.cluster_circles')
+
+
+
             .on('mouseover.cluster', function(d){
+
+                let x_pos = parseInt(d3.event.target.attributes['cx'].value) > 700 ? parseInt(d3.event.target.attributes['cx'].value) - 150 : parseInt(d3.event.target.attributes['cx'].value)
+                let y_pos = parseInt(d3.event.target.attributes['cy'].value) > 600 ? parseInt(d3.event.target.attributes['cy'].value) - 200 : parseInt(d3.event.target.attributes['cy'].value)
+
 				tooltip
-					.style("top", d3.event.target.attributes['cy'].value+ 'px')
-					.style("left", d3.event.target.attributes['cx'].value+ 'px')
+					.style("top",y_pos + 'px')
+					.style("left", x_pos + 'px')
 					.style('visibility', 'visible')
 					.html("<p style=font-size:20px>" + d.Group + "</p> \
 						   <p>" + d.Subgroup + "</p> \
@@ -60,11 +67,14 @@ class cluster {
 
         // Mouse move
         d3.selectAll('.cluster_circles')
+
 			.on('mousemove.cluster', () => {
+                let x_pos = parseInt(d3.event.target.attributes['cx'].value) > 700 ? parseInt(d3.event.target.attributes['cx'].value) - 150 : parseInt(d3.event.target.attributes['cx'].value)
+                let y_pos = parseInt(d3.event.target.attributes['cy'].value) > 600 ? parseInt(d3.event.target.attributes['cy'].value) - 200 : parseInt(d3.event.target.attributes['cy'].value)
+                
 				tooltip
-				.style("top", d3.event.target.attributes['cy'].value+ 'px')
-				.style("left", d3.event.target.attributes['cx'].value+ 'px')
-				// console.log(d.Language)
+                    .style("top",y_pos + 'px')
+                    .style("left", x_pos + 'px')
 			}) // End mousemove listener
 
         // Mouse out
