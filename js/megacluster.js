@@ -73,39 +73,7 @@ class cluster {
 
 
     circle_click.on('click.cluster', function(d){
-        updateOtherViews(d.Language);
-        /*
-        // --------------------------------------------
-        // Tooltip for the map circles
-        // --------------------------------------------  
-            d3.selectAll('.state_bubbles')
-                .on('mouseover.map', function(d){
-
-                    tooltip
-                        .style("top", d3.event.target.attributes['cy'].value+ 'px')
-                        .style("left", d3.event.target.attributes['cx'].value+ 'px')
-                        .style('visibility', 'visible')
-                        .html("<p style=font-size:20px>" + d.Group + "</p> \
-                            <p>" + d.State + "</p> \
-                            <p>" + d.Language + ": " + d.Speakers +"</p>"
-                            )
-                }) // End mouseover listener
-
-            // Mouse move
-            d3.selectAll('.state_bubbles')
-            .on('mousemove.map', (d) => {
-                tooltip
-                .style("top", d3.event.target.attributes['cy'].value+ 'px')
-                .style("left", d3.event.target.attributes['cx'].value+ 'px')
-                // console.log(d.Language)
-            }) // End mousemove listener
-
-            // Mouse out
-            d3.selectAll('.state_bubbles')
-                .on('mouseout.map', () => {
-                    tooltip.style('visibility', 'hidden')
-            }) // End mouseout listener*/
-
+            updateOtherViews(d.Language);
         })
     } // End circle click function
 
@@ -119,7 +87,6 @@ class cluster {
         d3.selectAll('cluster_circles').on('mouseout.map', null);
 		
         d3.selectAll('cluster_circles').on('click.cluster', null);
-        //d3.selectAll('circle').on('click.cluster', null);
     }
 
     map_brush(active){

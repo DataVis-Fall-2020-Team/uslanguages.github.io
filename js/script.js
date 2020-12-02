@@ -6,7 +6,7 @@ let map_simulation, map_nodes, map_clusters, dataset0_updated
 let MapData, map_speaker_total
 let views = {} //dictionary to store view objects
 let toggle_object, toggle_tracker = false
-let consolidated = false;
+let mergedBubbles = false, map_circles_same = true;
 // --------------------------------------------
         // Import the data
 // --------------------------------------------
@@ -121,7 +121,7 @@ loadData().then(function(data){
     function scaleSelection_map(input, min, max){
         let scaleBubbles = d3.scaleLinear()
             .domain([min,max])
-            .range([8,40]);
+            .range([6,35]);
 
         return scaleBubbles(input);
     }
@@ -130,14 +130,14 @@ loadData().then(function(data){
     function scale_multiselect_bubble(input){
         let scale = d3.scaleLinear()
             .domain([0,d3.max(map_speaker_total)])
-            .range([2,25]);
+            .range([6,35]);
         return scale(input);
     }
 
     function scale_singleselect_bubble(input, data){
         let scale = d3.scaleLinear()
             .domain([0,d3.max(data.map(d => d.Speakers))])
-            .range([2,25]);
+            .range([6,35]);
         return scale(input);
     }
     // ----------------------------------------------------------------
@@ -239,7 +239,7 @@ loadData().then(function(data){
      // Render Toggle - Taken from Homework 6 solution
      let toggle_div = d3.select('#map_section').append('div').attr('id','toggle_map')
 
-     toggle_object = renderToggle(toggle_div, 'Consolidate')
+     toggle_object = renderToggle(toggle_div, 'Merge Speakers')
 
     } // End setup_page function
 
@@ -351,18 +351,26 @@ loadData().then(function(data){
         // TOGGLE
         toggle_object.on('click.toggle', function(d){
             if (toggle_object.node().checked){
-                consolidated = true;
-                if(dataset0_updated.length > 1){
+                mergedBubbles = true;
+                views['cluster'].map_brush(false); // Clear brush selection
+                updateOtherViews([]); //Clear out selection
+                views['cluster'].map_brush(true) //bring back brush
+                d3.select("#cluster_group").raise();
+                /*if(dataset0_updated.length > 1){
                     let selectedLanguages = new Set(d3.map(dataset0_updated, d=>d.Language));
                     updateOtherViews(Array.from(selectedLanguages));
-                }
+                }*/
             }
             else {
-                consolidated = false;
-                if(dataset0_updated.length > 1){
+                mergedBubbles = false;
+                updateOtherViews([]); // Clear out selection
+                views['cluster'].map_brush(false); // Clear brush selection
+                views['cluster'].map_brush(true) //bring back brush
+                d3.select("#cluster_group").raise();
+                /*if(dataset0_updated.length > 1){
                     let selectedLanguages = new Set(d3.map(dataset0_updated, d=>d.Language));
                     updateOtherViews(Array.from(selectedLanguages));
-                }
+                }*/
             }
         })
 
