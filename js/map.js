@@ -146,7 +146,6 @@ class US_Map{
                     return colorScale(d.Group)
                 }
             })
-            .attr("stroke", "black")
             .style("opacity", d => {
                 if (group_ct == 0){
                     return 0
@@ -208,7 +207,6 @@ class US_Map{
             let selectedData = dataset_updated.filter((d,i)=>selectedPoints.includes(i));
             let languages = [... new Set(selectedData.map(d=>d.Language))];
             this.drawBubbles(languages);
-            console.log(languages)
         }
         else{
             //doesn't work...Why?

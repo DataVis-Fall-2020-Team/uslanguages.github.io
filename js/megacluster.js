@@ -1,3 +1,5 @@
+let selected_circle
+
 class cluster {
     constructor(svg){
         this.svg = svg
@@ -38,21 +40,26 @@ class cluster {
         // --------------------------------------------  
         // Mouse over
         d3.selectAll('circle')
-            .on('mouseover.cluster', function(d){
+            .on('mouseover.cluster', function(d,i){
                 tooltip
-                .style("top", d3.event.target.attributes['cy'].value+ 'px')
-                .style("left", d3.event.target.attributes['cx'].value+ 'px')
-                .style('visibility', 'visible')
-                .html("<p style=font-size:20px>" + d.Group + "</p> \
-                    <p>" + d.Subgroup + "</p> \
-                    <p>" + d.Language + ": " + d.Speakers +"</p>"
-                    )    
+                    .style("top", d3.event.target.attributes['cy'].value+ 'px')
+                    .style("left", d3.event.target.attributes['cx'].value+ 'px')
+                    .style('visibility', 'visible')
+                    .html("<p style=font-size:20px>" + d.Group + "</p> \
+                        <p>" + d.Subgroup + "</p> \
+                        <p>" + d.Language + ": " + d.Speakers +"</p>"
+                        )
+                selected_circle = this
+                d3.select(this)
+                    .attr('stroke', 'black')   
+                    .attr('stroke-width', 2) 
+                 
                         
         }) // End mouseover listener
 
         // Mouse move
         d3.selectAll('circle')
-        .on('mousemove.cluster', (d) => {
+        .on('mousemove.cluster', () => {
             tooltip
             .style("top", d3.event.target.attributes['cy'].value+ 'px')
             .style("left", d3.event.target.attributes['cx'].value+ 'px')
@@ -63,6 +70,8 @@ class cluster {
         d3.selectAll('circle')
             .on('mouseout.cluster', () => {
                 tooltip.style('visibility', 'hidden')
+                // d3.select(this).attr('stroke','white')
+                d3.event.target.attributes.stroke.value = null
         }) // End mouseout listener
 
     } // End of tooltip function
@@ -78,13 +87,21 @@ class cluster {
             .data(MapData.filter(x => x.Language === d.Language))
             .join("circle")
             .attr("fill", d=>colorScale(d.Group))
-            .attr("stroke", "black")
+            // .attr("stroke", "black")
             .style("opacity", 1)
             .attr("r", d=>scale_singleselect_bubble(d.Speakers, MapData.filter(x => x.Language === d.Language)))
             .attr("cx", d=>scaleCentersX_map(d.StateCenter[0]))
             .attr("cy", d=>scaleCentersY_map(d.StateCenter[1]))
             .attr("transform", "translate(0,140)")
-            .classed("state_bubbles", true);
+            .classed("state_bubbles", true)
+            .style('opacity', d => {
+                if (mapview){
+                    return 1
+                } 
+                else {
+                    return 0
+                }
+            })
 
 
         // --------------------------------------------
