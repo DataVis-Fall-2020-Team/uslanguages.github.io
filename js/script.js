@@ -6,7 +6,7 @@ let map_simulation, map_nodes, map_clusters, dataset0_updated
 let MapData, map_speaker_total
 let views = {} //dictionary to store view objects
 let toggle_object, toggle_tracker = false
-let mergedBubbles = false, map_circles_same = true;
+let map_circles_same = true;
 // --------------------------------------------
         // Import the data
 // --------------------------------------------
@@ -156,20 +156,14 @@ loadData().then(function(data){
             .attr('width', 1050)
             .attr('height', 1000)
             .attr('opacity', 1)
-            // .attr('position', 'relative')
 
         // Simulation setup
         simulation = d3.forceSimulation(dataset_updated)
-
-        //   .force("center", d3.forceCenter(500,500))
-        //   .force('charge', d3.forceManyBody().distanceMin(20))
           .force("cluster", clustering)
           .force("gravity", d3.forceManyBody(30))
           .force("collide", d3.forceCollide().radius(function(d){
               return scaleSize(d.Speakers) + 3
           }))
-        //   .velocityDecay(.7)
-        // .alphaDecay(.05) // Speed of cooling the simulation
 
           clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:100, y:110}
           , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:120, y:120}
@@ -241,6 +235,9 @@ loadData().then(function(data){
 
      toggle_object = renderToggle(toggle_div, 'Merge Speakers')
 
+     // Render Language Info Div in Panel - Replacement for tooltip because of clutter
+     d3.select("#map_section").append("div").attr("id", "LanguageInfo");
+
     } // End setup_page function
 
 
@@ -272,7 +269,14 @@ loadData().then(function(data){
             d3.select("#us_map").transition().style('opacity',0);
             views['map'].clearEventHandlers();
             views['cluster'].map_brush(false);
-        } // End map if statement
+        }
+        else{
+            //Reset Map
+            updateOtherViews([]); //Clear out selection
+            views['cluster'].map_brush(false); // Clear brush selection
+            views['cluster'].map_brush(true) //bring back brush
+            d3.select("#cluster_group").raise();
+        }// End map if statement
 
         if (chartType !== "area"){
             d3.select('#area').transition().style('opacity',0)
@@ -286,8 +290,8 @@ loadData().then(function(data){
         // Update Other Views
 // --------------------------------------------
 
-    function updateOtherViews(selectedPoints){
-        views['map'].updateView(selectedPoints);
+    function updateOtherViews(newData){
+        views['map'].updateView(newData);
     }
 
 // --------------------------------------------
@@ -351,33 +355,17 @@ loadData().then(function(data){
         // TOGGLE
         toggle_object.on('click.toggle', function(d){
             if (toggle_object.node().checked){
-                mergedBubbles = true;
-                views['cluster'].map_brush(false); // Clear brush selection
-                updateOtherViews([]); //Clear out selection
-                views['cluster'].map_brush(true) //bring back brush
-                d3.select("#cluster_group").raise();
-                /*if(dataset0_updated.length > 1){
-                    let selectedLanguages = new Set(d3.map(dataset0_updated, d=>d.Language));
-                    updateOtherViews(Array.from(selectedLanguages));
-                }*/
+                clean('map');
             }
             else {
-                mergedBubbles = false;
-                updateOtherViews([]); // Clear out selection
-                views['cluster'].map_brush(false); // Clear brush selection
-                views['cluster'].map_brush(true) //bring back brush
-                d3.select("#cluster_group").raise();
-                /*if(dataset0_updated.length > 1){
-                    let selectedLanguages = new Set(d3.map(dataset0_updated, d=>d.Language));
-                    updateOtherViews(Array.from(selectedLanguages));
-                }*/
+                clean('map');
             }
         })
 
         simulation.stop()
 
         // Draw the map
-        clean('map')
+        clean('map');
 
         //Draw Bubble Filters
         //Move the bubbles

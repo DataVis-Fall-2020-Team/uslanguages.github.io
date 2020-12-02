@@ -241,6 +241,14 @@ text {
     fill: lightgrey;
 }
 
+/* Language Info Box */
+.notice{
+    border: solid 2px black;
+    margin-top: 20px;
+    padding: 20px 20px 10px 20px;
+    text-align: left;
+}
+
 /* Taken from Homework 6 solution */
 /*For the slider*/
 /* #toggle_map{

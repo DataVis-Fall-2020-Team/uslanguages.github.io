@@ -108,24 +108,33 @@ class US_Map{
             languages="";
         }
 
+        //get individual language info
+        dataset0_updated = this.mapData.filter(d=>languages.includes(d.Language));
+
+        if(dataset0_updated.length == 0){
+            //Clear out all bubbles and lines
+            //This ignores whatever bug is in the code that makes the
+            //  program freak out about no circle cx's and cy's.
+            bubbleGroup.selectAll("circle")
+                .data(d=>[])
+                .join("circle");
+
+            d3.select("#lines_group").selectAll("line")
+                .data(d=>[])
+                .join("line")
+            return;
+        }
+
         // Turn off flag for resizing bubbles if there's only one language
-        if(languages.length==1 || mergedBubbles){
+        if(languages.length==1 || toggle_object.node().checked){
             map_circles_same = false;
         }
         else{
             map_circles_same = true;
         }
-        //get individual language bubbles
-        dataset0_updated = this.mapData.filter(d=>languages.includes(d.Language));
-
-        //Clear out all bubbles and start new
-        //Quick Fix for a bug that messes up the circle and state centers
-        bubbleGroup.selectAll("circle")
-            .data(d=>[])
-            .join("circle");
 
         //Draw bubbles based on whether they're merged or not
-        if(!mergedBubbles){
+        if(!toggle_object.node().checked){
             //Draw bubbles based on updated dataset
             let mapBubbles = bubbleGroup.selectAll("circle")
                 .data(dataset0_updated)
@@ -257,7 +266,7 @@ class US_Map{
 
         //Has to always be created after bubbles are created
         this.attachEventHandlers();
-        if(!mergedBubbles){
+        if(!toggle_object.node().checked){
             clusterMapBubbles();
         }
 
@@ -277,7 +286,7 @@ class US_Map{
 
         // Mouse over
         d3.selectAll('.state_bubbles').on('mouseover.map', function(d){
-            if(!mergedBubbles && map_circles_same){
+            if(!toggle_object.node().checked && map_circles_same){
                 // Grow Circle
                 let hovered_class = d.Language.replaceAll(" ",'_')
                     .replaceAll(",", "")
@@ -304,7 +313,6 @@ class US_Map{
             // Print Info to Side-Panel
             let htmlText = "<p style=font-size:20px><b>Language:</b> " + d.Language
                             + "</p><p><b>Sub-group:</b> " + d.Subgroup
-                            //+ "</p><p><b>Group:</b> " + d.Group + "</p>";
                             + "</p><p style=text-transform:capitalize><b>Group:</b> " + d.Group.toLowerCase() + "</p>";
 
             if(!map_circles_same){
@@ -312,6 +320,12 @@ class US_Map{
                 d3.select(this)
                     .attr("stroke", "black")
                     .attr("stroke-width", 3);
+                d3.select("#LanguageInfo")
+                    .classed("notice", false);
+            }
+            else{
+                d3.select("#LanguageInfo")
+                    .classed("notice", true);
             }
 
             infoBox.html(htmlText);
@@ -334,6 +348,9 @@ class US_Map{
                     .attr("stroke", "black")
                     .attr("stroke-width", 1);
             }
+
+            d3.select("#LanguageInfo")
+                .classed("notice", false);
         }) // End mouseout listener
     }
 
