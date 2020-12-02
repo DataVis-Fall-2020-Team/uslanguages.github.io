@@ -102,7 +102,6 @@ svg circle:hover{
 
 line {
     stroke: black;
-
 }
 
 .hover {
@@ -171,10 +170,12 @@ label {
 
 /* Language Info Box Style*/
 .notice{
-    border: solid 2px black;
-    margin-top: 20px;
-    padding: 20px 20px 10px 20px;
+    border: solid 3px black;
+    background: white;
+    margin: 20px 10px 10px 10px;
+    padding: 10px 10px 0px 10px;
     text-align: left;
+}
 
 /* Button Styling */
 .button {
@@ -255,8 +256,6 @@ button:hover{
     color: dark grey;
     background-color: #fff;
 }
-
-
 
 /* Taken from Homework 6 solution */
 /*For the slider*/

@@ -2,13 +2,14 @@
 let dataset, dataset_updated
 let simulation, nodes, clusters
 let map_data, map_center_data, path, projection
-let MapData, map_speaker_total, mapview = false
 let map_simulation, map_nodes, map_clusters, dataset0_updated
-let MapData, map_speaker_total
-
+let MapData, map_speaker_total, mapview = false
 let views = {} //dictionary to store view objects
 let toggle_object, toggle_tracker = false
 let map_circles_same = true;
+// https://stackoverflow.com/questions/1248081/how-to-get-the-browser-viewport-dimensions
+const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
 // --------------------------------------------
         // Import the data
 // --------------------------------------------
@@ -57,7 +58,7 @@ loadData().then(function(data){
         const languageMap = await d3.csv('./data/language_map.csv');
 
         return [stateData, nationalData, compareData, percentageData, languageMap];
-														}
+	}
     catch{
         console.log("Data not loaded");
     }
@@ -150,9 +151,6 @@ loadData().then(function(data){
 
     // Setup the page 
     function setup_page(){
-
-        
-        
         // Create the SVG
         let svg = d3.select("#vis")
             .style('margin-left', '450px')
@@ -326,7 +324,6 @@ loadData().then(function(data){
         }
         else{
             //Reset Map
-            updateOtherViews([]); //Clear out selection
             views['cluster'].map_brush(false); // Clear brush selection
             views['cluster'].map_brush(true) //bring back brush
             d3.select("#cluster_group").raise();
@@ -344,7 +341,10 @@ loadData().then(function(data){
         // Update Other Views
 // --------------------------------------------
 
-    function updateOtherViews(newData){
+    function updateOtherViews(newData, view){
+        if(view == "brush"){
+            clean('map');
+        }
         views['map'].updateView(newData);
     }
 
@@ -415,9 +415,11 @@ loadData().then(function(data){
         // TOGGLE
         toggle_object.on('click.toggle', function(d){
             if (toggle_object.node().checked){
+                updateOtherViews([], ""); //Clear out selection
                 clean('map');
             }
             else {
+                updateOtherViews([], ""); //Clear out selection
                 clean('map');
             }
         })
@@ -448,20 +450,12 @@ loadData().then(function(data){
             // .alphaDecay(.01)
             .velocityDecay(.9)
 
-            let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-100, y:-160}
-                , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:30, y:-150}
-                , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:170, y:-150}
-                , {'Group':"English",number:3, x:300, y:-142}
-                , {'Group':"ALL OTHER LANGUAGES", number:4, x: 430, y:-140}
+            let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-vw/14, y:-vh/4 + 10}
+                , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:vw/16, y:-vh/4 + 15}
+                , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:vw/6, y:-vh/4 + 20}
+                , {'Group':"English",number:3, x:vw/4, y:-vh/4 + 20}
+                , {'Group':"ALL OTHER LANGUAGES", number:4, x: vw/3+25, y:-vh/4 + 20}
             ]
-/*
-            let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:50, y:-300}
-            , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:220, y:-300}
-            , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:-100, y:-300}
-            , {'Group':"English",number:3, x:-220, y:-300}
-            , {'Group':"ALL OTHER LANGUAGES", number:4, x: 400, y:-310}
-        ]
-*/
 
         // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
         function clustering(alpha) {

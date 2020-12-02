@@ -13,7 +13,7 @@ class cluster {
         this.attach_maplisteners()
         this.tooltip()
         this.toggle_tracker = false
-
+        this.brush;
 
     } // End constructor call
 
@@ -84,7 +84,7 @@ class cluster {
 
 
     circle_click.on('click.cluster', function(d){
-            updateOtherViews(d.Language);
+            updateOtherViews(d.Language, "brush");
         })
         /*// --------------------------------------------
         // Tooltip for the map circles
@@ -203,7 +203,8 @@ class cluster {
                         }
                     }
                 });
-            brushGroup.call(brush);
+            this.brush = brush;
+            brushGroup.call(this.brush);
         }
     }
 } //End class

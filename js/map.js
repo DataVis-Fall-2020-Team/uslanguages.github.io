@@ -113,7 +113,7 @@ class US_Map{
 
         if(dataset0_updated.length == 0){
             //Clear out all bubbles and lines
-            //This ignores whatever bug is in the code that makes the
+            //This removes whatever bug is in the code that makes the
             //  program freak out about no circle cx's and cy's.
             bubbleGroup.selectAll("circle")
                 .data(d=>[])
@@ -311,22 +311,25 @@ class US_Map{
             }
 
             // Print Info to Side-Panel
-            let htmlText = "<p style=font-size:20px><b>Language:</b> " + d.Language
-                            + "</p><p><b>Sub-group:</b> " + d.Subgroup
-                            + "</p><p style=text-transform:capitalize><b>Group:</b> " + d.Group.toLowerCase() + "</p>";
+            let htmlText = "<p style=font-size:20px><b>Language:</b> " + (d.Language ? d.Language : "Multiple")
+                            + "</p><p><b>Sub-group:</b> " + (d.Subgroup ? d.Subgroup : "Multiple")
+                            + "</p><p style=text-transform:capitalize><b>Group:</b> "
+                            + (d.Group ? d.Group.toLowerCase() : "Multiple") + "</p>";
 
             if(!map_circles_same){
-                htmlText += "<p><b>Number of Speakers:</b> " + d.Speakers +"</p>";
-                d3.select(this)
+                htmlText += "<p><b>Number of Speakers:</b> " + (d.Speakers ? d.Speakers : d.Speakers_Total) +"</p>";
+            }
+
+            d3.select(this)
                     .attr("stroke", "black")
                     .attr("stroke-width", 3);
-                d3.select("#LanguageInfo")
-                    .classed("notice", false);
-            }
-            else{
-                d3.select("#LanguageInfo")
-                    .classed("notice", true);
-            }
+
+            let color = d3.select(this).attr("fill");
+            d3.select("#LanguageInfo")
+                .style("border-color", color)
+                //.style("background-color", color)
+                //.style("opacity", 0.5)
+                .classed("notice", true);
 
             infoBox.html(htmlText);
             console.log(d);
