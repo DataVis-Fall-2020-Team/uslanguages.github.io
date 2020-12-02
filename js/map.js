@@ -55,8 +55,6 @@ class US_Map{
         projection = d3.geoAlbersUsa()
             .translate([1000/2-50,410]) // this centers the map in the SVG element
             .scale([1200]); // this specifies how much to zoom
-        /*.translate([1000/2-75,400]) // this centers the map in the SVG element
-        .scale([1150]); // this specifies how much to zoom*/
 
         path = d3.geoPath()
             .projection(projection);
@@ -239,11 +237,9 @@ class US_Map{
         let linesGroup = d3.select("#lines_group");
         if(languages.length > 0){
             let linePoints = [];
-            let j = 0;
             for(let i = 0; i<this.lines.length; i++){
                 if(dataset0_updated.find(d=>this.lineStates[i] == d.State)){
-                    linePoints[j] = this.lines[i];
-                    j++;
+                    linePoints.push(this.lines[i]);
                 }
             }
 
@@ -327,8 +323,6 @@ class US_Map{
             let color = d3.select(this).attr("fill");
             d3.select("#LanguageInfo")
                 .style("border-color", color)
-                //.style("background-color", color)
-                //.style("opacity", 0.5)
                 .classed("notice", true);
 
             infoBox.html(htmlText);

@@ -76,7 +76,6 @@ loadData().then(function(data){
         }
             
         let my_categories = dataset[1].map(x => x.Group).filter(distinct);
-        //const colors = ["#e7298a","#66a61e","#1b9e77", "#6a3d9a", "#ff7f00",'#e41a1c'];
         const colors = ['#377eb8','#984ea3','#4daf4a',"#e7298a",'#ff7f00'];
         
         // Color scale
