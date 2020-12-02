@@ -1,9 +1,15 @@
 // Set global variables
 let dataset, dataset_updated
 let simulation, nodes, clusters
-let map_data, map_center_data, path, projection, MapData, map_speaker_total, mapview = false
+let map_data, map_center_data, path, projection
+let map_simulation, map_nodes, map_clusters, dataset0_updated
+let MapData, map_speaker_total, mapview = false
 let views = {} //dictionary to store view objects
 let toggle_object, toggle_tracker = false
+let map_circles_same = true;
+// https://stackoverflow.com/questions/1248081/how-to-get-the-browser-viewport-dimensions
+const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
 // --------------------------------------------
         // Import the data
 // --------------------------------------------
@@ -45,12 +51,14 @@ loadData().then(function(data){
         // JSON taken from: https://github.com/DataVis-Fall-2020-Team/MappingAPI/tree/master/data/geojson
         map_data = await d3.json("data/us-states.json");
         map_center_data = await d3.json("data/state-centers.json");
+        dataset0_updated = [];
+        //console.log('Map Data Loaded');
         const compareData = await d3.csv('./data/language_compare.csv');
         const percentageData = await d3.csv('./data/language_percentages.csv');
         const languageMap = await d3.csv('./data/language_map.csv');
 
         return [stateData, nationalData, compareData, percentageData, languageMap];
-    }
+	}
     catch{
         console.log("Data not loaded");
     }
@@ -102,29 +110,37 @@ loadData().then(function(data){
     function scaleCentersY_map(input){
         let scaleCenters = d3.scaleLinear()
             .domain([0,1000])
-            .range([0,900]);
+            .range([0,940]);
         return scaleCenters(input);
     }
 
     function scaleCentersX_map(input){
         let scaleCenters=d3.scaleLinear()
             .domain([0,1000])
-            .range([0,895]);
+            .range([0,927]);
         return scaleCenters(input);
+    }
+
+    function scaleSelection_map(input, min, max){
+        let scaleBubbles = d3.scaleLinear()
+            .domain([min,max])
+            .range([6,35]);
+
+        return scaleBubbles(input);
     }
 
     // Create a scale for all of the bubbles for multi-select
     function scale_multiselect_bubble(input){
         let scale = d3.scaleLinear()
             .domain([0,d3.max(map_speaker_total)])
-            .range([2,25]);
+            .range([6,35]);
         return scale(input);
     }
 
     function scale_singleselect_bubble(input, data){
         let scale = d3.scaleLinear()
             .domain([0,d3.max(data.map(d => d.Speakers))])
-            .range([2,25]);
+            .range([6,35]);
         return scale(input);
     }
     // ----------------------------------------------------------------
@@ -135,17 +151,13 @@ loadData().then(function(data){
 
     // Setup the page 
     function setup_page(){
-
-        
-        
         // Create the SVG
         let svg = d3.select("#vis")
-            .style('margin-left', '500px')
+            .style('margin-left', '450px')
             .append('svg')
-            .attr('width', 1000)
+            .attr('width', 1050)
             .attr('height', 1000)
             .attr('opacity', 1)
-            // .attr('position', 'relative')
 
         //Create the tooltip
         d3.select("#vis")
@@ -154,9 +166,6 @@ loadData().then(function(data){
     
         // Simulation setup
         simulation = d3.forceSimulation(dataset_updated)
-
-        //   .force("center", d3.forceCenter(500,500))
-        //   .force('charge', d3.forceManyBody().distanceMin(20))
           .force("cluster", clustering)
         //   .force("gravity", d3.forceManyBody())
           .force("charge", d3.forceManyBody().strength(-100).distanceMin(20))
@@ -164,8 +173,6 @@ loadData().then(function(data){
           .force("collide", d3.forceCollide().radius(function(d){
               return scaleSize(d.Speakers) + 3
           }))
-        //   .velocityDecay(.7)
-        // .alphaDecay(.05) // Speed of cooling the simulation
 
           clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:0, y:0} //Top left
           , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:250, y:100} // Furthest right, below English
@@ -192,6 +199,20 @@ loadData().then(function(data){
                 }
             }
 
+        // Map Simulation Prep
+        map_clusters = [];
+        let ind = 0;
+        d3.keys(map_center_data).forEach((d,i)=>{
+            if(d!="Notes"){
+                map_clusters[ind] = {
+                    'State': d,
+                    'x': d3.values(map_center_data)[i][0],
+                    'y': d3.values(map_center_data)[i][1],
+                };
+                ind++;
+            }
+        });
+		
         //Draws the various legends for each of the sections
         function drawLegend(name, groups){
             let svg = d3.select(name).append("svg")
@@ -242,7 +263,7 @@ loadData().then(function(data){
         // Viz #2 Map
         views['map'] = new US_Map([dataset[0],map_data,map_center_data, dataset[1]], svg);
         views['map'].updateStateOpacity(0);
-        
+
         // Viz #1 Megacluster setup
         views['cluster'] = new cluster(svg);
         drawLegend("#legendCluster", my_categories.slice(1));
@@ -250,14 +271,19 @@ loadData().then(function(data){
         // Define each tick of simulation
         simulation.on('tick', () => {
             d3.selectAll('.cluster_circles')
-                .attr('cx', (d) => d.x + 350)
-                .attr('cy', (d) => d.y + 400)
+                .attr('cx', (d) => d.x + 275)
+                .attr('cy', (d) => d.y + 250)
+                /*.attr('cx', (d) => d.x + 350)
+                .attr('cy', (d) => d.y + 400)*/
      }) 
 
      // Render Toggle - Taken from Homework 6 solution
      let toggle_div = d3.select('#map_section').append('div').attr('id','toggle_map')
 
-     toggle_object = renderToggle(toggle_div, 'Multi-select') 
+     toggle_object = renderToggle(toggle_div, 'Merge Speakers')
+
+     // Render Language Info Div in Panel - Replacement for tooltip because of clutter
+     d3.select("#map_section").append("div").attr("id", "LanguageInfo");
 
     } // End setup_page function
 
@@ -272,11 +298,9 @@ loadData().then(function(data){
         let svg = d3.select('#vis').select('svg')
         if (chartType !== "cluster"){
             if (chartType !== "map"){
-                //svg.selectAll('circle').transition().style('opacity',0)
                 d3.select("#cluster").transition().style('opacity', 0)
                 views['cluster'].clearEventHandlers();
-                //d3.select("#us_map").transition().style('opacity',0);
-            } 
+            }
         } // End cluster if statement
 
         if (chartType !== "bar1"){
@@ -297,7 +321,13 @@ loadData().then(function(data){
             views['map'].clearEventHandlers();
             views['cluster'].map_brush(false);
             mapview = false
-        } // End map if statement
+        }
+        else{
+            //Reset Map
+            views['cluster'].map_brush(false); // Clear brush selection
+            views['cluster'].map_brush(true) //bring back brush
+            d3.select("#cluster_group").raise();
+        }// End map if statement
 
         if (chartType !== "area"){
             d3.select('#area').transition().style('opacity',0)
@@ -311,8 +341,11 @@ loadData().then(function(data){
         // Update Other Views
 // --------------------------------------------
 
-    function updateOtherViews(selectedPoints){
-        views['map'].updateView(selectedPoints);
+    function updateOtherViews(newData, view){
+        if(view == "brush"){
+            clean('map');
+        }
+        views['map'].updateView(newData);
     }
 
 // --------------------------------------------
@@ -326,10 +359,7 @@ loadData().then(function(data){
         simulation.stop()
         
         clean('cluster') // Turns off opacity for all other charts
-        // let svg = d3.select("#vis")
-        //     .select('svg')
-        
-        //svg.selectAll('circle')
+
         d3.select("#cluster").raise();
         d3.select("#cluster")
             .transition()
@@ -379,39 +409,28 @@ loadData().then(function(data){
     } // end draw0 function
 
     function draw_map(){
-
-
+		
         mapview = true
+
         // TOGGLE
         toggle_object.on('click.toggle', function(d){
             if (toggle_object.node().checked){
-                views['cluster'].map_brush(true)
-                d3.select("#cluster_group").raise();
-
-    
+                updateOtherViews([], ""); //Clear out selection
+                clean('map');
             }
             else {
-                views['cluster'].map_brush(false)
-                views['cluster'].attach_maplisteners();
-                d3.select("#cluster_group").raise();
-
+                updateOtherViews([], ""); //Clear out selection
+                clean('map');
             }
         })
-        views['cluster'].tooltip();
-        views['cluster'].attach_maplisteners()
 
         simulation.stop()
+
         // Draw the map
-        clean('map')
-        d3.select("#cluster").raise();
+        clean('map');
 
-
-        // d3.select("#us_map").raise();
-        d3.select("#us_map").style('opacity',1);
-        views['map'].updateStateOpacity(1);
-		
+        //Draw Bubble Filters
         //Move the bubbles
-
         d3.selectAll('.cluster_circles')
             .transition()
             .duration(1000)
@@ -420,11 +439,9 @@ loadData().then(function(data){
         d3.select('#cluster')
             .style('opacity',1)
 
-
         simulation.alpha(1).restart()
 
         simulation
-            // .transition()
             .force("cluster", clustering)
             .force("charge", d3.forceManyBody().strength(-5))
             .force("collide", d3.forceCollide().radius(function(d){
@@ -433,13 +450,12 @@ loadData().then(function(data){
             // .alphaDecay(.01)
             .velocityDecay(.9)
 
-            let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:50, y:-300}
-            , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:220, y:-300}
-            , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:-100, y:-300}
-            , {'Group':"English",number:3, x:-220, y:-300}
-            , {'Group':"ALL OTHER LANGUAGES", number:4, x: 400, y:-310}
-        ]
-
+            let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-vw/14, y:-vh/4 + 10}
+                , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:vw/16, y:-vh/4 + 15}
+                , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:vw/6, y:-vh/4 + 20}
+                , {'Group':"English",number:3, x:vw/4, y:-vh/4 + 20}
+                , {'Group':"ALL OTHER LANGUAGES", number:4, x: vw/3+25, y:-vh/4 + 20}
+            ]
 
         // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
         function clustering(alpha) {
@@ -450,7 +466,54 @@ loadData().then(function(data){
               node.vy -= (node.y - cluster.y) * k;
               }
           }
+
+        //Draw Brush
+        views['cluster'].map_brush(true);
+
+
+        //Raise these views so that there's no fighting with the bar charts or the brush
+        d3.select("#cluster_group").raise();
+        d3.select("#us_map").raise();
+
+        //Attach Tooltips, Events, and Update Opacity
+        views['cluster'].tooltip();
+        views['cluster'].attach_maplisteners();
+
+        d3.select("#us_map").style('opacity',1);
+        views['map'].updateStateOpacity(1);
+        views['map'].attachEventHandlers();
+
     } // end draw_map function  
+
+    // Sub-function to Map, is called when map bubbles are drawn
+    function clusterMapBubbles(){
+        if(dataset0_updated.length > 0){
+            //console.log("Clustering Map!");
+
+            map_simulation = d3.forceSimulation(dataset0_updated)
+                .force("cluster", map_clustering)
+                .force("collide", d3.forceCollide().radius(function(d){
+                    return 2.2;
+                }))
+                .alphaDecay(.09)
+                .velocityDecay(.7)
+
+            map_simulation.on('tick', () => {
+                d3.selectAll('.state_bubbles')
+                    .attr("cx", (d) => d.x + 0)
+                    .attr("cy", (d) => d.y + 140)
+            })
+
+            // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
+            function map_clustering(alpha) {
+                for (let i = 0, n = dataset0_updated.length, map_node, map_cluster, k = alpha * 1; i < n; ++i) {
+                    map_node = dataset0_updated[i];
+                    map_node.vx -= (map_node.x - map_node.StateCenter[0]) * k;
+                    map_node.vy -= (map_node.y - map_node.StateCenter[1]) * k;
+                }
+            }
+        }
+    } // end clusterMapBubbles function  
 
     // Draw Horizontal Barchart
     function draw_bar1(){
