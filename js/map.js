@@ -1,10 +1,11 @@
-//TODO: Maybe: add some storytelling?
 //TODO: Add buttons to display merged bubbles
+//TODO: Maybe: add some storytelling?
+//TODO: Javascript Style Guides (clean up code)
+//TODO: write mini blurb 20-25 seconds/section
 
 class US_Map{
     // Creates a US_Map object showing language distribution
     constructor(data, svg){
-        //console.log(data); //355 languages, 51 states/territories
         //Get and Modify Data
         this.data=data[0];
         this.stateData = data[1]; // map_data - this is the U.S. states json file
@@ -36,7 +37,7 @@ class US_Map{
         this.svg=svg.append("g").attr("id", "us_map");
 
         this.drawStates();
-        this.drawBubbles("none", true); // Input a list of languages to view
+        this.drawBubbles("none"); // Input a list of languages to view
     }
 
     getLanguagesPerState(state){
@@ -90,25 +91,58 @@ class US_Map{
     }
 
     //Draws the language bubbles
-    drawBubbles(languages, multiSelect){
+    drawBubbles(languages){
+        //Prepare Vis for Drawing
+        if(this.svg.select("#map_circles").empty()){
+            this.svg.append("g")
+                .attr("id", "map_circles");
+        }
+        let bubbleGroup = this.svg.select("#map_circles");
 
-        if(multiSelect){
-            // Filter Data based on selected language(s)
-            if(languages == "all"){
-                languages=this.AllLanguages; //["English", "Spanish", "French Creole"];
-            }
-            else if(languages == "none"){
-                languages="";
-            }
+        // Filter Data based on selected language(s)
+        if(languages == "all"){
+            languages=this.AllLanguages;
+        }
+        else if(languages == "none"){
+            languages="";
+        }
 
-            dataset0_updated = this.mapData.filter(d=>languages.includes(d.Language));
-            if(this.svg.select("#map_circles").empty()){
-                this.svg.append("g")
-                    .attr("id", "map_circles");
-            }
-        }else{
+        // Turn off flag for resizing bubbles if there's only one language
+        let samesize = true;
+        if(languages.length==1){
+            samesize = false;
+        }
+
+        //get individual language bubbles
+        dataset0_updated = this.mapData.filter(d=>languages.includes(d.Language));
+
+        //Draw bubbles based on whether they're merged or not
+        if(!consolidated){
+            //Draw bubbles based on updated dataset
+            let mapBubbles = bubbleGroup.selectAll("circle")
+                .data(dataset0_updated)
+                .join("circle")
+                .attr("fill", d=>colorScale(d.Group))
+                .attr("stroke", "black")
+                .style("opacity", 0.8)
+                .attr("r", d=>{
+                    if(samesize){
+                        return 2;
+                    }
+                    else{
+                        return scale_singleselect_bubble(d.Speakers, dataset0_updated);
+                    }
+                })
+                .attr("class", d=>d.Language.replaceAll(" ",'_')
+                    .replaceAll(",", "")
+                    .replaceAll("'", "-")
+                    .toLowerCase())
+                .classed("state_bubbles", true);
+
+        }
+        else{
             /////////////////////////////////////////////////////////////////////////////////////////////////////
-                // Consolidate number of speakers so there is 1 bubble per state on multi-select
+            // Consolidate number of speakers so there is 1 bubble per state on multi-select
             /////////////////////////////////////////////////////////////////////////////////////////////////////
 
             // Create a list of all of the states
@@ -126,17 +160,27 @@ class US_Map{
             // Consolidate number of speakers so there is one bubble per state
             if (dataset0_updated.length > 0){
                 state_list.forEach((g) => {
-                    dataF.forEach((d) => {
+                    dataset0_updated.forEach((d) => {
                         if (d.State === g.State){
                             g.Speakers_Total += +d.Speakers // Add up the speakers
                             g.StateCenter[0] = d.StateCenter[0] // Add state center coordinate
                             g.StateCenter[1] = d.StateCenter[1] // Add state center coordinate
+                            //g.x[0] = d.StateCenter[0] // Add x for bubbling/animation to work
+                            //g.y[1] = d.StateCenter[1] // Add y for bubbling/animation to work
                             g.Group = d.Group
                             group_list.push(d.Group)
                         }
                     })
                 })
             }
+
+            console.log(dataset0_updated);
+            // Filter out undefined values (aka states that don't have values)
+            // https://www.techiedelight.com/remove-falsy-values-from-an-array-in-javascript/
+            state_list = state_list.filter(function(d){
+                return (d.State != undefined && d.StateCenter[0] != undefined
+                    && d.StateCenter[1] != undefined && d.Speakers_Total != undefined);
+            });
 
             // Count the number of groups. If group_ct > 1, then change the color of the circles
             let group_ct
@@ -146,63 +190,35 @@ class US_Map{
             // Create an array of all the speaker counts
             map_speaker_total =  state_list.map(d => d.Speakers_Total)
 
+            console.log(state_list);
+            let mapBubbles = bubbleGroup.selectAll("circle")
+                .data(state_list)
+                .join("circle")
+                .attr("fill", d=> {
+                    if (group_ct > 1){
+                        return 'blue'
+                    }
+                    else {
+                        return colorScale(d.Group)
+                    }
+                })
+                .attr("stroke", "black")
+                .style("opacity", d => {
+                    if (group_ct == 0){
+                        return 0
+                    }
+                    else {
+                        return 1
+                    }
+                })
+                .attr("r", d=>scale_multiselect_bubble(d.Speakers_Total))
+                .attr("cx", d=>d.StateCenter[0])
+                .attr("cy", d=>d.StateCenter[1])
+                .attr("transform", "translate(0,140)")
+                .classed("state_bubbles", true);
         }
-        /////////////////////////////////////////////////////////////////////////////
 
-                // Draw Bubbles
-        let bubbleGroup = this.svg.select("#map_circles");
-
-        let that = this;
-        let mapBubbles = bubbleGroup.selectAll("circle")
-            .data(dataset0_updated)
-            .join("circle")
-            .attr("fill", d=> {
-                /*if (group_ct > 1){
-                    return 'blue'
-                }
-                else {*/
-                    return colorScale(d.Group)
-                //}
-            })
-            .attr("stroke", "black")
-            .style("opacity", 0.8)
-            .attr("r", 2)
-            .attr("class", d=>d.Language.replaceAll(" ",'_')
-                .replaceAll(",", "")
-                .replaceAll("'", "-")
-                .toLowerCase())
-            .classed("state_bubbles", true);
-			
-			/*Andreas's code
-			let mapBubbles = bubbleGroup.selectAll("circle")
-            .data(state_list)
-            .join("circle")
-            .attr("fill", d=> {
-                if (group_ct > 1){
-                    return 'blue'
-                }
-                else {
-                    return colorScale(d.Group)
-                }
-            })
-            .attr("stroke", "black")
-            .style("opacity", d => {
-                if (group_ct == 0){
-                    return 0
-                }
-                else {
-                    return 1
-                }
-            })
-            .attr("r", d=>scale_multiselect_bubble(d.Speakers_Total))
-            .attr("cx", d=>scaleCentersX_map(d.StateCenter[0]))
-            .attr("cy", d=>scaleCentersY_map(d.StateCenter[1]))
-            .attr("transform", "translate(0,140)")
-            .classed("state_bubbles", true);
-			*/
-
-
-         //Draw lines for smaller states to link bubbles to
+         //Draw lines for smaller states to organize bubbles to
         let linesGroup = d3.select("#lines_group");
         if(languages.length > 0){
             linesGroup.selectAll("line")
@@ -222,7 +238,9 @@ class US_Map{
 
         //Has to always be created after bubbles are created
         this.attachEventHandlers();
-        clusterMapBubbles();
+        if(!consolidated){
+            clusterMapBubbles();
+        }
     }
 
     /* Create Event Handlers and make language of circles grow */
@@ -235,27 +253,29 @@ class US_Map{
         // Mouse over
         d3.selectAll('.state_bubbles').on('mouseover.map', function(d){
             console.log("mouseover in map");
-            // Grow Circle
-            let hovered_class = d.Language.replaceAll(" ",'_')
-                .replaceAll(",", "")
-                .replaceAll("'", "-")
-                .toLowerCase();
+            if(!consolidated){
+                // Grow Circle
+                let hovered_class = d.Language.replaceAll(" ",'_')
+                    .replaceAll(",", "")
+                    .replaceAll("'", "-")
+                    .toLowerCase();
 
-            let selection = d3.map(that.data.filter(e=>e.Language == d.Language), e=>e.Speakers);
-            let min = d3.min(selection);
-            let max = d3.max(selection);
+                let selection = d3.map(that.data.filter(e=>e.Language == d.Language), e=>e.Speakers);
+                let min = d3.min(selection);
+                let max = d3.max(selection);
 
-            d3.selectAll(".state_bubbles")
-                .attr("r", 2);
+                d3.selectAll(".state_bubbles")
+                    .attr("r", 2);
 
-            let circles = d3.selectAll("."+hovered_class)
-                .attr("r", function(d1){
-                    return scaleSelection_map(d1.Speakers, min, max);
-                })
-                .style("opacity", 1);
+                let circles = d3.selectAll("."+hovered_class)
+                    .attr("r", function(d1){
+                        return scaleSelection_map(d1.Speakers, min, max);
+                    })
+                    .style("opacity", 1);
 
-            // Bring language circles to front
-            circles.raise();
+                // Bring language circles to front
+                circles.raise();
+            }
 
             // Print Info to Side-Panel
             let htmlText = "<p style=font-size:20px><b>Language:</b> " + d.Language
@@ -277,22 +297,35 @@ class US_Map{
     }
 
     clearEventHandlers(){
-        d3.selectAll('.state_bubbles').on('mousemove.map', null);
         d3.selectAll('.state_bubbles').on('mouseover.map', null);
         d3.selectAll('.state_bubbles').on('mouseout.map', null);
     }
 
     updateView(selectedPoints){
         //get languages from points
-        if(selectedPoints.length > 0){
-            let selectedData = dataset_updated.filter((d,i)=>selectedPoints.includes(i));
-            let languages = [... new Set(selectedData.map(d=>d.Language))];
-            this.drawBubbles(languages, true);
-            console.log(languages)
+        console.log(selectedPoints);
+       if(selectedPoints.length > 0){
+            if(!Number.isInteger(selectedPoints[0])){
+                if(selectedPoints[0].length > 1){
+                    // The Toggle Switch changed
+                    this.drawBubbles(selectedPoints);
+                }
+                else{
+                    // This is a click-select input
+                    this.drawBubbles([selectedPoints]);
+                }
+            }
+            else{
+                // This is a brush-select input
+                let selectedData = dataset_updated.filter((d,i)=>selectedPoints.includes(i));
+                let languages = [... new Set(selectedData.map(d=>d.Language))];
+                this.drawBubbles(languages);
+                console.log(languages)
+            }
         }
         else{
             //doesn't work...Why?
-            this.drawBubbles("none", true);
+            this.drawBubbles("none");
         }
     }
 

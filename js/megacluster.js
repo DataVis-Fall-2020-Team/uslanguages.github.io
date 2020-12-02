@@ -17,13 +17,8 @@ class cluster {
 
     draw_circles(){
         nodes = d3.select("#cluster")
-          //.append("g")
-          //.attr('id','cluster_group')
-        /*Old: 
-		console.log(MapData)
-        nodes = d3.select("#cluster").append("g")
+          .append("g")
           .attr('id','cluster_group')
-		  */
           .selectAll('circle')
           .data(dataset_updated)
           .join('circle')
@@ -78,19 +73,8 @@ class cluster {
 
 
     circle_click.on('click.cluster', function(d){
-        d3.select('#map_circles').selectAll('circle')
-            .data(MapData.filter(x => x.Language === d.Language))
-            .join("circle")
-            .attr("fill", d=>colorScale(d.Group))
-            .attr("stroke", "black")
-            .style("opacity", 1)
-            .attr("r", d=>scale_singleselect_bubble(d.Speakers, MapData.filter(x => x.Language === d.Language)))
-            .attr("cx", d=>scaleCentersX_map(d.StateCenter[0]))
-            .attr("cy", d=>scaleCentersY_map(d.StateCenter[1]))
-            .attr("transform", "translate(0,140)")
-            .classed("state_bubbles", true);
-
-
+        updateOtherViews(d.Language);
+        /*
         // --------------------------------------------
         // Tooltip for the map circles
         // --------------------------------------------  
@@ -120,9 +104,9 @@ class cluster {
             d3.selectAll('.state_bubbles')
                 .on('mouseout.map', () => {
                     tooltip.style('visibility', 'hidden')
-            }) // End mouseout listener
+            }) // End mouseout listener*/
 
-        })      
+        })
     } // End circle click function
 
     clearEventHandlers(){

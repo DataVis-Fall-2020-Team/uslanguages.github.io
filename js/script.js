@@ -6,6 +6,7 @@ let map_simulation, map_nodes, map_clusters, dataset0_updated
 let MapData, map_speaker_total
 let views = {} //dictionary to store view objects
 let toggle_object, toggle_tracker = false
+let consolidated = false;
 // --------------------------------------------
         // Import the data
 // --------------------------------------------
@@ -238,8 +239,7 @@ loadData().then(function(data){
      // Render Toggle - Taken from Homework 6 solution
      let toggle_div = d3.select('#map_section').append('div').attr('id','toggle_map')
 
-     toggle_object = renderToggle(toggle_div, 'Multi-select') 
-
+     toggle_object = renderToggle(toggle_div, 'Consolidate')
 
     } // End setup_page function
 
@@ -348,41 +348,31 @@ loadData().then(function(data){
     } // end draw0 function
 
     function draw_map(){
-
-
-    
         // TOGGLE
         toggle_object.on('click.toggle', function(d){
             if (toggle_object.node().checked){
-                views['cluster'].map_brush(true)
-                d3.select("#cluster_group").raise();
-
-    
+                consolidated = true;
+                if(dataset0_updated.length > 1){
+                    let selectedLanguages = new Set(d3.map(dataset0_updated, d=>d.Language));
+                    updateOtherViews(Array.from(selectedLanguages));
+                }
             }
             else {
-                views['cluster'].map_brush(false)
-                views['cluster'].attach_maplisteners();
-                d3.select("#cluster_group").raise();
-
+                consolidated = false;
+                if(dataset0_updated.length > 1){
+                    let selectedLanguages = new Set(d3.map(dataset0_updated, d=>d.Language));
+                    updateOtherViews(Array.from(selectedLanguages));
+                }
             }
         })
-        views['cluster'].tooltip();
-        views['cluster'].attach_maplisteners()
 
         simulation.stop()
 
         // Draw the map
         clean('map')
 
-        //Raise these views so that there's no fighting with the bar charts
-        d3.select("#cluster").raise();
-        d3.select("#us_map").raise();
-        d3.select("#us_map").style('opacity',1);
-        views['map'].updateStateOpacity(1);
-        views['map'].attachEventHandlers();
-
+        //Draw Bubble Filters
         //Move the bubbles
-
         d3.selectAll('.cluster_circles')
             .transition()
             .duration(1000)
@@ -394,7 +384,6 @@ loadData().then(function(data){
         simulation.alpha(1).restart()
 
         simulation
-            // .transition()
             .force("cluster", clustering)
             .force("collide", d3.forceCollide().radius(function(d){
                 return scaleSize_map(d.Speakers)
@@ -402,18 +391,12 @@ loadData().then(function(data){
             .alphaDecay(.01)
             .velocityDecay(.9)
 
-        /*Old: let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-120, y:-170}
-            , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:40, y:-160}
-            , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:350, y:-160}
-            , {'Group':"English",number:3, x:490, y:-160}
-            , {'Group':"ALL OTHER LANGUAGES", number:4, x: 190, y:-155}*/
-
             let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-100, y:-160}
-            , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:30, y:-150}
-            , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:170, y:-150}
-            , {'Group':"English",number:3, x:300, y:-142}
-            , {'Group':"ALL OTHER LANGUAGES", number:4, x: 430, y:-140}
-        ]
+                , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:30, y:-150}
+                , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:170, y:-150}
+                , {'Group':"English",number:3, x:300, y:-142}
+                , {'Group':"ALL OTHER LANGUAGES", number:4, x: 430, y:-140}
+            ]
 
         // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
         function clustering(alpha) {
@@ -425,17 +408,30 @@ loadData().then(function(data){
               }
           }
 
+        //Draw Brush
         views['cluster'].map_brush(true);
+
+
+        //Raise these views so that there's no fighting with the bar charts or the brush
+        d3.select("#cluster_group").raise();
+        d3.select("#us_map").raise();
+
+        //Attach Tooltips, Events, and Update Opacity
+        views['cluster'].tooltip();
+        views['cluster'].attach_maplisteners();
+
+        d3.select("#us_map").style('opacity',1);
+        views['map'].updateStateOpacity(1);
+        views['map'].attachEventHandlers();
 
     } // end draw_map function  
 
     // Sub-function to Map, is called when map bubbles are drawn
     function clusterMapBubbles(){
         if(dataset0_updated.length > 0){
-            console.log("Clustering Map!");
+            //console.log("Clustering Map!");
 
             map_simulation = d3.forceSimulation(dataset0_updated)
-                // .transition()
                 .force("cluster", map_clustering)
                 .force("collide", d3.forceCollide().radius(function(d){
                     return 2.2;
@@ -451,7 +447,6 @@ loadData().then(function(data){
 
             // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
             function map_clustering(alpha) {
-                let j = map_clusters.length;
                 for (let i = 0, n = dataset0_updated.length, map_node, map_cluster, k = alpha * 1; i < n; ++i) {
                     map_node = dataset0_updated[i];
                     map_node.vx -= (map_node.x - map_node.StateCenter[0]) * k;
