@@ -18,29 +18,28 @@
 	</head>
 	
 	<body>
-
-		<!-- <div id="info">
-			a
-		</div> -->
-		
 		<div id="graphic">
 			<div id="sections">
 				<section class="step">
 					<h1>Which languages are spoken in the U.S.?</h1>
-					<p>By Janaan Lake, Andreas Martinson, Rachel Berghout</a></p>
-					<p>
-						The visualization on the right shows each language in the United States represented by a circle. The largest circle is English in purple, followed by Spanish in orange.
-						Each color represents a different language group. The U.S. language totals in order of size are: English, Spanish & Spanish Creole, Other Indo-European Languages, 
-						Asian and Pacific Island Languages, and finally a 'catch-all' group called 'All Other Languages'. Hover over each circle to see a tooltip of that language with some details
-						about the population size that speaks that language. 
-
-						In the next visualization, we will look at the distribution of these languages across the U.S. Scroll down to see the distribution of languages broken out by state.
+				</br>
+					<p style="text-align:center"><strong>By</strong></p>
+					<p style="text-align:center">Janaan Lake, Andreas Martinson, Rachel Berghout</p>
+					<p> The United States has a rich variety of foreign language speakers.  Our visualizations 
+						explore data taken from the the most recent U.S. Census information about foreign language speakers.
+						The bubbles on the right represent the various languages spoken in the U.S. Each circle size is proportional
+						to to the total number of speakers of that language.  
+						Hover over each circle to see more information about that language.
+						Scroll down to explore more data.
 					</p>
+					<br>
+					<div id=legendCluster></div>
 				</section>
 				<section class="step"; id='map_section'>
 					
 					<br><br>
 					<h2>Where are these languages spoken in the U.S.?</h2>
+
 					<br><br>
 					<br><br>
 					<p>
@@ -52,29 +51,34 @@
 				<section class="step">
 					<h2>Which states have the most language diversity?</h2>
 					<br>
-					<p> West Virginia and Mississippi are the least diverse states, while 
-						Puerto Rico and California have the largest percentage of foreign speakers.
-						<button id="showEnglishSort">Click</button> to see.</p>
+					<p> <label id="showEnglishSort-WV" class="link"><strong>West Virginia</strong></label> and 
+						<label id="showEnglishSort-MS" class="link"><strong>Mississippi</strong></label> are 
+						the least diverse states, while <label id="showEnglishSort-PR" class="link"><strong>Puerto Rico</strong></label>
+						 and <label id="showEnglishSort-CA" class="link"><strong>California</strong></label> have the largest percentage of foreign speakers.
+					</p>
 					<br>
-					<p> Spanish is most commonly found in Puerto Rico and the Southwest while the 
+					<p> <label id="showSpanishSort" class="link"><strong>Spanish</strong></label> is most commonly found in Puerto Rico and the Southwest while the 
 						Northeast has the smallest percentage of Spanish speakers.
-						<button id="showSpanishSort">Click</button> to see.</p>
+					</p>
 					<br>
-					<p>Native American Languages are most commonly found in New Mexico and Alaska.
-						<button id="showNativeAmericanSort">Click</button> to see.</p>
+					<p><label id="showNativeAmericanSort" class="link"><strong>Native American</strong></label> languages are most commonly found in New Mexico and Alaska.
+					</p>
 					<br>
 					<p>Click each bar to sort the states by that language group.  Click
 						state names to sort alphabetically.</p>
+					<br>
+					<div id=legendBarchart1></div>
 				</section>
 				<section class="step">
 					<h2>Which foreign language speakers are the most fluent in English?</h2>
 					<br>
-					<p> Scandinavian and Native American speakers are more fluent in English, while
-						Vietnamse and Korean speakers are least fluent.  <button id="showSubgroupSort">Click</button> to see.
+					<p> <label id="showScandinavianSubgroup" class="link"><strong>Scandinavian</strong></label> 
+						and <label id="showNativeAmericanSubgroup" class="link"><strong>Native American</strong></label> 
+						speakers are more fluent in English, while <label id="showVietnameseSubgroup" class="link"><strong>Vietnamese</strong></label>
+						 and <label id="showKoreanSubgroup" class="link"><strong>Korean</strong></label> speakers are least fluent.  
 					</p>
 					<br>
-					<br> 
-					<p> <button id="showNativeAmerican">Click</button> to see how the different Native American languages compare. </p>
+					<p> See how the many different <label id="showNativeAmerican" class="link"><strong>Native American</strong></label> languages compare. </p>
 					<br>
 					<p> Click on each bar to drill down to the next level and see more detail.  Double
 						click to return.  
@@ -89,29 +93,34 @@
 						grown dramatically in the last 40 years.
 					</p>
 					<br>
-					<p> <button id="showSpanishGrowth">Click</button> to see how the Spanish language has grown as a percentage
-						of all total foreign language speakers in the United States.
+					<p> The <label id="showSpanishGrowth" class="link"><strong>Spanish</strong></label> language has increased as a percentage
+						of all total foreign language speakers in the United States due to the high influx of Mexican and Central American
+						immigrants since the 1980s.  The <label id="showChineseGrowth" class="link"><strong>Chinese</strong></label> language
+						has also grown, albeit a bit less dramatically.
 					</p>
 					<br>
-					<p> Explore the number of total number of speakers and percentage of total
-						foreign speakers in the United States over the past 40 years.  Click on
-						each language to see that language separately.  Click again to return to 
+					<p> Explore by clicking on each language to see that language separately.  Click again to return to 
 						the combined chart.
 					</p>
-					<!-- <p>
-					 
-					</p> -->
+					<div id=legendAreachart></div>
+				</section>
+				<section class="step">
+					<br><br>
+					<h2>The End</h2>
+					<br>
+					<p> We hope you learned something about the wide variety of languages spoken in the United States.
+						Our data represents information from 2009-2013 and was taken from the U.S. Census Bureau found 
+						<a href="https://www.census.gov/data/tables/2013/demo/2009-2013-lang-tables.html">here</a>.
+						A video detailing our visualization can be found here.
+					</p>
 				</section>
 			</div>
 			<div id="vis">
 	
 			</div>
 		</div>   
-		  <div class="us_map">
-
-		</div>
-    </div>
-
+		  <!-- <div class="us_map">
+		</div> -->
 		 <script src="https://d3js.org/d3.v5.js"></script>
 
 		 <script src = 'https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js'></script>
