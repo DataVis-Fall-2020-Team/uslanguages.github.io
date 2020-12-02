@@ -34,7 +34,9 @@ class cluster {
         
         // Create tooltip    
         let tooltip = d3.select('#tooltip-bar2')
+        tooltip.attr('transform','translate(0, -300)')
 
+        
         // --------------------------------------------
         // Tooltip for the cluster
         // --------------------------------------------  
@@ -42,12 +44,13 @@ class cluster {
         d3.selectAll('circle')
             .on('mouseover.cluster', function(d,i){
                 tooltip
-                    .style("top", d3.event.target.attributes['cy'].value+ 'px')
-                    .style("left", d3.event.target.attributes['cx'].value+ 'px')
+                    .style("top", d3.event.target.attributes['cy'].value  + 'px')
+                    .style("left", d3.event.target.attributes['cx'].value + 'px')
                     .style('visibility', 'visible')
-                    .html("<p style=font-size:20px>" + d.Group + "</p> \
-                        <p>" + d.Subgroup + "</p> \
-                        <p>" + d.Language + ": " + d.Speakers +"</p>"
+                    .html("<p style=font-size:20px> Language Group: " + d.Group + "</p> \
+                        <p> Subgroup: " + d.Subgroup + "</p> \
+                        <p> Language: " + d.Language + "</p>  \
+                        <p> Number of Speakers: " + numberWithCommas(d.Speakers) +"</p>"
                         )
                 selected_circle = this
                 d3.select(this)

@@ -218,11 +218,6 @@ class Barchart{
         this.attachStorytellingHandlers();
         let that = this;
 
-
-        //https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
-        function numberWithCommas(x) {
-            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
         d3.select("#barchart1").selectAll("rect")
             .on("mouseover.barchart", function(d) {
                 d3.select(this).classed("hover", true);                  
