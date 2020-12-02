@@ -1,3 +1,5 @@
+let selected_circle
+
 class cluster {
     constructor(svg){
         this.svg = svg
@@ -31,37 +33,46 @@ class cluster {
     tooltip() {
         
         // Create tooltip    
-        let tooltip = d3.select('#tooltip-bar2')
+        let tooltip = d3.select('#tooltip')
+        //tooltip.attr('transform','translate(0, -300)')
 
+        
         // --------------------------------------------
         // Tooltip for the cluster
         // --------------------------------------------  
         // Mouse over
         d3.selectAll('.cluster_circles')
             .on('mouseover.cluster', function(d){
-            tooltip
-                .style("top", d3.event.target.attributes['cy'].value+ 'px')
-                .style("left", d3.event.target.attributes['cx'].value+ 'px')
-                .style('visibility', 'visible')
-                .html("<p style=font-size:20px>" + d.Group + "</p> \
-                       <p>" + d.Subgroup + "</p> \
-                       <p>" + d.Language + ": " + d.Speakers +"</p>"
-                )
+				tooltip
+					.style("top", d3.event.target.attributes['cy'].value+ 'px')
+					.style("left", d3.event.target.attributes['cx'].value+ 'px')
+					.style('visibility', 'visible')
+					.html("<p style=font-size:20px>" + d.Group + "</p> \
+						   <p>" + d.Subgroup + "</p> \
+						   <p>" + d.Language + ": " + d.Speakers +"</p>"
+					)
+					
+				selected_circle = this
+				d3.select(this)
+					.attr('stroke', 'black')   
+					.attr('stroke-width', 2)
         }) // End mouseover listener
 
         // Mouse move
         d3.selectAll('.cluster_circles')
-        .on('mousemove.cluster', () => {
-            tooltip
-            .style("top", d3.event.target.attributes['cy'].value+ 'px')
-            .style("left", d3.event.target.attributes['cx'].value+ 'px')
-            // console.log(d.Language)
-        }) // End mousemove listener
+			.on('mousemove.cluster', () => {
+				tooltip
+				.style("top", d3.event.target.attributes['cy'].value+ 'px')
+				.style("left", d3.event.target.attributes['cx'].value+ 'px')
+				// console.log(d.Language)
+			}) // End mousemove listener
 
         // Mouse out
+		
         d3.selectAll('.cluster_circles')
 			.on('mouseout.cluster', () => {
 				tooltip.style('visibility', 'hidden')
+                d3.event.target.attributes.stroke.value = null
 			}) // End mouseout listener
 
     } // End of tooltip function
@@ -69,12 +80,44 @@ class cluster {
     attach_maplisteners(){
     // Controlling what circles show up when a state is selected
     let circle_click = d3.selectAll('.cluster_circles')
-    let tooltip = d3.select('#tooltip-bar2')
+    let tooltip = d3.select('#tooltip')
 
 
     circle_click.on('click.cluster', function(d){
             updateOtherViews(d.Language);
         })
+        /*// --------------------------------------------
+        // Tooltip for the map circles
+        // --------------------------------------------  
+            d3.selectAll('.state_bubbles')
+                .on('mouseover.map', function(d){
+
+                    tooltip
+                        .style("top", d3.event.target.attributes['cy'].value+ 'px')
+                        .style("left", d3.event.target.attributes['cx'].value+ 'px')
+                        .style('visibility', 'visible')
+                        .html("<p style=font-size:20px>" + d.Group + "</p> \
+                            <p>" + d.State + "</p> \
+                            <p>" + d.Language + ": " + d.Speakers +"</p>"
+                            )
+                }) // End mouseover listener
+
+            // Mouse move
+            d3.selectAll('.state_bubbles')
+            .on('mousemove.map', (d) => {
+                tooltip
+                .style("top", d3.event.target.attributes['cy'].value+ 'px')
+                .style("left", d3.event.target.attributes['cx'].value+ 'px')
+                // console.log(d.Language)
+            }) // End mousemove listener
+
+            // Mouse out
+            d3.selectAll('.state_bubbles')
+                .on('mouseout.map', () => {
+                    tooltip.style('visibility', 'hidden')
+            }) // End mouseout listener
+
+        })      */
     } // End circle click function
 
     clearEventHandlers(){

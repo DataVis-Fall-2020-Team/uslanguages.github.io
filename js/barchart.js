@@ -42,11 +42,12 @@ class Barchart{
         this.stateData = this.sumData(data);
         this.svg = svg;
         this.margin = { top: 20, right: 10, bottom: 20, left: 10};
-        this.barWidth = 500;
-        this.cellHeight = 15;
+        this.barWidth = 700;
+        this.cellHeight = 13;
         this.nameWidth = 150;
         this.sortAscending = true;
         this.currentSelection = "ENGLISH";
+        this.isSorted = false;
 
         this.scaleBar = d3.scaleLinear()
             .domain([0, 1])
@@ -62,9 +63,10 @@ class Barchart{
 
         this.svg.append('g')
                 .attr("id", "barchart1")
-                .style('opacity', 0);
+                .style('opacity', 0)
+                .attr("transform", "translate(0," + this.margin.top + ")");
         
-        this.drawBarChart();
+        this.drawBarChart()
     }
 
     /**
@@ -153,8 +155,38 @@ class Barchart{
                     .attr("width", d => that.scaleBar(d.percentage))
                     .attr("height", that.cellHeight - 1.5)
                     .attr('fill',d => colorScale(d.group))
-                    .attr("class", "stateRects");
+                    .attr("class", "stateRects")
+                    .attr("id", d =>(d.group + d.state).replace(" ", "").toLowerCase());
                 });
+    }
+
+    /**
+     * Function that renders the tooltip
+     * @param {select} selection -- the d3 selection for which the tooltip will be rendered
+     * @param {*} d -- the data bound to the d3 selection above
+     */
+    renderTooltip(selection, d){
+        let that = this;
+
+        //https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        let state = d3.select(selection).data()[0]["state"];
+            let index = that.stateData.findIndex(obj => obj.state === state);
+            let x = parseInt(d3.select(selection).attr("x"));
+            let y = index * (that.cellHeight+0.5);
+            x > 650 ? x -= 100: x + 25;
+            y < 500 ? y += 50: y -= 175;
+            d3.select("#tooltip")
+                .style("left", x + "px")
+                .style("top", y + "px")
+                .style('visibility', 'visible')
+                .html(`<h2>${d.state}</h2> 
+                    <strong>Language:</strong> ${d.group}
+                    <br><strong>Percentage:</strong> ${d3.format(",.2r")(d.percentage * 100)}%
+                    <br><strong>Total Speakers:</strong> ${numberWithCommas(d.total)}`);
     }
 
     /**
@@ -164,7 +196,6 @@ class Barchart{
         let that = this;
 
         d3.selectAll(".stateRects").on("click", function(){
-            //console.log("click function in barchart1");
             let sortSelection = d3.select(this).data()[0].group;
             
             if (that.currentSelection === sortSelection){
@@ -203,6 +234,7 @@ class Barchart{
 
             that.stateData.sort(sort);
             that.sortAscending = !that.sortAscending;
+            that.isSorted = true;
             that.drawBarChart();
         })
     }
@@ -218,42 +250,26 @@ class Barchart{
         this.attachStorytellingHandlers();
         let that = this;
 
-
-        //https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
-        function numberWithCommas(x) {
-            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
         d3.select("#barchart1").selectAll("rect")
             .on("mouseover.barchart", function(d) {
-                d3.select(this).classed("hover", true);                  
-
-                let state = d3.select(this).data()[0]["state"];
-                let index = that.stateData.findIndex(obj => obj.state === state);
-                let x = parseInt(d3.select(this).attr("x"));
-                let y = index * (that.cellHeight+0.5);
-                x > 650 ? x -= 100: x + 25;
-                y < 500 ? y += 50: y -= 175;
-                d3.select("#tooltip-bar2")
-                    .style("left", x + "px")
-                    .style("top", y + "px")
-                    .style('visibility', 'visible')
-                    .html(`<h2>${d.state}</h2> 
-                        <strong>Language:</strong> ${d.group}
-                        <br><strong>Percentage:</strong> ${d3.format(",.2r")(d.percentage * 100)}%
-                        <br><strong>Total Speakers:</strong> ${numberWithCommas(d.total)}`);
+                that.clearStorytelling();
+                d3.select(this).classed("hover", true); 
+                that.renderTooltip(this, d);
              })
             .on("mouseout.barchart", function(d) {
+                that.clearStorytelling();
                 d3.select(".hover").classed("hover", false);
-                d3.select("#tooltip-bar2")
-                    .style('visibility', 'hidden');});
+                d3.select("#tooltip").style('visibility', 'hidden');});
 
         //sort handler for sorting by state name
-        d3.selectAll(".stateNames").on("click", function(){    
+        d3.selectAll(".stateNames").on("click", function(){  
+            that.clearStorytelling();  
             that.stateData.sort(function (a,b){
                 if (a.state > b.state) return 1;
                 else return -1;
             })
             that.currentSelection = "ENGLISH";
+            that.isSorted = false;
             that.drawBarChart();
         });
     }
@@ -261,10 +277,10 @@ class Barchart{
     /**
      * Function that attaches handlers for the storytelling buttons
      */
-
     attachStorytellingHandlers(){
         let that = this;
-        let sort = function(selection){
+        
+        function sort(selection){
             that.sortAscending = "true";
             that.currentSelection = selection;
             let sortFunction = function(a,b){
@@ -286,19 +302,61 @@ class Barchart{
             that.stateData.sort(sortFunction);
             that.sortAscending = !that.sortAscending;
         }
+        
+        function highlight(state){
+            let selection = d3.select(state);
+            selection.attr("class", "highlighted");
+            that.renderTooltip(selection._groups[0][0], selection.data()[0]);
+        }
 
-        d3.select("#showEnglishSort")
+        function sortAndHighlight(sortByGroup, state){
+            that.clearStorytelling();
+            if (that.currentSelection !== sortByGroup || that.isSorted === false){
+                sort(sortByGroup);
+                that.isSorted = true;
+                that.drawBarChart();
+                setTimeout(() =>{ highlight(state);}, 1000);
+            }
+            else {
+                highlight(state);
+            }
+        }
+
+        //West Virginia highlight
+        d3.select("#showEnglishSort-WV")
             .on("click", function(){
-                sort("ENGLISH");
-                that.drawBarChart()});
+                sortAndHighlight("ENGLISH", "#englishwestvirginia");
+            });
 
+        //Mississippi Highlight
+        d3.select("#showEnglishSort-MS")
+            .on("click", function(){
+                sortAndHighlight("ENGLISH", "#englishmississippi");
+            });
+
+        //Puerto Rico Highlight
+        d3.select("#showEnglishSort-PR")
+            .on("click", function(){
+                sortAndHighlight("ENGLISH", "#englishpuertorico");
+            });
+
+        //California Highlight
+        d3.select("#showEnglishSort-CA")
+            .on("click", function(){
+                sortAndHighlight("ENGLISH", "#englishcalifornia");
+            });
+        
+        //Spanish sort
         d3.select("#showSpanishSort")
             .on("click", function(){
+                that.clearStorytelling();
                 sort("SPANISH AND SPANISH CREOLE");
                 that.drawBarChart()});
 
+        //Other languages sort
         d3.select("#showNativeAmericanSort")
             .on("click", function(){
+                that.clearStorytelling();
                 sort("ALL OTHER LANGUAGES");
                 that.drawBarChart()});
     }
@@ -314,6 +372,14 @@ class Barchart{
 
         d3.selectAll(".stateNames").on("click", null);
         d3.selectAll(".stateRects").on("click", null);
+    }
+
+    /**
+     * Function that clears all highlighted bars and tooltips from storytelling events
+     */
+    clearStorytelling(){
+        d3.selectAll('.highlighted').classed('highlighted', false);
+        d3.select("#tooltip").style('visibility', 'hidden');
 
     }
 
@@ -343,5 +409,4 @@ class Barchart{
             });
         return data;
     }
-
 }
