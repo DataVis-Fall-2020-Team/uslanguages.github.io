@@ -36,6 +36,7 @@ class AreaChart{
                 .range([ 0, this.width ]);
 
             d3.select("#graph").append("g")
+                .attr("class", "xAxis")
                 .attr("transform", "translate(0," + this.height + ")")
                 .call(d3.axisBottom(this.xScale).ticks(4)
                 .tickFormat(x => x.toString()));
@@ -53,7 +54,8 @@ class AreaChart{
             d3.select("#graph").append('line').classed('hoverLine', true)
             d3.select("#graph").append('circle').classed('hoverPoint', true);
             this.createButtons();
-            this.drawChart();            
+            this.drawChart();     
+            //this.drawLegend();       
         }
 
         /**
@@ -66,11 +68,12 @@ class AreaChart{
 
             if (this.currentType === "numbers"){
                 data = this.data[0];
+                let formatAsMillions = d3.format(".2s")
                 this.yScale = d3.scaleLinear()
                                 .domain([0, 60000000])
                                 .range([this.height, 0]);
-                yAxis = d3.axisLeft().scale(this.yScale);
-                yLabel = "Number of Foreign Speakers in the U.S";
+                yAxis = d3.axisLeft().scale(this.yScale).tickFormat(formatAsMillions);
+                yLabel = "Number of Foreign Speakers in the U.S. (in Millions)";
             }
             
             else { //this.currentType === "percentages"
@@ -104,10 +107,8 @@ class AreaChart{
 
             layers
                 .append("path")
-                .transition()
                 .attr("class", "areas")
                 .attr("d", areaGenerator)
-                .attr("stroke", "black")
                 .style("fill", function(d) { 
                     let obj = that.data[2].find(obj => obj.Language === d.key);
                     return colorScale(obj.Group);});
@@ -123,9 +124,9 @@ class AreaChart{
             graph.append("text") 
                 .attr("id", "xAxisLabel")            
                 .attr("transform", "translate(" + (this.width/2) + " ," + 
-                                   (this.height + this.margin.top + 20) + ")")
+                                   (this.height + this.margin.top/2) + ")")
                 .style("text-anchor", "middle")
-                .attr("font-size", "14px")
+                .style("font-size", "16px")
                 .text("Year");
 
              graph.append("text")
@@ -136,6 +137,7 @@ class AreaChart{
                     .attr("x",0 - (this.height / 2))
                     .attr("dy", "1em")
                     .style("text-anchor", "middle")
+                    .style("font-size", "16px")
                     .text(yLabel);   
         }  
 
@@ -145,43 +147,42 @@ class AreaChart{
         createButtons(){
             let that = this;
             let buttonData = ["Numbers", "Percentages"];
-            
-            let buttons = d3.select("#area")
-                .append("g")
-                .attr("id", "buttons")
-                .attr("transform", "translate(120, 25)"); 
-            
-            buttons
-                .selectAll('rect')             
-                .data(buttonData)
-                .join("rect")
-                .classed("buttons", true)
-                .attr("width", 120)
-                .attr("height", 40)
-                .attr("x", function(d,i) {return i * (120 + 5)})
-                .style("fill", "lightgrey")
-                .attr("id", function(d) {return d})
-                .on("click", function(d){
-                    //does nothing if the current view type is the same as the button clicked
-                    if (that.currentType === d.toLowerCase()) return;
-                    d3.selectAll()
-                    that.currentType = d.toLowerCase();
-                    that.currentView = "combined";
-                    d3.selectAll(".layers").remove();
-                    d3.selectAll(".yAxis").remove();
-                    that.drawChart();
-                    that.attachEventHandlers();
-                });
-            
-            buttons
-                .selectAll("text")
-                .data(buttonData)
-                .join("text")
-                .classed("buttons", true)
-                .style("font-size", "1em")
-                .attr("x", function(d,i) {return i * 120})
-                .text(d=>d)
-                .attr("transform", "translate(20, 25)");
+
+            //draw sort button
+        d3.select("#area").append("foreignObject")
+            //.attr("id", "sortButton")
+            .attr("transform", "translate(" + (this.width/2) + " ,20)")
+            //.attr("transform", "translate(150, 20)")
+            .attr("width", 300)
+            .attr("height", 50)
+            .append('xhtml:div')
+            .append('div')
+            .attr("id", "radioBtn")
+            .attr("class", "btn-group")
+            .selectAll("a")
+            .data(buttonData)
+            .join('a')
+            .classed("btn notActive", true)
+            .text(d=>d)
+            .attr("id", d=>d.toLowerCase() + "-btn")
+            .on("click", function(d){
+                        //does nothing if the current view type is the same as the button clicked
+                        if (that.currentType === d.toLowerCase()) return;
+                        d3.select("#radioBtn")
+                            .selectAll(".btn.active")
+                            .classed("btn active", false)
+                            .classed("btn notActive", true);
+                        d3.select(this)
+                            .classed("btn notActive", false)
+                            .classed("btn active", true);
+                        that.currentType = d.toLowerCase();
+                        that.currentView = "combined";
+                        d3.selectAll(".layers").remove();
+                        d3.selectAll(".yAxis").remove();
+                        that.drawChart();
+                        that.attachEventHandlers();
+                    });
+            d3.select("#" + this.currentType + "-btn").classed("btn notActive", false).classed("btn active", true);
         }
 
         /**
@@ -193,9 +194,9 @@ class AreaChart{
             let mouseover = function(d, i) {
                 d3.selectAll(".layers").style("opacity", .2)
                 d3.select(this)
-                  .style("stroke", "black")
-                  .style("opacity", 1)
-                that.renderTooltip(d.key, null, null, null);
+                    .style("stroke", "black")
+                    .style("opacity", 1)
+                    that.renderTooltip(d.key, null, null, null);
             }
 
             let mousemove = function(d,i) {
@@ -221,7 +222,7 @@ class AreaChart{
                 d3.select("#graph").selectAll('.hoverLine')
                     .classed("hidden", false)
                     .attr('x1', snapX)
-                    .attr('y1', that.margin.top)
+                    .attr('y1', that.yScale(mouseValue) - 50)
                     .attr('x2', snapX)
                     .attr('y2', that.height)
                     .attr('stroke', '#147F90')
@@ -231,14 +232,14 @@ class AreaChart{
                     .classed("hidden", false)
                     .attr('cx', snapX)
                     .attr('cy', that.yScale(mouseValue))
-                    .attr('r', 7)
-                    .attr('fill', '#147F90')
-                    .attr('stroke', '#147F90');
+                    .attr('r', 3)
+                    .attr('fill', 'darkgrey')
+                    .attr('stroke', 'black');
                 }
             }
 
             let mouseleave = function(d) {
-                d3.selectAll(".layers").style("opacity", 1);
+                d3.selectAll(".layers").style("stroke","none").style("opacity", 1);
                 d3.select("#tooltip-bar2").style('visibility', 'hidden');
                 d3.selectAll(".hoverPoint").classed("hidden", true);
                 d3.selectAll(".hoverLine").classed("hidden", true);
@@ -346,7 +347,7 @@ class AreaChart{
                     if (that.currentView === "combined"){
                         return `<h2>${name}</h2>`;
                     }
-                    else if (that.currentType === "numbers"){
+                    else if (that.currentType === "numbers" && value){
                         return `<h2>${name}</h2>
                         <strong>Number of Speakers:</strong> ${numberWithCommas(value)}
                         <br> <strong>Year:</strong> ${year}`;
@@ -368,6 +369,12 @@ class AreaChart{
                 that.clearChart();
                 that.currentView = "single";
                 that.currentType = "percentages";
+                
+                //update buttons
+                d3.select("#numbers-btn").classed("btn active", false).classed("btn notActive", true);
+                d3.select("#percentages-btn").classed("btn notActive", false).classed("btn active", true);
+
+                //update graph
                 let key = that.keys[0];
                 that.drawChart();
                 that.attachEventHandlers();
@@ -375,6 +382,28 @@ class AreaChart{
                 let selection = d3.select(language);
                 that.updateSingleView(selection._groups[0][0], key);
             })
+
+            d3.select("#showChineseGrowth").on("click", function(d){
+                that.clearChart();
+                that.currentView = "single";
+                that.currentType = "numbers";
+                
+                //update buttons
+                d3.select("#percentages-btn").classed("btn active", false).classed("btn notActive", true);
+                d3.select("#numbers-btn").classed("btn notActive", false).classed("btn active", true);
+
+                //update graph
+                let key = that.keys[1];
+                that.drawChart();
+                that.attachEventHandlers();
+                let language = "#" + key.replace(/[\s,\)\(.]/g, "");
+                let selection = d3.select(language);
+                that.updateSingleView(selection._groups[0][0], key);
+            })
+
+
+
+
         }
 
         /**
@@ -399,6 +428,38 @@ class AreaChart{
             d3.selectAll(".hoverPoint").classed("hidden", true);
             d3.select("#tooltip-bar2").style('visibility', 'hidden')
         }
+
+        /**
+     * Draws the category legend on the scrolling side
+     */
+    drawLegend(){
+        let svg = d3.select("#legendAreachart").append("svg")
+            .attr("width", 400)
+            .attr("height", 200);
+        
+        let groups = this.data[2].map(obj => obj.Group);
+        groups = [...new Set(groups)];
+
+        let legend = svg.selectAll("g")
+             .data(groups)
+             .join("g")
+    	    .attr("class","legend")
+            .attr("transform", "translate(20, 10)");
+
+        legend.append("rect")
+            .attr("x", 0) 
+            .attr("y", function(d, i) { return 40 * i; })
+            .attr("width", 30)
+            .attr("height", 30)
+            .attr('fill',d => colorScale(d));
+
+        legend.append("text")
+            .attr("x", 50) 
+            .attr("dy", "0.75em")
+            .attr("y", function(d, i) { return 40 * i + 10; })
+            .style("font-size", "15px")
+            .text(function(d) {return d});
+    }
 }
 
     

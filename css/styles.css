@@ -33,9 +33,10 @@ body {
 
 
 
-.categoryLegend {
+/* .categoryLegend {
     font-family: "Domine";
-}
+    font-size: 16px;
+} */
 
 .step {
     margin-bottom: 100px;
@@ -64,7 +65,7 @@ p {
 
 
 strong {
-    color: rgb(243, 18, 194);
+    color: rgb(247, 92, 213);
 }
 
 #graphic {
@@ -102,7 +103,7 @@ strong {
 }
 
 a {
-    color: rgb(221, 33, 250);
+    color: rgb(245, 130, 222);
     text-decoration: none;
 }
 
@@ -120,7 +121,13 @@ line {
     stroke-width: 1;
     opacity: 0.7;
 }
-#barchart1 {
+.highlighted {
+    stroke: black;
+    stroke-width: 1;
+    fill: grey;
+}
+
+/* #barchart1 {
     position: fixed;
     margin-left: 500px;
 }
@@ -128,44 +135,42 @@ line {
 #barchart2 {
     position: fixed;
     margin-left: 500px;
-}
+} */
 
 #sortLabel.clicked{
    
    font-size: 1.1em;
    text-align: center;
-   color: rgb(243, 18, 194);
+   color: rgb(245, 140, 222);
 }
 
-#sortLabelButton {
-    fill:  lightgrey;
+
+label { 
+    background:none;
+    border: none;
+    margin: 0; 
+    padding: 0;
+}
+.link:hover {
+    cursor: pointer;
 }
 
-#sortLabelButton.clicked {
-    fill:  darkgrey;
-    stroke: black;
-    stroke-width: 1;
+.stateNames:hover {
+    cursor: pointer;
 }
 
-button {
-    display:inline-block;
+/* #sortLabelButton {
     padding:0.2em 0.8em;
     margin:0 0.1em 0.1em 0;
-    border:0.16em solid rgba(255,255,255,0);
-    border-radius:1em;
-    box-sizing: border-box;
-    text-decoration:none;
-    font-family:'Roboto',sans-serif;
-    font-weight:300;
-    color:#FFFFFF;
-    text-shadow: 0 0.04em 0.04em rgba(0,0,0,0.35);
-    text-align:center;
-    transition: all 0.2s;
-    background-color:#f14ebd;
-}
+    border-radius: 5px;
+    color: #E9E8FD;
+    background-color:  #E9E8FD;
+    box-shadow: 3px 3px 8px 0;
+} */
+
 button:hover{
     border-color: rgba(255,255,255,1);
-}
+} */
 
 
 #tooltip-bar2 {
@@ -176,12 +181,15 @@ button:hover{
     border-radius: 5px;
     color: black;
     font-size: 1.1em;
-    font-family:  "Comic Sans MS", cursive, sans-serif;
+    font-family: "Merriweather";
+    /* font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif; */
+    /* font-family:  "Comic Sans MS", cursive, sans-serif; */
     stroke: black;
     box-shadow: -3px 3px 15 px lightgrey;
     opacity: 0.8;
     pointer-events: none;
     margin: 2px;
+    padding: 2px;
     z-index:  100;
     
 }
@@ -192,22 +200,10 @@ button:hover{
     text-align: left;
 }
 
-#sortLabelButton {
-    fill:  lightgrey;
-}
-
-#sortLabelButton.clicked {
-    fill:  darkgrey;
-    stroke: black;
-    stroke-width: 1;
-}
-.selectButtons rect{
-    fill: light-grey;
-  }
-
 text {
     font-size: 10px;
-    font-family:  "Comic Sans MS", cursive, sans-serif;
+    font-family:  Verdana, Geneva, Tahoma, sans-serif;
+    /* font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif; */
     stroke: black;
 }
 
@@ -237,3 +233,98 @@ text {
     /*fill: #5ea3df;*/
     fill: lightgrey;
 }
+/* Button Styling */
+.button {
+    font: normal normal bold 16px Verdana;
+    border: 2px solid #ac7ca7;
+    vertical-align: middle;
+    display: inline-block;
+    padding: 10px;
+    position: relative;
+    text-align: center;
+    background: #9c33a5;
+    opacity: 0.8;
+    
+    border-radius: 3px;
+    /* background: rgb(245, 130, 222); */
+    /* background: -webkit-gradient(linear, left top, left bottom, from(#f6b1ef), to(#ac7ca7));
+    background: -moz-linear-gradient(top, #f6b1ef, #ac7ca7);
+    background: linear-gradient(to bottom, #f6b1ef, #ac7ca7);
+    -webkit-box-shadow: #ffd4ff 0px 0px 12px 0px;
+    -moz-box-shadow: #ffd4ff 0px 0px 12px 0px; */
+    box-shadow: #ffd4ff 0px 0px 12px 0px;
+    text-shadow: #ffe6ff 1px 1px 1px;
+    color: #111111;
+    text-decoration: none;
+    width: 100px;
+    outline-color: darkgrey;
+    /* height: 50px; */
+    /* font-family: Verdana; */
+}
+.button:hover,
+.button:focus {
+    border: 2px solid #f6b1ef;
+    background: rgb(245, 130, 222);
+    background: -webkit-gradient(linear, left top, left bottom, from(#ffd4ff), to(#ce95c8));
+    background: -moz-linear-gradient(top, #ffd4ff, #ce95c8);
+    background: linear-gradient(to bottom, #ffd4ff, #ce95c8);
+    color: #111111;
+    text-decoration: none;
+    outline: none !important;
+    box-shadow: none !important;
+    
+}
+.button:active {
+    background:  rgb(245, 130, 222)7;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ac7ca7), to(#ac7ca7));
+    background: -moz-linear-gradient(top, #ac7ca7, #ac7ca7);
+    background: linear-gradient(to bottom, #ac7ca7, #ac7ca7);
+    outline-color: darkgrey;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.btn{
+    font: normal normal bold 16px Verdana;
+    border: 2px solid #ac7ca7;
+    vertical-align: middle;
+    display: inline-block;
+    padding: 10px;
+    position: relative;
+    text-align: center;
+    /* background:  rgb(245, 130, 222); */
+    background: #9c33a5;
+    opacity: 0.8;
+
+    /* background: -webkit-gradient(linear, left top, left bottom, from(#ac7ca7), to(#ac7ca7));
+    background: -moz-linear-gradient(top, #ac7ca7, #ac7ca7); */
+    /* background: linear-gradient(to bottom, #ac7ca7, #ac7ca7); */
+    
+    transition: background 600ms ease, color 600ms ease;
+}
+
+.btn.active{
+    /* background:  rgb(245, 130, 222); */
+    background: #9c33a5;
+    opacity: 0.8;
+}
+
+.btn.notActive {
+    color: dark grey;
+    background-color: #fff;
+}
+
+.yAxis text{
+    font-size: 13px;
+}
+.xAxis text{
+    font-size: 13px;
+}
+
+
+
+
+
+
+    
+

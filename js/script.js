@@ -27,7 +27,6 @@ loadData().then(function(data){
                 nonEnglishSpeakers: +d.nonEnglishSpeakers.replace(/["',]/g ,"")
             }
         });
-        console.log('State Data Loaded:', stateData);
 
         // National Data
         const nationalData = await d3.csv('./data/National_Languages.csv', function(d){
@@ -40,7 +39,6 @@ loadData().then(function(data){
                 r: d3.randomUniform(100, 400)
             }
         });
-        console.log('National Data Loaded');
         dataset_updated = nationalData.filter(d => d.Group != 'Total')
         // Mapping Data
         // JSON taken from: https://github.com/DataVis-Fall-2020-Team/MappingAPI/tree/master/data/geojson
@@ -74,7 +72,8 @@ async function usMap(){
         }
             
         let my_categories = dataset[1].map(x => x.Group).filter(distinct);
-        const colors = ["#e7298a","#66a61e","#1b9e77", "#6a3d9a", "#ff7f00"];
+        //const colors = ["#e7298a","#66a61e","#1b9e77", "#6a3d9a", "#ff7f00",'#e41a1c'];
+        const colors = ['#377eb8','#984ea3','#4daf4a',"#e7298a",'#ff7f00'];
         
         // Color scale
         let my_colorScale = d3.scaleOrdinal() 
@@ -134,6 +133,9 @@ async function usMap(){
             .attr('height', 1000)
             .attr('opacity', 1)
             // .attr('position', 'relative')
+    
+
+        //svg.append("g").attr("id", "tooltip-bar2");
 
         // Simulation setup
         simulation = d3.forceSimulation(dataset_updated)
@@ -172,9 +174,47 @@ async function usMap(){
                 node.vy -= (node.y - cluster.y) * k;
                 }
             }
+        
+
+        //Draws the various legends for each of the sections
+        function drawLegend(name, groups){
+            let svg = d3.select(name).append("svg")
+            .attr("width", 400)
+            .attr("height", 200);
+
+        let legend = svg.selectAll("g")
+             .data(groups)
+             .join("g")
+    	    .attr("class","legend")
+            .attr("transform", "translate(20, 10)");
+
+        legend.append("rect")
+            .attr("x", 0) 
+            .attr("y", function(d, i) { return 40 * i; })
+            .attr("width", 30)
+            .attr("height", 30)
+            .attr('fill',d => colorScale(d));
+
+        legend.append("text")
+            .attr("x", 50) 
+            .attr("dy", "0.75em")
+            .attr("y", function(d, i) { return 40 * i + 10; })
+            .style("font-size", "15px")
+            .text(function(d) {return d.toUpperCase()});
+        }
+    
+        // Get distinct values, taken from: https://codeburst.io/javascript-array-distinct-5edc93501dc4
+        const distinct = (value, index, self) => {
+            return self.indexOf(value) === index;
+        }
+    
+        let my_categories = dataset[1].map(x => x.Group).filter(distinct);
+        console.log("my categories:", my_categories);
 
         //Viz #5 Stacked Area Chart
         views['area'] = new AreaChart(dataset[2], dataset[3], dataset[4], svg);
+        drawLegend("#legendAreachart", my_categories.slice(2));
+
 
         // Viz #4 Bar Graph setup
         views['bar2'] = new BarChart2(dataset[1], svg);
@@ -182,6 +222,7 @@ async function usMap(){
 
         // Viz #3 Bar Graph setup
         views['bar1'] = new Barchart(dataset[0], svg);
+        drawLegend("#legendBarchart1", my_categories.slice(1));
 
         // Viz #2 Map
         views['map'] = new US_Map([dataset[0],map_data,map_center_data], svg);
@@ -189,6 +230,7 @@ async function usMap(){
         
         // Viz #1 Megacluster setup
         views['cluster'] = new cluster(svg);
+        drawLegend("#legendCluster", my_categories.slice(1));
 
         // Define each tick of simulation
         simulation.on('tick', () => {
@@ -215,6 +257,7 @@ async function usMap(){
 
         if (chartType !== "bar1"){
             d3.select('#barchart1').transition(300).style('opacity',0)
+
             views['bar1'].clearEventHandlers();
             d3.select("#tooltip-bar2").style('visibility', 'hidden');
         } // End bar1 if statement
@@ -379,7 +422,7 @@ async function usMap(){
         d3.select("#barchart1").raise();
         d3.select('#barchart1')
             .transition()
-            .style('opacity',.8)
+            .style('opacity',.8);
         views['bar1'].attachEventHandlers();
 
     } // end draw horizontal barchart function    
@@ -396,7 +439,7 @@ async function usMap(){
         d3.select('#barchart2')
                 .transition()
                 .style('margin-left', '500px')
-                .style('opacity',1);
+                .style('opacity',0.8);
         d3.select("#bar-rects")
             .style("opacity", 0);
         
@@ -475,7 +518,7 @@ async function usMap(){
         d3.select("#area").raise();
         d3.select('#area')
             .transition()
-            .style('opacity',1)
+            .style('opacity',0.8)
         views['area'].attachEventHandlers();
 
     } // end draw area chart function 
