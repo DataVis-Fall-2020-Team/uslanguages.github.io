@@ -135,6 +135,8 @@ loadData().then(function(data){
 
     // Setup the page 
     function setup_page(){
+
+        
         
         // Create the SVG
         let svg = d3.select("#vis")
@@ -144,10 +146,12 @@ loadData().then(function(data){
             .attr('height', 1000)
             .attr('opacity', 1)
             // .attr('position', 'relative')
+
+        //Create the tooltip
+        d3.select("#vis")
+            .append("div")
+            .attr("id","tooltip");
     
-
-        //svg.append("g").attr("id", "tooltip-bar2");
-
         // Simulation setup
         simulation = d3.forceSimulation(dataset_updated)
 
@@ -187,7 +191,6 @@ loadData().then(function(data){
                 node.vy -= (node.y - cluster.y) * k;
                 }
             }
-        
 
         //Draws the various legends for each of the sections
         function drawLegend(name, groups){
@@ -222,7 +225,6 @@ loadData().then(function(data){
         }
     
         let my_categories = dataset[1].map(x => x.Group).filter(distinct);
-        console.log("my categories:", my_categories);
 
         //Viz #5 Stacked Area Chart
         views['area'] = new AreaChart(dataset[2], dataset[3], dataset[4], svg);
@@ -448,11 +450,6 @@ loadData().then(function(data){
               node.vy -= (node.y - cluster.y) * k;
               }
           }
-        
-
-
-
-
     } // end draw_map function  
 
     // Draw Horizontal Barchart
@@ -525,14 +522,14 @@ loadData().then(function(data){
 
         rects.selectAll("rect")
                 .transition()
-                .delay(500)
-                .duration(800)
+                .delay(300)
+                .duration(400)
                 //move bars to the left
                 .attr("x", function(d){
                     let object = map.filter(obj => obj.group === d.group);
                     return object[0].x;})
                 .transition()
-                .duration(800)
+                .duration(400)
                 //adjust width to match bar width in view 2
                 .attr("width", 100)
                 //drop into bars
@@ -578,6 +575,7 @@ loadData().then(function(data){
         draw_bar1,
         draw_bar2,
         draw_area,
+        draw_cluster
     ]
     
     //All the scrolling function

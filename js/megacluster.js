@@ -33,8 +33,8 @@ class cluster {
     tooltip() {
         
         // Create tooltip    
-        let tooltip = d3.select('#tooltip-bar2')
-        tooltip.attr('transform','translate(0, -300)')
+        let tooltip = d3.select('#tooltip')
+        //tooltip.attr('transform','translate(0, -300)')
 
         
         // --------------------------------------------
@@ -47,10 +47,15 @@ class cluster {
                     .style("top", d3.event.target.attributes['cy'].value  + 'px')
                     .style("left", d3.event.target.attributes['cx'].value + 'px')
                     .style('visibility', 'visible')
-                    .html("<p style=font-size:20px> Language Group: " + d.Group + "</p> \
-                        <p> Subgroup: " + d.Subgroup + "</p> \
-                        <p> Language: " + d.Language + "</p>  \
-                        <p> Number of Speakers: " + numberWithCommas(d.Speakers) +"</p>"
+                    // .html("<p style=font-size:20px> Language Group: " + d.Group + "</p> \
+                    //     <p> Subgroup: " + d.Subgroup + "</p> \
+                    //     <p> Language: " + d.Language + "</p>  \
+                    //     <p> Number of Speakers: " + numberWithCommas(d.Speakers) +"</p>"
+                    //     )
+                    .html("<h2>" + d.Language + "</h2>" +
+                            "<strong>Subgroup: </strong>" + d.Subgroup + 
+                            "</br><strong>Language Group: </strong>" + d.Group + 
+                            "</br><strong> Number of Speakers: </strong>" + numberWithCommas(d.Speakers)
                         )
                 selected_circle = this
                 d3.select(this)
@@ -82,7 +87,7 @@ class cluster {
     attach_maplisteners(){
     // Controlling what circles show up when a state is selected
     let circle_click = d3.selectAll('.cluster_circles')
-    let tooltip = d3.select('#tooltip-bar2')
+    let tooltip = d3.select('#tooltip')
 
 
     circle_click.on('click.cluster', function(d){

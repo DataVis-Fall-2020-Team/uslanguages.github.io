@@ -1,27 +1,12 @@
-
-
-#tooltip {
-    position: absolute;
-    background-color: white;
-    opacity: .75;
-    font-weight: 600;
-    text-transform: capitalize;
-    fill: #787878;
-    display: inline-block;
-
-}
-
-@import url('https://fonts.googleapis.com/css?family=Merriweather&display=swap');
-@import url('https://fonts.googleapis.com/css?family=Kosugi&display=swap');
-@import url('https://fonts.googleapis.com/css?family=Domine:400,700&display=swap');
-
 body {
     /* background-color: rgb(248, 247, 242); */
     overflow-x: hidden;
     position: relative;
     background-color: rgb(243, 236, 236);
-
 }
+@import url('https://fonts.googleapis.com/css?family=Merriweather&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Kosugi&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Domine:400,700&display=swap');
 
 #sections {
     position: absolute;
@@ -33,12 +18,30 @@ body {
 
 }
 
+#tooltip {
+    position: absolute;
+    background: rgb(241, 241, 241);
+    text-align: left;
+    max-width: 300px;
+    border-radius: 5px;
+    color: black;
+    font-size: 1.1em;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    /* font-family: "Merriweather"; */
+    stroke: black;
+    box-shadow: -3px 3px 15 px lightgrey;
+    opacity: 0.8;
+    pointer-events: none;
+    margin: 2px;
+    padding: 2px;
+}
 
-
-/* .categoryLegend {
-    font-family: "Domine";
-    font-size: 16px;
-} */
+#tooltip h2{
+    margin: 2px;
+    font-size: 1.5em;
+    font-style: bold;
+    text-align: left;
+}
 
 .step {
     margin-bottom: 100px;
@@ -47,13 +50,7 @@ body {
     font-weight: 400;
     line-height: 1.4em;
     text-align: justify;
-    /* display: flex;
-    flex-direction: column;
-    justify-content: space-around; */
 }
-
-
-
 
 h1, h2 {
     font-weight: 700;
@@ -65,9 +62,21 @@ p {
     font-size: 1.3em;
 }
 
+a {
+    color: rgb(247, 92, 213);
+}
+a:hover {
+    color: rgb(247, 92, 213);
+}
 
 strong {
     color: rgb(247, 92, 213);
+}
+
+text {
+    font-size: 10px;
+    font-family:  Verdana, Geneva, Tahoma, sans-serif;
+    stroke: black;
 }
 
 #graphic {
@@ -82,35 +91,14 @@ strong {
     display: inline-block;
     position: fixed;
     top: 0px;
-    z-index: 1;
+    /* z-index: 1; */
     margin-left: 0;
     height: 1000px;
     width: 1000px;
 }
 
-.tick line {
-    stroke: 'red'
-}
-
-/* svg circle:hover{
+svg circle:hover{
     cursor: pointer;
-} */
-
-.swatch {
-    fill: #939393;
-}
-
-.sizeLegend2 {
-    opacity: 0.7
-}
-
-a {
-    color: rgb(245, 130, 222);
-    text-decoration: none;
-}
-
-img {
-    display: none;
 }
 
 line {
@@ -129,30 +117,13 @@ line {
     fill: grey;
 }
 
-/* #barchart1 {
-    position: fixed;
-    margin-left: 500px;
-}
-
-#barchart2 {
-    position: fixed;
-    margin-left: 500px;
-} */
-
-#sortLabel.clicked{
-   
-   font-size: 1.1em;
-   text-align: center;
-   color: rgb(245, 140, 222);
-}
-
-
 label { 
     background:none;
     border: none;
     margin: 0; 
     padding: 0;
 }
+
 .link:hover {
     cursor: pointer;
 }
@@ -161,58 +132,17 @@ label {
     cursor: pointer;
 }
 
-/* #sortLabelButton {
-    padding:0.2em 0.8em;
-    margin:0 0.1em 0.1em 0;
-    border-radius: 5px;
-    color: #E9E8FD;
-    background-color:  #E9E8FD;
-    box-shadow: 3px 3px 8px 0;
-} */
-
-button:hover{
-    border-color: rgba(255,255,255,1);
-} */
-
-
-#tooltip-bar2 {
-    position: absolute;
-    background: silver;
-    text-align: left;
-    max-width: 300px;
-    border-radius: 5px;
-    color: black;
-    font-size: 1.1em;
-    font-family: "Merriweather";
-    /* font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif; */
-    /* font-family:  "Comic Sans MS", cursive, sans-serif; */
-    stroke: black;
-    box-shadow: -3px 3px 15 px lightgrey;
-    opacity: 0.8;
-    pointer-events: none;
-    margin: 2px;
-    padding: 2px;
-    z-index:  100;
-    
-}
-#tooltip-bar2 h2{
-    margin: 2px;
-    font-size: 1.5em;
-    font-style: bold;
-    text-align: left;
-}
-
-text {
-    font-size: 10px;
-    font-family:  Verdana, Geneva, Tahoma, sans-serif;
-    /* font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif; */
-    stroke: black;
-}
-
 .hidden{
     display: none;
 }
 
+.yAxis text{
+    font-size: 13px;
+}
+
+.xAxis text{
+    font-size: 13px;
+}
 
 /* Map Styles */
 .states, .territory{
@@ -247,23 +177,15 @@ text {
     text-align: center;
     background: #9c33a5;
     opacity: 0.8;
-    
     border-radius: 3px;
-    /* background: rgb(245, 130, 222); */
-    /* background: -webkit-gradient(linear, left top, left bottom, from(#f6b1ef), to(#ac7ca7));
-    background: -moz-linear-gradient(top, #f6b1ef, #ac7ca7);
-    background: linear-gradient(to bottom, #f6b1ef, #ac7ca7);
-    -webkit-box-shadow: #ffd4ff 0px 0px 12px 0px;
-    -moz-box-shadow: #ffd4ff 0px 0px 12px 0px; */
     box-shadow: #ffd4ff 0px 0px 12px 0px;
     text-shadow: #ffe6ff 1px 1px 1px;
     color: #111111;
     text-decoration: none;
     width: 100px;
     outline-color: darkgrey;
-    /* height: 50px; */
-    /* font-family: Verdana; */
 }
+
 .button:hover,
 .button:focus {
     border: 2px solid #f6b1ef;
@@ -275,7 +197,6 @@ text {
     text-decoration: none;
     outline: none !important;
     box-shadow: none !important;
-    
 }
 .button:active {
     background:  rgb(245, 130, 222)7;
@@ -287,6 +208,20 @@ text {
     box-shadow: none !important;
 }
 
+.button.active {
+    background:  rgb(245, 130, 222)7;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ac7ca7), to(#ac7ca7));
+    background: -moz-linear-gradient(top, #ac7ca7, #ac7ca7);
+    background: linear-gradient(to bottom, #ac7ca7, #ac7ca7);
+    outline-color: darkgrey;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+button:hover{
+    border-color: rgba(255,255,255,1);
+} 
+
 .btn{
     font: normal normal bold 16px Verdana;
     border: 2px solid #ac7ca7;
@@ -295,14 +230,8 @@ text {
     padding: 10px;
     position: relative;
     text-align: center;
-    /* background:  rgb(245, 130, 222); */
     background: #9c33a5;
     opacity: 0.8;
-
-    /* background: -webkit-gradient(linear, left top, left bottom, from(#ac7ca7), to(#ac7ca7));
-    background: -moz-linear-gradient(top, #ac7ca7, #ac7ca7); */
-    /* background: linear-gradient(to bottom, #ac7ca7, #ac7ca7); */
-    
     transition: background 600ms ease, color 600ms ease;
 }
 
@@ -317,19 +246,10 @@ text {
     background-color: #fff;
 }
 
-.yAxis text{
-    font-size: 13px;
-}
-.xAxis text{
-    font-size: 13px;
-}
+
 
 /* Taken from Homework 6 solution */
 /*For the slider*/
-/* #toggle_map{
-
-
-} */
 
 .toggle-text {
     padding-right: 20px;

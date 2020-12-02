@@ -38,9 +38,9 @@ class BarChart2{
             .style('margin-left', '500px')
             .style('opacity', 0);
 
-        d3.select("#vis")
-            .append("div")
-            .attr("id","tooltip-bar2");
+        // d3.select("#vis")
+        //     .append("div")
+        //     .attr("id","tooltip");
 
         //setup grouping for rects
         d3.select("#barchart2").append("g")
@@ -48,7 +48,6 @@ class BarChart2{
         
         //draw axis
         let yScale = d3.scaleLinear().domain([0, 1]).range([this.height, 0]);
-
         let formatAsPercentage = d3.format(".0%");
         let axis = d3.axisLeft()
                     .scale(yScale)
@@ -77,28 +76,23 @@ class BarChart2{
             .style("font-size", "1.2em")
             .text("Level: Groups");
         
-            
-        
         //draw sort button
         d3.select("#barchart2").append("foreignObject")
-            //.attr("id", "sortButton")
             .attr("transform", "translate(650, 50)")
             .attr("width", 100)
             .attr("height", 50)
             .append('xhtml:div')
             .append('div')
-            .attr("id", "sortButton")
-            .html('<button class="button">Sort</button>');
+            .html('<button id="sortButton" class="button">Sort</button>');
         
         //draw home button
         d3.select("#barchart2").append("foreignObject")
-            .attr("id", "homeButton")
             .attr("transform", "translate(650, 110)")
             .attr("width", 100)
             .attr("height", 50)
             .append('xhtml:div')
             .append('div')
-            .html('<button class="button">Home</button>');
+            .html('<button id="homeButton" class="button">Home</button>');
    }      
 
     /**
@@ -136,7 +130,6 @@ class BarChart2{
 
         d3.select("#levelLabel")
             .text("Level: " + that.currentLevel.charAt(0).toUpperCase() + that.currentLevel.slice(1) + "s");
-        
 
         //These must be attached after every update so that each rect has an 
         //event handler attached to it
@@ -148,7 +141,6 @@ class BarChart2{
      * @param {Node} selection - the currently selected node
      */
     updateData(node){
-        //let node = selection.data()[0];
         let newData = this.tree.treeSelectionToArray(node, this.direction);
         this.currentLevel = newData[0].level;
 
@@ -250,6 +242,7 @@ class BarChart2{
             languageWidth = Math.min(barWidth, this.barWidth["language"]);
         }
 
+        //next calculate subgroup width
         else if (this.currentLevel === "subgroup"){
         
             barWidth = (this.width - (groupWidth + this.barWidth["gap"]) * numGroups  
@@ -274,49 +267,23 @@ class BarChart2{
     }
 
     /**
-     * Function that attaches the mouse event handlers for the tooltips and hovering
-     */
-    attachMouseEventHandlers(){
-        let that = this;
-        d3.select("#bar-rects").selectAll("rect")
-            .on("mouseover", function(d) {
-                that.clearStorytelling();
-                d3.select(this).classed("hover", true);
-                that.renderTooltip(d3.select(this), d);
-             })
-            .on("mouseout", function(d) {
-                d3.select(".hover").classed("hover", false)
-                d3.select("#tooltip-bar2")
-                    .style('visibility', 'hidden');
-            });
+    * Function that sorts the nodes given the curent level
+    */
+    sortLevel(){
+        this.isSorted = true;
 
-        d3.select("#sortLabel")
-            .on("mouseover", function() {
-                that.clearStorytelling();
-                d3.select(this).classed("hover", true);})
-                .on("mouseout", function() {
-                    d3.select(this).classed("hover", false);})
+        //get all the nodes in the tree at specified level
+        this.currentData = this.tree.returnAll(this.currentLevel);
+        
+        let sortDescending = function (a,b){
+            if (b.percentage > a.percentage) return 1;
+                else return -1;
+        };
 
-        function reset(){
-            that.direction = "down";
-            that.currentData = that.tree.treeSelectionToArray(that.tree.root, that.direction);
-            that.currentLevel = "group";
-            that.isSorted = false;
-            that.updateBarChart();
-        }
-
-        d3.select("#sortButton").on("click", function(){
-            if(that.isSorted){
-                reset();
-            }
-            else{
-                that.isSorted = true;
-                that.sortLevel();
-            }
-        });
-
-        d3.select("#homeButton").on("click", reset);
+        this.currentData.sort(sortDescending);
+        this.updateBarChart();
     }
+    
     
     /**
      * Function that renders the tooltip
@@ -339,7 +306,7 @@ class BarChart2{
             y -= 150;
         if (y < 100)
             y += 150;
-        d3.select("#tooltip-bar2")
+        d3.select("#tooltip")
             .style("left", x + "px")
             .style("top", y + "px")
             .style('visibility', 'visible')
@@ -351,6 +318,24 @@ class BarChart2{
                 <strong>Percentage:</strong> ${d3.format(",.2r")(d.percentage * 100)}%
                 <br> <strong>Total Speakers:</strong> ${numberWithCommas(d.totalSpeakers)}`);
         }
+
+    /**
+     * Function that attaches the mouse event handlers for the tooltips and hovering
+     */
+    attachMouseEventHandlers(){
+        let that = this;
+        d3.select("#bar-rects").selectAll("rect")
+            .on("mouseover", function(d) {
+                that.clearStorytelling();
+                d3.select(this).classed("hover", true);
+                that.renderTooltip(d3.select(this), d);
+             })
+            .on("mouseout", function(d) {
+                d3.select(".hover").classed("hover", false)
+                d3.select("#tooltip")
+                    .style('visibility', 'hidden');
+            });
+    }
 
     /**
      * Function that attaches the click handlers for the click and doubleclick events
@@ -402,39 +387,33 @@ class BarChart2{
     
         var cc = clickcancel();
         d3.select("#barchart2").call(cc);
-        //d3.select("#vis").select("svg").call(cc);
 
         cc.on('click', function(d, index) {
             that.clearStorytelling();
             if (this !== null && this.srcElement.id !== "") {
-
                 let id = this.srcElement.id;
-                if (id.includes("sort")) {
-                    // if(that.isSorted){
-                    //     //reset the graph
-                    //     that.direction = "down";
-                    //     that.currentData = that.tree.treeSelectionToArray(that.tree.root, that.direction);
-                    //     that.currentLevel = "group";
-                    //     that.isSorted = false;
-                    //     d3.select("#sortLabelButton")
-                    //         .classed("clicked", false);
-                    //     that.updateBarChart();
-                    // }
-
-                    // else{
-                    //     that.isSorted = true;
-                    //     d3.select("#sortLabelButton")
-                    //         .classed("clicked", true);
-                    //     that.sort();
-                    // }
+                
+                //sort button handler
+                if (id === "sortButton"){
+                    if(that.isSorted)
+                        return;
+                    that.isSorted = true;
+                    that.sortLevel();
+                    d3.select("#sortButton").classed("button", false).classed("button active", true);
                 }
 
+                //home button handler
+                else if (id === "homeButton"){
+                    that.reset();
+                }
+
+                //rects handler
                 else {
                     that.direction = "down";
-                    d3.select("#tooltip-bar2")
-                        .style('visibility', 'hidden');
+                    d3.select("#tooltip").style('visibility', 'hidden');
                     let node = d3.select("#" + id).data()[0];
                     if (that.isSorted){
+    
                         if (node.level === "language")
                             return;
                         else {
@@ -442,18 +421,18 @@ class BarChart2{
                             that.sortLevel();
                         }
                     }
-                else {
-                    that.updateData(node);
+                    else {
+                        that.updateData(node);
+                    }
                 }
-
-            }    
-        }
-    });
+             }    
+        });
+        
         cc.on('dblclick', function(d, index) {
             that.clearStorytelling();
             if (this !== null && this.srcElement.id !== ""){
                 that.direction = "up";  
-                d3.select("#tooltip-bar2")
+                d3.select("#tooltip")
                     .style('visibility', 'hidden');
                 let node = d3.select("#" + this.srcElement.id).data()[0];
                 if (that.isSorted){
@@ -461,7 +440,7 @@ class BarChart2{
                         return;
                     else {
                         that.updateLevel(node);
-                        that.sort();
+                        that.sortLevel();
                     }
                 }
                 else {
@@ -469,16 +448,6 @@ class BarChart2{
                 }
             }
         });
-
-        
-
-        // $('#radioBtn").on('click', function(){
-        //     var tog = $(this).data('toggle');
-        //     $('#'+tog).prop('value', sel);
-            
-        //     $('a[data-toggle="'+tog+'"]').not('[data-title="'+sel+'"]').removeClass('active').addClass('notActive');
-        //     $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
-        //})
     }
 
     /**
@@ -492,7 +461,7 @@ class BarChart2{
             that.clearStorytelling();
             that.currentLevel = "subgroup";
             that.isSorted = true;
-            d3.select("#sortLabelButton").classed("clicked", true);
+            d3.select("#sortButton").classed("button active", true);
             that.sortLevel();
             setTimeout(function(){
                 let selection = d3.select(subgroup)
@@ -524,8 +493,7 @@ class BarChart2{
                 that.clearStorytelling();
                 if (that.isSorted){
                     that.isSorted = false;
-                    d3.select("#sortLabelButton")
-                        .classed("clicked", false);
+                    d3.select("#sortButton").classed("button active", false).classed("button", true);
                 }
                 that.currentLevel = "language";
                 that.currentDirection = "down";
@@ -554,26 +522,32 @@ class BarChart2{
             .on("mouseover", null) 
             .on("mouseout", null);
         
+        d3.select("#sortButton").on("click", null);
+        d3.select("#homeButton").on("click", null);
+        
         let event = d3.dispatch('click', 'dblclick');
         event.on('click', null);
         event.on('dblclick', null);
-   }   
+    }   
+    
+    /**
+     * Function that clears all highlighted bars and tooltips from storytelling events
+     */
+    clearStorytelling(){
+        d3.selectAll('.highlighted').classed('highlighted', false);
+        d3.select("#tooltip").style('visibility', 'hidden');
+    }
 
    /**
-    * Function that sorts the nodes given the curent level
+    * Function that resets the view to the original view
+    * (Grouping level)
     */
-    sortLevel(){
-        this.isSorted = true;
-
-        //get all the nodes in the tree at specified level
-        this.currentData = this.tree.returnAll(this.currentLevel);
-        
-        let sortDescending = function (a,b){
-            if (b.percentage > a.percentage) return 1;
-                else return -1;
-        };
-
-        this.currentData.sort(sortDescending);
+    reset(){
+        this.direction = "down";
+        this.currentLevel = "group";  
+        this.isSorted = false;  
+        this.currentData = this.tree.treeSelectionToArray(this.tree.root, this.direction);
+        d3.select("#sortButton").classed("button active", false).classed("button", true);
         this.updateBarChart();
    }
 
@@ -583,27 +557,6 @@ class BarChart2{
      */
     getBasicData(){
         return this.tree.treeSelectionToArray(this.tree.root, "down");
-
-    }
-
-   /**
-    * Function that resets the view to the original view
-    * (Grouping level)
-    */
-    reset(){
-        this.direction = "down";
-        this.currentData = this.tree.treeSelectionToArray(this.tree.root, this.direction);
-        this.currentLevel = "group";  
-        this.isSorted = false;  
-        this.updateBarChart();
-   }
-
-   /**
-     * Function that clears all highlighted bars and tooltips from storytelling events
-     */
-    clearStorytelling(){
-        d3.selectAll('.highlighted').classed('highlighted', false);
-        d3.select("#tooltip-bar2").style('visibility', 'hidden');
 
     }
 

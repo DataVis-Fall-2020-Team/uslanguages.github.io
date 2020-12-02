@@ -67,7 +67,6 @@ class Barchart{
                 .attr("transform", "translate(0," + this.margin.top + ")");
         
         this.drawBarChart()
-        //this.drawLegend();
     }
 
     /**
@@ -162,6 +161,35 @@ class Barchart{
     }
 
     /**
+     * Function that renders the tooltip
+     * @param {select} selection -- the d3 selection for which the tooltip will be rendered
+     * @param {*} d -- the data bound to the d3 selection above
+     */
+    renderTooltip(selection, d){
+        let that = this;
+
+        //https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        let state = d3.select(selection).data()[0]["state"];
+            let index = that.stateData.findIndex(obj => obj.state === state);
+            let x = parseInt(d3.select(selection).attr("x"));
+            let y = index * (that.cellHeight+0.5);
+            x > 650 ? x -= 100: x + 25;
+            y < 500 ? y += 50: y -= 175;
+            d3.select("#tooltip")
+                .style("left", x + "px")
+                .style("top", y + "px")
+                .style('visibility', 'visible')
+                .html(`<h2>${d.state}</h2> 
+                    <strong>Language:</strong> ${d.group}
+                    <br><strong>Percentage:</strong> ${d3.format(",.2r")(d.percentage * 100)}%
+                    <br><strong>Total Speakers:</strong> ${numberWithCommas(d.total)}`);
+    }
+
+    /**
      * Function that attaches the sort handlers to the barchart visualization
      */
     attachSortHandlers(){
@@ -226,13 +254,12 @@ class Barchart{
             .on("mouseover.barchart", function(d) {
                 that.clearStorytelling();
                 d3.select(this).classed("hover", true); 
-                that.drawTooltip(this, d);
+                that.renderTooltip(this, d);
              })
             .on("mouseout.barchart", function(d) {
                 that.clearStorytelling();
                 d3.select(".hover").classed("hover", false);
-                d3.select("#tooltip-bar2")
-                    .style('visibility', 'hidden');});
+                d3.select("#tooltip").style('visibility', 'hidden');});
 
         //sort handler for sorting by state name
         d3.selectAll(".stateNames").on("click", function(){  
@@ -247,33 +274,9 @@ class Barchart{
         });
     }
 
-    drawTooltip(selection, d){
-        let that = this;
-
-        //https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
-        function numberWithCommas(x) {
-            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
-
-        let state = d3.select(selection).data()[0]["state"];
-            let index = that.stateData.findIndex(obj => obj.state === state);
-            let x = parseInt(d3.select(selection).attr("x"));
-            let y = index * (that.cellHeight+0.5);
-            x > 650 ? x -= 100: x + 25;
-            y < 500 ? y += 50: y -= 175;
-            d3.select("#tooltip-bar2")
-                .style("left", x + "px")
-                .style("top", y + "px")
-                .style('visibility', 'visible')
-                .html(`<h2>${d.state}</h2> 
-                    <strong>Language:</strong> ${d.group}
-                    <br><strong>Percentage:</strong> ${d3.format(",.2r")(d.percentage * 100)}%
-                    <br><strong>Total Speakers:</strong> ${numberWithCommas(d.total)}`);
-    }
     /**
      * Function that attaches handlers for the storytelling buttons
      */
-
     attachStorytellingHandlers(){
         let that = this;
         
@@ -303,7 +306,7 @@ class Barchart{
         function highlight(state){
             let selection = d3.select(state);
             selection.attr("class", "highlighted");
-            that.drawTooltip(selection._groups[0][0], selection.data()[0]);
+            that.renderTooltip(selection._groups[0][0], selection.data()[0]);
         }
 
         function sortAndHighlight(sortByGroup, state){
@@ -331,22 +334,26 @@ class Barchart{
                 sortAndHighlight("ENGLISH", "#englishmississippi");
             });
 
+        //Puerto Rico Highlight
         d3.select("#showEnglishSort-PR")
             .on("click", function(){
                 sortAndHighlight("ENGLISH", "#englishpuertorico");
             });
 
+        //California Highlight
         d3.select("#showEnglishSort-CA")
             .on("click", function(){
                 sortAndHighlight("ENGLISH", "#englishcalifornia");
             });
         
+        //Spanish sort
         d3.select("#showSpanishSort")
             .on("click", function(){
                 that.clearStorytelling();
                 sort("SPANISH AND SPANISH CREOLE");
                 that.drawBarChart()});
 
+        //Other languages sort
         d3.select("#showNativeAmericanSort")
             .on("click", function(){
                 that.clearStorytelling();
@@ -365,6 +372,14 @@ class Barchart{
 
         d3.selectAll(".stateNames").on("click", null);
         d3.selectAll(".stateRects").on("click", null);
+    }
+
+    /**
+     * Function that clears all highlighted bars and tooltips from storytelling events
+     */
+    clearStorytelling(){
+        d3.selectAll('.highlighted').classed('highlighted', false);
+        d3.select("#tooltip").style('visibility', 'hidden');
 
     }
 
@@ -393,43 +408,5 @@ class Barchart{
                 data.push(node)
             });
         return data;
-    }
-
-    /**
-     * Function that clears all highlighted bars and tooltips from storytelling events
-     */
-    clearStorytelling(){
-        d3.selectAll('.highlighted').classed('highlighted', false);
-        d3.select("#tooltip-bar2").style('visibility', 'hidden');
-
-    }
-
-    /**
-     * Draws the category legend on the scrolling side
-     */
-    drawLegend(){
-        let svg = d3.select("#legendBarchart1").append("svg")
-            .attr("width", 400)
-            .attr("height", 200);
-
-        let legend = svg.selectAll("g")
-             .data(Object.getOwnPropertyNames(this.groupMap))
-             .join("g")
-    	    .attr("class","legend")
-            .attr("transform", "translate(20, 10)");
-
-        legend.append("rect")
-            .attr("x", 0) 
-            .attr("y", function(d, i) { return 40 * i; })
-            .attr("width", 30)
-            .attr("height", 30)
-            .attr('fill',d => colorScale(d));
-
-        legend.append("text")
-            .attr("x", 50) 
-            .attr("dy", "0.75em")
-            .attr("y", function(d, i) { return 40 * i + 10; })
-            .style("font-size", "15px")
-            .text(function(d) {return d});
     }
 }
