@@ -3,7 +3,7 @@
 ## Quick Overview
 This visualization shows U.S. language data from the U.S. census from 2009-2013. The visualization presents the data in a storytelling format through a scrolling visualization that presents different graphs as you scroll through the web page. The data includes both national and state data.
 
-As you scroll through, the visuals are interactive so you can hover and click to filter data or to see tooltips with further information. On the map view (the 2nd visualization), you can click the bubbles at the top to filter the map. The rest of the visuals should have instructions on how to use them
+As you scroll through, the visuals are interactive so you can hover and click to filter data or to see tooltips with further information. On the map view (the 2nd visualization), you can click the bubbles at the top to filter the map. The rest of the visuals should have instructions on how to use them.
 
 ## Links/Libraries
 
