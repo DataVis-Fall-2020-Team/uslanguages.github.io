@@ -1,7 +1,7 @@
-//TODO: Maybe: add some storytelling?
-//TODO: Javascript Style Guides (clean up code)
-//TODO: write mini blurb 20-25 seconds/section
 
+    /*
+    * Class that creates the second view, which is the map. It controls the positioning of the circles drawn on the map as well
+    */
 class US_Map{
     // Creates a US_Map object showing language distribution
     constructor(data, svg){
@@ -55,8 +55,6 @@ class US_Map{
         projection = d3.geoAlbersUsa()
             .translate([1000/2-50,410]) // this centers the map in the SVG element
             .scale([1200]); // this specifies how much to zoom
-        /*.translate([1000/2-75,400]) // this centers the map in the SVG element
-        .scale([1150]); // this specifies how much to zoom*/
 
         path = d3.geoPath()
             .projection(projection);
@@ -232,7 +230,6 @@ class US_Map{
                 .attr("class", "") // Clear out all the classes
                 .classed("state_bubbles", true);
 
-            console.log(mapBubbles);
         }
 
          //Draw lines for smaller states to organize bubbles to
@@ -332,7 +329,6 @@ class US_Map{
                 .classed("notice", true);
 
             infoBox.html(htmlText);
-            console.log(d);
 
         }) // End mouseover listener
 

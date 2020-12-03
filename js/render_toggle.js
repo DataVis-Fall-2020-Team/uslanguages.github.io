@@ -1,3 +1,4 @@
+// Render Toggle - Taken from Homework 6 solution
 function renderToggle(div, labelText) {
     div
       .append("text")

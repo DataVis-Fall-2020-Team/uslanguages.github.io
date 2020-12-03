@@ -1,6 +1,14 @@
-let selected_circle
+let selected_circle // This is here to add a stroke line to circles later on
 
+    /*
+    * Class that creates the first view of the clustered circles, as well as the circles on the top of the 
+    * visualiation for the second view
+    */
 class cluster {
+
+     /**
+     * @param {element} svg - svg defined in the script file
+     */
     constructor(svg){
         this.svg = svg
 
@@ -18,6 +26,9 @@ class cluster {
 
     } // End constructor call
 
+    /**
+     * This function draws the circles for the view
+     */
     draw_circles(){
         nodes = d3.select("#cluster")
           .append("g")
@@ -31,23 +42,22 @@ class cluster {
           .classed('cluster_circles', true)
     }
 
+    /**
+     * This function creates the tooltip containing national language data for the circles 
+     */
     tooltip() {
         
         // Create tooltip    
         let tooltip = d3.select('#tooltip')
-        //tooltip.attr('transform','translate(0, -300)')
 
         
         // --------------------------------------------
         // Tooltip for the cluster
         // --------------------------------------------  
+
         // Mouse over
         d3.selectAll('.cluster_circles')
-
-
-
             .on('mouseover.cluster', function(d){
-
                 let x_pos = parseInt(d3.event.target.attributes['cx'].value) > 700 ? parseInt(d3.event.target.attributes['cx'].value) - 150 : parseInt(d3.event.target.attributes['cx'].value)
                 let y_pos = parseInt(d3.event.target.attributes['cy'].value) > 600 ? parseInt(d3.event.target.attributes['cy'].value) - 200 : parseInt(d3.event.target.attributes['cy'].value)
 
@@ -60,11 +70,6 @@ class cluster {
                             "</br><strong>Language Group: </strong>" + d.Group + 
                             "</br><strong> Number of Speakers: </strong>" + numberWithCommas(d.Speakers)
                         )
-                    //.html("<p style=font-size:20px> Language Group: " + d.Group + "</p> \
-                    //    <p> Subgroup: " + d.Subgroup + "</p> \
-                    //    <p> Language: " + d.Language + "</p>  \
-                    //    <p> Number of Speakers: " + numberWithCommas(d.Speakers) +"</p>"
-                    //    )
 					
 				selected_circle = this
 				d3.select(this)
@@ -85,7 +90,6 @@ class cluster {
 			}) // End mousemove listener
 
         // Mouse out
-		
         d3.selectAll('.cluster_circles')
 			.on('mouseout.cluster', () => {
 				tooltip.style('visibility', 'hidden')
@@ -94,63 +98,35 @@ class cluster {
 
     } // End of tooltip function
 
+    /**
+     * This function adds listeners for the circles on the map (2nd view)
+     */
     attach_maplisteners(){
+
     // Controlling what circles show up when a state is selected
     let circle_click = d3.selectAll('.cluster_circles')
-    let tooltip = d3.select('#tooltip')
-
-
     circle_click.on('click.cluster', function(d){
             if (mapview){
             updateOtherViews(d.Language, "brush");
             }
         })
-        /*// --------------------------------------------
-        // Tooltip for the map circles
-        // --------------------------------------------  
-            d3.selectAll('.state_bubbles')
-                .on('mouseover.map', function(d){
-
-                    tooltip
-                        .style("top", d3.event.target.attributes['cy'].value+ 'px')
-                        .style("left", d3.event.target.attributes['cx'].value+ 'px')
-                        .style('visibility', 'visible')
-                        .html("<p style=font-size:20px>" + d.Group + "</p> \
-                            <p>" + d.State + "</p> \
-                            <p>" + d.Language + ": " + d.Speakers +"</p>"
-                            )
-                }) // End mouseover listener
-
-            // Mouse move
-            d3.selectAll('.state_bubbles')
-            .on('mousemove.map', (d) => {
-                tooltip
-                .style("top", d3.event.target.attributes['cy'].value+ 'px')
-                .style("left", d3.event.target.attributes['cx'].value+ 'px')
-                // console.log(d.Language)
-            }) // End mousemove listener
-
-            // Mouse out
-            d3.selectAll('.state_bubbles')
-                .on('mouseout.map', () => {
-                    tooltip.style('visibility', 'hidden')
-            }) // End mouseout listener
-
-        })      */
     } // End circle click function
 
+    /**
+     * This function clears event listeners 
+     */
     clearEventHandlers(){
         d3.selectAll('.cluster_circles').on('mousemove.cluster', null);
         d3.selectAll('.cluster_circles').on('mouseover.cluster', null);
         d3.selectAll('.cluster_circles').on('mouseout.cluster', null);
 		
-		d3.selectAll('cluster_circles').on('mousemove.map', null);
-        d3.selectAll('cluster_circles').on('mouseover.map', null);
-        d3.selectAll('cluster_circles').on('mouseout.map', null);
-		
         d3.selectAll('cluster_circles').on('click.cluster', null);
     }
 
+    /**
+     * @param {boolean} active - Removes brush and class names if set to false
+     * This function clears event listeners 
+     */
     map_brush(active){
         let that = this;
         let height = 200;
@@ -167,7 +143,6 @@ class cluster {
             const brushGroup = d3.select("#cluster").append("g")
                 .classed("brush", true);
 
-            //console.log(dataset_updated);
             const brush = d3.brush()
                 .extent([[0,0], [width, height]])
                 .on("start", function(){
@@ -213,6 +188,7 @@ class cluster {
                             }
                         });
                         nodes.classed("regular", true);
+
                         //Update Other Views here to not bog down brush
                         updateOtherViews(selectedPoints);
                         if (selectedPoints.length > 0) {

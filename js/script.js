@@ -1,4 +1,7 @@
 // Set global variables
+
+// A template for this page was taken from: https://github.com/cuthchow/college-majors-visualisation, but has since been heavily altered
+
 let dataset, dataset_updated
 let simulation, nodes, clusters
 let map_data, map_center_data, path, projection
@@ -8,6 +11,7 @@ let views = {} //dictionary to store view objects
 let toggle_object, toggle_tracker = false
 let map_circles_same = true;
 let current_view; //{"cluster", "map", "bar1", "bar2", "area", "end"}
+
 // https://stackoverflow.com/questions/1248081/how-to-get-the-browser-viewport-dimensions
 const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
@@ -53,7 +57,6 @@ loadData().then(function(data){
         map_data = await d3.json("data/us-states.json");
         map_center_data = await d3.json("data/state-centers.json");
         dataset0_updated = [];
-        //console.log('Map Data Loaded');
         const compareData = await d3.csv('./data/language_compare.csv');
         const percentageData = await d3.csv('./data/language_percentages.csv');
         const languageMap = await d3.csv('./data/language_map.csv');
@@ -90,16 +93,17 @@ loadData().then(function(data){
     
     function scaleSize(input){ 
         
-        let my_scaleSize = d3.scalePow() 
-            .exponent(.25) // Smaller exponent = bigger circles
-            .domain([1, d3.max(dataset_updated.map(d => d.Speakers))])
-            .range([1,125])
-            .nice()
-        return my_scaleSize(input)
+    // Setting the scale for the circles on the first view
+    let my_scaleSize = d3.scalePow() 
+        .exponent(.25) // Smaller exponent = bigger circles
+        .domain([1, d3.max(dataset_updated.map(d => d.Speakers))])
+        .range([1,125])
+        .nice()
+    return my_scaleSize(input)
     }
 
+    // Scaling circles on the map view
     function scaleSize_map(input){ 
-        
         let my_scaleSize_map = d3.scalePow() 
             .exponent(.2) // Smaller = bigger
             .domain([1, d3.max(dataset_updated.map(d => d.Speakers))])
@@ -108,6 +112,7 @@ loadData().then(function(data){
         return my_scaleSize_map(input)
     }
 
+    // Scale for centering y location on map view
     function scaleCentersY_map(input){
         let scaleCenters = d3.scaleLinear()
             .domain([0,1000])
@@ -115,6 +120,7 @@ loadData().then(function(data){
         return scaleCenters(input);
     }
 
+    // Scale for centering x location on map view
     function scaleCentersX_map(input){
         let scaleCenters=d3.scaleLinear()
             .domain([0,1000])
@@ -122,6 +128,7 @@ loadData().then(function(data){
         return scaleCenters(input);
     }
 
+    // Scale for the map view
     function scaleSelection_map(input, min, max){
         let scaleBubbles = d3.scaleLinear()
             .domain([min,max])
@@ -130,7 +137,7 @@ loadData().then(function(data){
         return scaleBubbles(input);
     }
 
-    // Create a scale for all of the bubbles for multi-select
+    // Create a scale for all of the bubbles for multi-select on the map view
     function scale_multiselect_bubble(input){
         let scale = d3.scaleLinear()
             .domain([0,d3.max(map_speaker_total)])
@@ -138,13 +145,13 @@ loadData().then(function(data){
         return scale(input);
     }
 
+    // Create a scale for all of the bubbles for single-select on the map view
     function scale_singleselect_bubble(input, data){
         let scale = d3.scaleLinear()
             .domain([0,d3.max(data.map(d => d.Speakers))])
             .range([6,35]);
         return scale(input);
     }
-    // ----------------------------------------------------------------
 
 // --------------------------------------------
         // Setup the page 
@@ -152,6 +159,7 @@ loadData().then(function(data){
 
     // Setup the page 
     function setup_page(){
+
         // Create the SVG
         let svg = d3.select("#vis")
             .style('margin-left', '450px')
@@ -168,17 +176,15 @@ loadData().then(function(data){
         // Simulation setup
         simulation = d3.forceSimulation(dataset_updated)
           .force("cluster", clustering)
-        //   .force("gravity", d3.forceManyBody())
           .force("charge", d3.forceManyBody().strength(-100).distanceMin(20))
-
           .force("collide", d3.forceCollide().radius(function(d){
               return scaleSize(d.Speakers) + 3
           }))
 
-          clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:vw/2 -300 - 25, y:vh/2 - 25} //Top left
-          , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:vw/2 -300 + 25, y:vh/2 + 25} // Furthest right, below English
-          , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:vw/2 -300 - 25, y:vh/2 + 25} // Bottom left
-          , {'Group':"English",number:3, x:vw/2 -300 + 25, y:vh/2} // Furthest right
+          clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:vw/2 -300 - 25, y:vh/2 - 25} 
+          , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:vw/2 -300 + 25, y:vh/2 + 25} 
+          , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:vw/2 -300 - 25, y:vh/2 + 25} 
+          , {'Group':"English",number:3, x:vw/2 -300 + 25, y:vh/2} 
           , {'Group':"ALL OTHER LANGUAGES", number:4, x: vw/2 -300, y:vh/2}
         ]
 
@@ -252,7 +258,6 @@ loadData().then(function(data){
         views['area'] = new AreaChart(dataset[2], dataset[3], dataset[4], svg);
         drawLegend("#legendAreachart", my_categories.slice(2));
 
-
         // Viz #4 Bar Graph setup
         views['bar2'] = new BarChart2(dataset[1], svg);
         views['bar2'].clearEventHandlers();
@@ -274,8 +279,6 @@ loadData().then(function(data){
             d3.selectAll('.cluster_circles')
                 .attr('cx', (d) => d.x)
                 .attr('cy', (d) => d.y)
-                /*.attr('cx', (d) => d.x + 350)
-                .attr('cy', (d) => d.y + 400)*/
      }) 
 
      // Render Toggle - Taken from Homework 6 solution
@@ -354,11 +357,13 @@ loadData().then(function(data){
         // Draw the visualizations
 // --------------------------------------------
 
-    //First Viz
+    /**
+     * This function draws the first viz in the visualization (the cluster circle) 
+     */
     function draw_cluster(){
-        // console.log("CAN YOU SEE THIS YET?")
         //Stop simulation
         simulation.stop()
+
         current_view = "cluster";
         
         clean('cluster') // Turns off opacity for all other charts
@@ -402,15 +407,11 @@ loadData().then(function(data){
       d3.select("#cluster").raise();
       simulation.alpha(0.9).restart()
 
+    } // end draw_cluster function
 
-        // simulation.force("cluster", clustering)
-
-           // Define clustering simulation function
-
-        // clustering()
-
-    } // end draw0 function
-
+    /**
+     * This function draws the second viz in the visualization (the map) 
+     */
     function draw_map(){
 		
         mapview = true
@@ -455,7 +456,6 @@ loadData().then(function(data){
             .force("collide", d3.forceCollide().radius(function(d){
                 return scaleSize_map(d.Speakers) + 2.5
             }))
-            // .alphaDecay(.01)
             .velocityDecay(.9)
 
             let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-vw/14 + 275, y:-vh/4 + 10 + 250}
@@ -478,7 +478,6 @@ loadData().then(function(data){
         //Draw Brush
         views['cluster'].map_brush(true);
 
-
         //Raise these views so that there's no fighting with the bar charts or the brush
         d3.select("#cluster_group").raise();
         d3.select("#us_map").raise();
@@ -491,18 +490,16 @@ loadData().then(function(data){
         views['map'].updateStateOpacity(1);
         views['map'].attachEventHandlers();
         
-        // d3.select('#line_group').style('opacity',0)
         d3.select('#cluster').raise()
-        
-
-
 
     } // end draw_map function  
 
-    // Sub-function to Map, is called when map bubbles are drawn
+    
+    /**
+     * Sub-function to Map, is called when map bubbles are drawn
+     */
     function clusterMapBubbles(){
         if(dataset0_updated.length > 0){
-            //console.log("Clustering Map!");
 
             map_simulation = d3.forceSimulation(dataset0_updated)
                 .force("cluster", map_clustering)
@@ -529,7 +526,9 @@ loadData().then(function(data){
         }
     } // end clusterMapBubbles function  
 
-    // Draw Horizontal Barchart
+    /**
+     * Draws horizontal bar-chart
+     */    
     function draw_bar1(){
     
         //Stop simulation
@@ -635,7 +634,9 @@ loadData().then(function(data){
         
     } // end draw vertial barchcart function   
 
-    // Draw Area Chart
+    /**
+     * Draw Area Chart
+     */    
     function draw_area(){
     
         //Stop simulation
@@ -651,8 +652,6 @@ loadData().then(function(data){
         views['area'].attachEventHandlers();
 
     } // end draw area chart function 
-
- 
 
 // --------------------------------------------
         // Run the scrolling functions

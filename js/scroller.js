@@ -1,4 +1,4 @@
-
+// This code was taken from: https://github.com/cuthchow/college-majors-visualisation
 
 function scroller(){
   let container = d3.select('body')
