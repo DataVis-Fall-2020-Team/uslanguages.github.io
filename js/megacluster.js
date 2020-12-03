@@ -56,6 +56,13 @@ class cluster {
         // --------------------------------------------  
 
         // Mouse over
+
+        // Capitalize first letter code taken from: https://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+          }
+          
+          console.log(capitalizeFirstLetter('foo'));
         d3.selectAll('.cluster_circles')
             .on('mouseover.cluster', function(d){
                 let x_pos = parseInt(d3.event.target.attributes['cx'].value) > 700 ? parseInt(d3.event.target.attributes['cx'].value) - 150 : parseInt(d3.event.target.attributes['cx'].value)
@@ -65,9 +72,9 @@ class cluster {
 					.style("top",y_pos + 'px')
 					.style("left", x_pos + 'px')
 					.style('visibility', 'visible')
-					.html("<h2>" + d.Language + "</h2>" +
-                            "<strong>Subgroup: </strong>" + d.Subgroup + 
-                            "</br><strong>Language Group: </strong>" + d.Group + 
+                    .html("<h2>" + d.Language + "</h2>" +
+                            "</br><strong>Language Group: </strong>" + capitalizeFirstLetter(d.Group.toLowerCase()) + 
+                            "</br><strong>Subgroup: </strong>" + d.Subgroup + 
                             "</br><strong> Number of Speakers: </strong>" + numberWithCommas(d.Speakers)
                         )
 					
