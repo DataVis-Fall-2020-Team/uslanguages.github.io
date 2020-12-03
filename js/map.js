@@ -1,4 +1,3 @@
-
     /*
     * Class that creates the second view, which is the map. It controls the positioning of the circles drawn on the map as well
     */
@@ -12,7 +11,8 @@ class US_Map{
         this.lines=[[785, 705, 260, 225],[805, 753, 260, 200],[804,894,285,225],[814,858,298,289],[797,895,303,346],
                     [777,827,340,360],[770,882,370,427],[750,810,370,430],[744,815,376,508]];
         this.lineStates = ["Vermont", "New Hampshire", "Massachusetts", "Rhode Island", "Connecticut",
-            "New Jersey", "Delaware", "Maryland", "District of Columbia"]
+            "New Jersey", "Delaware", "Maryland", "District of Columbia"];
+        this.group_size = 0;
 
         //Add centers and languages per state to the data
         let that = this;
@@ -108,6 +108,11 @@ class US_Map{
 
         //get individual language info
         dataset0_updated = this.mapData.filter(d=>languages.includes(d.Language));
+        dataset0_updated.forEach(d=>{
+            if(d.Group != ""){
+                return d;
+            }
+        })
 
         if(dataset0_updated.length == 0){
             //Clear out all bubbles and lines
@@ -179,6 +184,7 @@ class US_Map{
                 }
             })
 
+
             // Consolidate number of speakers so there is one bubble per state
             if (dataset0_updated.length > 0){
                 state_list.forEach((g) => {
@@ -194,10 +200,16 @@ class US_Map{
                 })
             }
 
+            //Filter out those with StateCenter == 0
+            dataset0_updated.forEach((d) => {
+                if(d.Speakers_Total != 0 && d.StateCenter[0] != 0 && d.StateCenter[1] != 0){
+                    return d;
+                }
+            })
+
             // Count the number of groups. If group_ct > 1, then change the color of the circles
-            let group_ct
-            group_ct = new Set(group_list)
-            group_ct = group_ct.size
+            this.group_ct = new Set(group_list)
+            this.group_ct = this.group_ct.size;
 
             // Create an array of all the speaker counts
             map_speaker_total =  state_list.map(d => d.Speakers_Total)
@@ -206,7 +218,7 @@ class US_Map{
                 .data(state_list)
                 .join("circle")
                 .attr("fill", d=> {
-                    if (group_ct > 1){
+                    if (this.group_ct > 1){
                         return 'rgb(220,220,220)'
                     }
                     else {
@@ -216,7 +228,7 @@ class US_Map{
                 .attr("stroke", "black")
                 .attr("stroke-width", 1)
                 .style("opacity", d => {
-                    if (group_ct == 0){
+                    if (this.group_ct == 0){
                         return 0
                     }
                     else {
@@ -224,8 +236,8 @@ class US_Map{
                     }
                 })
                 .attr("r", d=>scale_multiselect_bubble(d.Speakers_Total))
-                .attr("cx", d=>d.StateCenter[0])
-                .attr("cy", d=>d.StateCenter[1])
+                .attr("cx", d=>(d.StateCenter[0] > 0 && d.StateCenter[1] > 0) ? d.StateCenter[0] : -20)
+                .attr("cy", d=>(d.StateCenter[1] > 0 && d.StateCenter[0] > 0) ? d.StateCenter[1] : -20)
                 .attr("transform", "translate(0,140)")
                 .attr("class", "") // Clear out all the classes
                 .classed("state_bubbles", true);
@@ -236,11 +248,9 @@ class US_Map{
         let linesGroup = d3.select("#lines_group");
         if(languages.length > 0){
             let linePoints = [];
-            let j = 0;
             for(let i = 0; i<this.lines.length; i++){
                 if(dataset0_updated.find(d=>this.lineStates[i] == d.State)){
-                    linePoints[j] = this.lines[i];
-                    j++;
+                    linePoints.push(this.lines[i]);
                 }
             }
 
@@ -311,10 +321,11 @@ class US_Map{
             let htmlText = "<p style=font-size:20px><b>Language:</b> " + (d.Language ? d.Language : "Multiple")
                             + "</p><p><b>Sub-group:</b> " + (d.Subgroup ? d.Subgroup : "Multiple")
                             + "</p><p style=text-transform:capitalize><b>Group:</b> "
-                            + (d.Group ? d.Group.toLowerCase() : "Multiple") + "</p>";
+                            + ((that.group_ct > 1) ? "Multiple" : d.Group.toLowerCase()) + "</p>";
 
             if(!map_circles_same){
-                htmlText += "<p><b>Number of Speakers:</b> " + (d.Speakers ? numberWithCommas(d.Speakers) : numberWithCommas(d.Speakers_Total)) +"</p>";
+                htmlText += "<p><b>Number of Speakers:</b> " + (d.Speakers ? numberWithCommas(d.Speakers) :
+                    numberWithCommas(d.Speakers_Total)) +"</p>";
             }
 
             d3.select(this)
@@ -324,11 +335,10 @@ class US_Map{
             let color = d3.select(this).attr("fill");
             d3.select("#LanguageInfo")
                 .style("border-color", color)
-                //.style("background-color", color)
-                //.style("opacity", 0.5)
                 .classed("notice", true);
 
             infoBox.html(htmlText);
+            console.log(d);
 
         }) // End mouseover listener
 

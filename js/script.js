@@ -80,7 +80,6 @@ loadData().then(function(data){
         }
             
         let my_categories = dataset[1].map(x => x.Group).filter(distinct);
-        //const colors = ["#e7298a","#66a61e","#1b9e77", "#6a3d9a", "#ff7f00",'#e41a1c'];
         const colors = ['#377eb8','#984ea3','#4daf4a',"#e7298a",'#ff7f00'];
         
         // Color scale
@@ -305,7 +304,8 @@ loadData().then(function(data){
                 d3.select("#cluster").transition().style('opacity', 0)
                 views['cluster'].clearEventHandlers();
             }
-        } // End cluster if statement
+        }
+        // End cluster if statement
 
         if (chartType !== "bar1"){
             d3.select('#barchart1').transition(300).style('opacity',0)
@@ -331,7 +331,6 @@ loadData().then(function(data){
             views['cluster'].map_brush(false); // Clear brush selection
             views['cluster'].map_brush(true) //bring back brush
             d3.select("#cluster_group").raise();
-
         }// End map if statement
 
         if (chartType !== "area"){
@@ -350,6 +349,7 @@ loadData().then(function(data){
         if(view == "brush"){
             clean('map');
         }
+        d3.select("#LanguageInfo").html("");
         views['map'].updateView(newData);
     }
 
@@ -371,7 +371,7 @@ loadData().then(function(data){
         d3.select("#cluster")
             .transition()
             .style('opacity',1)
-        
+
         d3.selectAll('.cluster_circles')
             .transition(1000)
             .attr('r',d=> scaleSize(d.Speakers))
