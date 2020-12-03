@@ -281,7 +281,7 @@ loadData().then(function(data){
      // Render Toggle - Taken from Homework 6 solution
      let toggle_div = d3.select('#map_section').append('div').attr('id','toggle_map')
 
-     toggle_object = renderToggle(toggle_div, 'Select Multiple Languages')
+     toggle_object = renderToggle(toggle_div, 'Aggregate Multiple Languages')
 
      // Render Language Info Div in Panel - Replacement for tooltip because of clutter
      d3.select("#map_section").append("div").attr("id", "LanguageInfo");

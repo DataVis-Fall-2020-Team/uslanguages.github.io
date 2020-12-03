@@ -339,6 +339,7 @@ class BarChart2{
 
     /**
      * Function that attaches the click handlers for the click and doubleclick events
+     * Taken from http://bl.ocks.org/couchand/6394506
      */
     attachClickHandlers(){
         let that = this;
