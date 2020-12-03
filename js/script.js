@@ -1,4 +1,7 @@
 // Set global variables
+
+// A template for this page was taken from: https://github.com/cuthchow/college-majors-visualisation, but has since been heavily altered
+
 let dataset, dataset_updated
 let simulation, nodes, clusters
 let map_data, map_center_data, path, projection
@@ -7,6 +10,8 @@ let MapData, map_speaker_total, mapview = false
 let views = {} //dictionary to store view objects
 let toggle_object, toggle_tracker = false
 let map_circles_same = true;
+let current_view; //{"cluster", "map", "bar1", "bar2", "area", "end"}
+
 // https://stackoverflow.com/questions/1248081/how-to-get-the-browser-viewport-dimensions
 const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
@@ -52,7 +57,6 @@ loadData().then(function(data){
         map_data = await d3.json("data/us-states.json");
         map_center_data = await d3.json("data/state-centers.json");
         dataset0_updated = [];
-        //console.log('Map Data Loaded');
         const compareData = await d3.csv('./data/language_compare.csv');
         const percentageData = await d3.csv('./data/language_percentages.csv');
         const languageMap = await d3.csv('./data/language_map.csv');
@@ -88,16 +92,17 @@ loadData().then(function(data){
     
     function scaleSize(input){ 
         
-        let my_scaleSize = d3.scalePow() 
-            .exponent(.3) // Smaller exponent = bigger circles
-            .domain([1, d3.max(dataset_updated.map(d => d.Speakers))])
-            .range([1,225])
-            .nice()
-        return my_scaleSize(input)
+    // Setting the scale for the circles on the first view
+    let my_scaleSize = d3.scalePow() 
+        .exponent(.25) // Smaller exponent = bigger circles
+        .domain([1, d3.max(dataset_updated.map(d => d.Speakers))])
+        .range([1,125])
+        .nice()
+    return my_scaleSize(input)
     }
 
+    // Scaling circles on the map view
     function scaleSize_map(input){ 
-        
         let my_scaleSize_map = d3.scalePow() 
             .exponent(.2) // Smaller = bigger
             .domain([1, d3.max(dataset_updated.map(d => d.Speakers))])
@@ -106,6 +111,7 @@ loadData().then(function(data){
         return my_scaleSize_map(input)
     }
 
+    // Scale for centering y location on map view
     function scaleCentersY_map(input){
         let scaleCenters = d3.scaleLinear()
             .domain([0,1000])
@@ -113,6 +119,7 @@ loadData().then(function(data){
         return scaleCenters(input);
     }
 
+    // Scale for centering x location on map view
     function scaleCentersX_map(input){
         let scaleCenters=d3.scaleLinear()
             .domain([0,1000])
@@ -120,6 +127,7 @@ loadData().then(function(data){
         return scaleCenters(input);
     }
 
+    // Scale for the map view
     function scaleSelection_map(input, min, max){
         let scaleBubbles = d3.scaleLinear()
             .domain([min,max])
@@ -128,7 +136,7 @@ loadData().then(function(data){
         return scaleBubbles(input);
     }
 
-    // Create a scale for all of the bubbles for multi-select
+    // Create a scale for all of the bubbles for multi-select on the map view
     function scale_multiselect_bubble(input){
         let scale = d3.scaleLinear()
             .domain([0,d3.max(map_speaker_total)])
@@ -136,13 +144,13 @@ loadData().then(function(data){
         return scale(input);
     }
 
+    // Create a scale for all of the bubbles for single-select on the map view
     function scale_singleselect_bubble(input, data){
         let scale = d3.scaleLinear()
             .domain([0,d3.max(data.map(d => d.Speakers))])
             .range([6,35]);
         return scale(input);
     }
-    // ----------------------------------------------------------------
 
 // --------------------------------------------
         // Setup the page 
@@ -150,6 +158,7 @@ loadData().then(function(data){
 
     // Setup the page 
     function setup_page(){
+
         // Create the SVG
         let svg = d3.select("#vis")
             .style('margin-left', '450px')
@@ -166,18 +175,16 @@ loadData().then(function(data){
         // Simulation setup
         simulation = d3.forceSimulation(dataset_updated)
           .force("cluster", clustering)
-        //   .force("gravity", d3.forceManyBody())
           .force("charge", d3.forceManyBody().strength(-100).distanceMin(20))
-
           .force("collide", d3.forceCollide().radius(function(d){
               return scaleSize(d.Speakers) + 3
           }))
 
-          clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:0, y:0} //Top left
-          , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:250, y:100} // Furthest right, below English
-          , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:0, y:250} // Bottom left
-          , {'Group':"English",number:3, x:250, y:0} // Furthest right
-          , {'Group':"ALL OTHER LANGUAGES", number:4, x: 180, y:180}
+          clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:vw/2 -300 - 25, y:vh/2 - 25} 
+          , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:vw/2 -300 + 25, y:vh/2 + 25} 
+          , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:vw/2 -300 - 25, y:vh/2 + 25} 
+          , {'Group':"English",number:3, x:vw/2 -300 + 25, y:vh/2} 
+          , {'Group':"ALL OTHER LANGUAGES", number:4, x: vw/2 -300, y:vh/2}
         ]
 
         for (i of dataset_updated){
@@ -250,7 +257,6 @@ loadData().then(function(data){
         views['area'] = new AreaChart(dataset[2], dataset[3], dataset[4], svg);
         drawLegend("#legendAreachart", my_categories.slice(2));
 
-
         // Viz #4 Bar Graph setup
         views['bar2'] = new BarChart2(dataset[1], svg);
         views['bar2'].clearEventHandlers();
@@ -270,16 +276,14 @@ loadData().then(function(data){
         // Define each tick of simulation
         simulation.on('tick', () => {
             d3.selectAll('.cluster_circles')
-                .attr('cx', (d) => d.x + 275)
-                .attr('cy', (d) => d.y + 250)
-                /*.attr('cx', (d) => d.x + 350)
-                .attr('cy', (d) => d.y + 400)*/
+                .attr('cx', (d) => d.x)
+                .attr('cy', (d) => d.y)
      }) 
 
      // Render Toggle - Taken from Homework 6 solution
      let toggle_div = d3.select('#map_section').append('div').attr('id','toggle_map')
 
-     toggle_object = renderToggle(toggle_div, 'Merge Speakers')
+     toggle_object = renderToggle(toggle_div, 'Aggregate Multiple Languages')
 
      // Render Language Info Div in Panel - Replacement for tooltip because of clutter
      d3.select("#map_section").append("div").attr("id", "LanguageInfo");
@@ -326,6 +330,7 @@ loadData().then(function(data){
             views['cluster'].map_brush(false); // Clear brush selection
             views['cluster'].map_brush(true) //bring back brush
             d3.select("#cluster_group").raise();
+
         }// End map if statement
 
         if (chartType !== "area"){
@@ -351,11 +356,14 @@ loadData().then(function(data){
         // Draw the visualizations
 // --------------------------------------------
 
-    //First Viz
+    /**
+     * This function draws the first viz in the visualization (the cluster circle) 
+     */
     function draw_cluster(){
-        // console.log("CAN YOU SEE THIS YET?")
         //Stop simulation
         simulation.stop()
+
+        current_view = "cluster";
         
         clean('cluster') // Turns off opacity for all other charts
 
@@ -379,11 +387,11 @@ loadData().then(function(data){
         .velocityDecay(.4)
 
 
-        clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:0, y:0} //Top left
-        , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:250, y:100} // Furthest right, below English
-        , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:0, y:250} // Bottom left
-        , {'Group':"English",number:3, x:250, y:0} // Furthest right
-        , {'Group':"ALL OTHER LANGUAGES", number:4, x: 180, y:180}
+        clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:vw/2 -300 - 25, y:vh/2 - 25} //Top left
+        , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:vw/2 -300 + 25, y:vh/2 + 25} // Furthest right, below English
+        , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:vw/2 -300 - 25, y:vh/2 + 25} // Bottom left
+        , {'Group':"English",number:3, x:vw/2 -300 + 25, y:vh/2} // Furthest right
+        , {'Group':"ALL OTHER LANGUAGES", number:4, x: vw/2 -300, y:vh/2}
       ]
 
       // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
@@ -398,18 +406,15 @@ loadData().then(function(data){
       d3.select("#cluster").raise();
       simulation.alpha(0.9).restart()
 
+    } // end draw_cluster function
 
-        // simulation.force("cluster", clustering)
-
-           // Define clustering simulation function
-
-        // clustering()
-
-    } // end draw0 function
-
+    /**
+     * This function draws the second viz in the visualization (the map) 
+     */
     function draw_map(){
 		
         mapview = true
+        current_view = "map";
 
         // TOGGLE
         toggle_object.on('click.toggle', function(d){
@@ -438,6 +443,10 @@ loadData().then(function(data){
         d3.select('#cluster')
             .style('opacity',1)
 
+            simulation.on("end", function(){
+                d3.select("#us_map").raise();
+            })
+
         simulation.alpha(1).restart()
 
         simulation
@@ -446,14 +455,13 @@ loadData().then(function(data){
             .force("collide", d3.forceCollide().radius(function(d){
                 return scaleSize_map(d.Speakers) + 2.5
             }))
-            // .alphaDecay(.01)
             .velocityDecay(.9)
 
-            let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-vw/14, y:-vh/4 + 10}
-                , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:vw/16, y:-vh/4 + 15}
-                , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:vw/6, y:-vh/4 + 20}
-                , {'Group':"English",number:3, x:vw/4, y:-vh/4 + 20}
-                , {'Group':"ALL OTHER LANGUAGES", number:4, x: vw/3+25, y:-vh/4 + 20}
+            let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-vw/14 + 275, y:-vh/4 + 10 + 250}
+                , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:vw/16 + 270 , y:-vh/4 + 15 + 250}
+                , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:vw/6 + 250, y:-vh/4 + 20 + 250}
+                , {'Group':"English",number:3, x:vw/4 + 250, y:-vh/4 + 20 + 250} //x:vw/4, y:-vh/4 + 20}
+                , {'Group':"ALL OTHER LANGUAGES", number:4, x: vw/3+25 + 250, y:-vh/4 + 20 + 250}
             ]
 
         // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
@@ -469,7 +477,6 @@ loadData().then(function(data){
         //Draw Brush
         views['cluster'].map_brush(true);
 
-
         //Raise these views so that there's no fighting with the bar charts or the brush
         d3.select("#cluster_group").raise();
         d3.select("#us_map").raise();
@@ -481,13 +488,17 @@ loadData().then(function(data){
         d3.select("#us_map").style('opacity',1);
         views['map'].updateStateOpacity(1);
         views['map'].attachEventHandlers();
+        
+        d3.select('#cluster').raise()
 
     } // end draw_map function  
 
-    // Sub-function to Map, is called when map bubbles are drawn
+    
+    /**
+     * Sub-function to Map, is called when map bubbles are drawn
+     */
     function clusterMapBubbles(){
         if(dataset0_updated.length > 0){
-            //console.log("Clustering Map!");
 
             map_simulation = d3.forceSimulation(dataset0_updated)
                 .force("cluster", map_clustering)
@@ -514,11 +525,14 @@ loadData().then(function(data){
         }
     } // end clusterMapBubbles function  
 
-    // Draw Horizontal Barchart
+    /**
+     * Draws horizontal bar-chart
+     */    
     function draw_bar1(){
     
         //Stop simulation
         simulation.stop()
+        current_view = "bar1"
         
         clean('bar1')
 
@@ -556,42 +570,44 @@ loadData().then(function(data){
             , {group: "ALL OTHER LANGUAGES", number:4, x: 356, y:240}
         ]
     
-        let rects = d3.select("#barchart2").append("g").attr("class", "simRects");
+        //do the transition if coming from bar1 view
+        if (current_view === "bar1"){
+            //draw the transition rects in barchart2 view
+            let rects = d3.select("#barchart2").append("g").attr("class", "simRects");
 
-        //draw the transition rects in barchart2 view
-        rects.selectAll("rect")
-            .data(data)
-            .join("rect")
-            .attr("x", d=>d.startX)
-            .attr("y", d=>d.startY)
-            .attr("height", d=>d.height)
-            .attr("width", d=>d.width)
-            .attr('fill',d => colorScale(d.group));
+            rects.selectAll("rect")
+                .data(data)
+                .join("rect")
+                .attr("x", d=>d.startX)
+                .attr("y", d=>d.startY)
+                .attr("height", d=>d.height)
+                .attr("width", d=>d.width)
+                .attr('fill',d => colorScale(d.group));
         
-        let count = 0;
-        let callbackFunction = function(){
-            count++;
-            if (count === 130){
-                d3.select(".simRects")
-                    .style("opacity", 0)
-                d3.select("#bar-rects")
-                    .style("opacity", 1)
-                d3.select(".simRects").remove();
-                d3.select("#barchart2").attr("pointer-events", "auto");
-                views['bar2'].attachEventHandlers();
-            }
-        }   
+            let count = 0;
+            let callbackFunction = function(){
+                count++;
+                if (count === 130){
+                    d3.select(".simRects")
+                        .style("opacity", 0)
+                    d3.select("#bar-rects")
+                        .style("opacity", 1)
+                    d3.select(".simRects").remove();
+                    d3.select("#barchart2").attr("pointer-events", "auto");
+                    views['bar2'].attachEventHandlers();
+                }
+            }   
 
-        rects.selectAll("rect")
+            rects.selectAll("rect")
                 .transition()
-                .delay(300)
-                .duration(400)
+                .delay(400)
+                .duration(500)
                 //move bars to the left
                 .attr("x", function(d){
                     let object = map.filter(obj => obj.group === d.group);
                     return object[0].x;})
                 .transition()
-                .duration(400)
+                .duration(500)
                 //adjust width to match bar width in view 2
                 .attr("width", 100)
                 //drop into bars
@@ -607,14 +623,24 @@ loadData().then(function(data){
                     else return d.startY;
                 })
                 .on("end", callbackFunction);
-    
+        }
+        else{
+            d3.select("#bar-rects").style("opacity", 1);
+            d3.select("#barchart2").attr("pointer-events", "auto");
+            views['bar2'].attachEventHandlers();
+        }
+        current_view = "bar2";
+        
     } // end draw vertial barchcart function   
 
-    // Draw Area Chart
+    /**
+     * Draw Area Chart
+     */    
     function draw_area(){
     
         //Stop simulation
         simulation.stop()
+        current_view = "area"
         
         clean('area')
 
@@ -625,8 +651,6 @@ loadData().then(function(data){
         views['area'].attachEventHandlers();
 
     } // end draw area chart function 
-
- 
 
 // --------------------------------------------
         // Run the scrolling functions

@@ -43,13 +43,6 @@ class AreaChart{
         
         this.yScale; //defined depending upon the type of chart
 
-        // color palette
-        this.color = d3.scaleOrdinal()
-            .domain(this.keys)
-            .range(['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf',
-                    '#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00','#ffff33','#a65628','#f781bf',
-                    '#e41a1c','#377eb8']);
-        
         //tooltip line and buttons
         d3.select("#graph").append('line').classed('hoverLine', true)
         d3.select("#graph").append('circle').classed('hoverPoint', true);

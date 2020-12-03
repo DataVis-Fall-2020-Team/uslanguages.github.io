@@ -1,7 +1,7 @@
-//TODO: Maybe: add some storytelling?
-//TODO: Javascript Style Guides (clean up code)
-//TODO: write mini blurb 20-25 seconds/section
 
+    /*
+    * Class that creates the second view, which is the map. It controls the positioning of the circles drawn on the map as well
+    */
 class US_Map{
     // Creates a US_Map object showing language distribution
     constructor(data, svg){
@@ -207,7 +207,7 @@ class US_Map{
                 .join("circle")
                 .attr("fill", d=> {
                     if (group_ct > 1){
-                        return 'blue'
+                        return 'rgb(220,220,220)'
                     }
                     else {
                         return colorScale(d.Group)
@@ -230,7 +230,6 @@ class US_Map{
                 .attr("class", "") // Clear out all the classes
                 .classed("state_bubbles", true);
 
-            console.log(mapBubbles);
         }
 
          //Draw lines for smaller states to organize bubbles to
@@ -313,7 +312,7 @@ class US_Map{
                             + (d.Group ? d.Group.toLowerCase() : "Multiple") + "</p>";
 
             if(!map_circles_same){
-                htmlText += "<p><b>Number of Speakers:</b> " + (d.Speakers ? d.Speakers : d.Speakers_Total) +"</p>";
+                htmlText += "<p><b>Number of Speakers:</b> " + (d.Speakers ? numberWithCommas(d.Speakers) : numberWithCommas(d.Speakers_Total)) +"</p>";
             }
 
             d3.select(this)
@@ -326,7 +325,6 @@ class US_Map{
                 .classed("notice", true);
 
             infoBox.html(htmlText);
-            console.log(d);
 
         }) // End mouseover listener
 
