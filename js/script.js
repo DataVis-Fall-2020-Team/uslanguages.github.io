@@ -91,9 +91,9 @@ loadData().then(function(data){
     function scaleSize(input){ 
         
         let my_scaleSize = d3.scalePow() 
-            .exponent(.3) // Smaller exponent = bigger circles
+            .exponent(.25) // Smaller exponent = bigger circles
             .domain([1, d3.max(dataset_updated.map(d => d.Speakers))])
-            .range([1,225])
+            .range([1,125])
             .nice()
         return my_scaleSize(input)
     }
@@ -175,11 +175,11 @@ loadData().then(function(data){
               return scaleSize(d.Speakers) + 3
           }))
 
-          clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:0, y:0} //Top left
-          , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:250, y:100} // Furthest right, below English
-          , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:0, y:250} // Bottom left
-          , {'Group':"English",number:3, x:250, y:0} // Furthest right
-          , {'Group':"ALL OTHER LANGUAGES", number:4, x: 180, y:180}
+          clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:vw/2 -300 - 25, y:vh/2 - 25} //Top left
+          , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:vw/2 -300 + 25, y:vh/2 + 25} // Furthest right, below English
+          , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:vw/2 -300 - 25, y:vh/2 + 25} // Bottom left
+          , {'Group':"English",number:3, x:vw/2 -300 + 25, y:vh/2} // Furthest right
+          , {'Group':"ALL OTHER LANGUAGES", number:4, x: vw/2 -300, y:vh/2}
         ]
 
         for (i of dataset_updated){
@@ -272,8 +272,8 @@ loadData().then(function(data){
         // Define each tick of simulation
         simulation.on('tick', () => {
             d3.selectAll('.cluster_circles')
-                .attr('cx', (d) => d.x + 275)
-                .attr('cy', (d) => d.y + 250)
+                .attr('cx', (d) => d.x)
+                .attr('cy', (d) => d.y)
                 /*.attr('cx', (d) => d.x + 350)
                 .attr('cy', (d) => d.y + 400)*/
      }) 
@@ -328,6 +328,7 @@ loadData().then(function(data){
             views['cluster'].map_brush(false); // Clear brush selection
             views['cluster'].map_brush(true) //bring back brush
             d3.select("#cluster_group").raise();
+
         }// End map if statement
 
         if (chartType !== "area"){
@@ -382,11 +383,11 @@ loadData().then(function(data){
         .velocityDecay(.4)
 
 
-        clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:0, y:0} //Top left
-        , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:250, y:100} // Furthest right, below English
-        , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:0, y:250} // Bottom left
-        , {'Group':"English",number:3, x:250, y:0} // Furthest right
-        , {'Group':"ALL OTHER LANGUAGES", number:4, x: 180, y:180}
+        clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:vw/2 -300 - 25, y:vh/2 - 25} //Top left
+        , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:vw/2 -300 + 25, y:vh/2 + 25} // Furthest right, below English
+        , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:vw/2 -300 - 25, y:vh/2 + 25} // Bottom left
+        , {'Group':"English",number:3, x:vw/2 -300 + 25, y:vh/2} // Furthest right
+        , {'Group':"ALL OTHER LANGUAGES", number:4, x: vw/2 -300, y:vh/2}
       ]
 
       // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
@@ -453,11 +454,11 @@ loadData().then(function(data){
             // .alphaDecay(.01)
             .velocityDecay(.9)
 
-            let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-vw/14, y:-vh/4 + 10}
-                , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:vw/16, y:-vh/4 + 15}
-                , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:vw/6, y:-vh/4 + 20}
-                , {'Group':"English",number:3, x:vw/4, y:-vh/4 + 20}
-                , {'Group':"ALL OTHER LANGUAGES", number:4, x: vw/3+25, y:-vh/4 + 20}
+            let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-vw/14 + 275, y:-vh/4 + 10 + 250}
+                , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:vw/16 + 250 , y:-vh/4 + 15 + 250}
+                , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:vw/6 + 250, y:-vh/4 + 20 + 250}
+                , {'Group':"English",number:3, x:vw/4 + 250, y:-vh/4 + 20 + 250} //x:vw/4, y:-vh/4 + 20}
+                , {'Group':"ALL OTHER LANGUAGES", number:4, x: vw/3+25 + 250, y:-vh/4 + 20 + 250}
             ]
 
         // This clustering code is taken from: https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127
@@ -485,6 +486,9 @@ loadData().then(function(data){
         d3.select("#us_map").style('opacity',1);
         views['map'].updateStateOpacity(1);
         views['map'].attachEventHandlers();
+        
+        d3.select('#line_group').style('opacity',0)
+
 
     } // end draw_map function  
 
