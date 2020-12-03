@@ -440,6 +440,10 @@ loadData().then(function(data){
         d3.select('#cluster')
             .style('opacity',1)
 
+            simulation.on("end", function(){
+                d3.select("#us_map").raise();
+            })
+
         simulation.alpha(1).restart()
 
         simulation
@@ -452,7 +456,7 @@ loadData().then(function(data){
             .velocityDecay(.9)
 
             let clusters = [{'Group': "ASIAN AND PACIFIC ISLAND LANGUAGES", number: 0, x:-vw/14 + 275, y:-vh/4 + 10 + 250}
-                , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:vw/16 + 250 , y:-vh/4 + 15 + 250}
+                , {'Group':"OTHER INDO-EUROPEAN LANGUAGES", number:1, x:vw/16 + 270 , y:-vh/4 + 15 + 250}
                 , {'Group':"SPANISH AND SPANISH CREOLE", number:2, x:vw/6 + 250, y:-vh/4 + 20 + 250}
                 , {'Group':"English",number:3, x:vw/4 + 250, y:-vh/4 + 20 + 250} //x:vw/4, y:-vh/4 + 20}
                 , {'Group':"ALL OTHER LANGUAGES", number:4, x: vw/3+25 + 250, y:-vh/4 + 20 + 250}
@@ -484,7 +488,10 @@ loadData().then(function(data){
         views['map'].updateStateOpacity(1);
         views['map'].attachEventHandlers();
         
-        d3.select('#line_group').style('opacity',0)
+        // d3.select('#line_group').style('opacity',0)
+        d3.select('#cluster').raise()
+        
+
 
 
     } // end draw_map function  

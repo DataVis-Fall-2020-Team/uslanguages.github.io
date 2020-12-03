@@ -209,7 +209,7 @@ class US_Map{
                 .join("circle")
                 .attr("fill", d=> {
                     if (group_ct > 1){
-                        return 'blue'
+                        return 'rgb(220,220,220)'
                     }
                     else {
                         return colorScale(d.Group)
