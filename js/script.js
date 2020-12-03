@@ -331,7 +331,6 @@ loadData().then(function(data){
             views['cluster'].map_brush(false); // Clear brush selection
             views['cluster'].map_brush(true) //bring back brush
             d3.select("#cluster_group").raise();
-
         }// End map if statement
 
         if (chartType !== "area"){
@@ -350,6 +349,7 @@ loadData().then(function(data){
         if(view == "brush"){
             clean('map');
         }
+        d3.select("#LanguageInfo").html("");
         views['map'].updateView(newData);
     }
 

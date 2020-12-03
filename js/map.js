@@ -1,4 +1,3 @@
-
     /*
     * Class that creates the second view, which is the map. It controls the positioning of the circles drawn on the map as well
     */
@@ -325,7 +324,8 @@ class US_Map{
                             + ((that.group_ct > 1) ? "Multiple" : d.Group.toLowerCase()) + "</p>";
 
             if(!map_circles_same){
-                htmlText += "<p><b>Number of Speakers:</b> " + (d.Speakers ? numberWithCommas(d.Speakers) : numberWithCommas(d.Speakers_Total)) +"</p>";
+                htmlText += "<p><b>Number of Speakers:</b> " + (d.Speakers ? numberWithCommas(d.Speakers) :
+                    numberWithCommas(d.Speakers_Total)) +"</p>";
             }
 
             d3.select(this)
