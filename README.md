@@ -16,3 +16,21 @@ Links to the data sources for this project:
 ### Libraries
 D3 Library: https://github.com/d3/d3 <br/>
 Bootstrap Library: https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css
+
+### Resource Links
+There are other links and resources that we used. Most consisted of various tutorials that we learned in class (http://dataviscourse.net/tutorials/) but some consisted of public resources such as MDN Web Docs (https://developer.mozilla.org/en-US/), StackOverflow, and other resources. Below are more resource links.<br>
+
+https://github.com/cuthchow/college-majors-visualisation <br>
+https://github.com/DataVis-Fall-2020-Team/MappingAPI/tree/master/data/geojson <br>
+https://appdividend.com/2019/04/11/how-to-get-distinct-values-from-array-in-javascript/ <br>
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from <br>
+https://www.techiedelight.com/remove-falsy-values-from-an-array-in-javascript/ <br>
+https://stackoverflow.com/questions/40268326/find-center-of-svg-shape <br>
+https://developer.mozilla.org/en-US/docs/Web/API/SVGGraphicsElement/getBBox <br>
+https://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript <br>
+https://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript <br>
+https://bl.ocks.org/pbogden/854425acb57b4e5a4fdf4242c068a127 <br>
+https://stackoverflow.com/questions/1248081/how-to-get-the-browser-viewport-dimensions <br>
+https://codeburst.io/javascript-array-distinct-5edc93501dc4 <br>
+http://bl.ocks.org/couchand/6394506 <br>
+https://www.w3.org/2000/svg <br>
