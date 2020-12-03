@@ -368,7 +368,6 @@ loadData().then(function(data){
         
         clean('cluster') // Turns off opacity for all other charts
 
-        d3.select("#cluster").raise();
         d3.select("#cluster")
             .transition()
             .style('opacity',1)
@@ -444,9 +443,11 @@ loadData().then(function(data){
         d3.select('#cluster')
             .style('opacity',1)
 
-            simulation.on("end", function(){
+        simulation.on("end", function(){
+            if (mapview){
                 d3.select("#us_map").raise();
-            })
+            }
+        })
 
         simulation.alpha(1).restart()
 
