@@ -95,7 +95,9 @@ class cluster {
 
 
     circle_click.on('click.cluster', function(d){
+            // if (mapview){
             updateOtherViews(d.Language, "brush");
+            // }
         })
         /*// --------------------------------------------
         // Tooltip for the map circles
@@ -147,8 +149,8 @@ class cluster {
         let that = this;
         let height = 200;
         let width = 900;
-        let marginX = 280;
-        let marginY = 250;
+        let marginX = 0;
+        let marginY = 0;
 
         if(!active){
             d3.selectAll(".brush").remove();
