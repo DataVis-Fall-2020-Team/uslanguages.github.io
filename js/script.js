@@ -7,6 +7,7 @@ let MapData, map_speaker_total, mapview = false
 let views = {} //dictionary to store view objects
 let toggle_object, toggle_tracker = false
 let map_circles_same = true;
+let current_view; //{"cluster", "map", "bar1", "bar2", "area", "end"}
 // https://stackoverflow.com/questions/1248081/how-to-get-the-browser-viewport-dimensions
 const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
 const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
@@ -280,7 +281,7 @@ loadData().then(function(data){
      // Render Toggle - Taken from Homework 6 solution
      let toggle_div = d3.select('#map_section').append('div').attr('id','toggle_map')
 
-     toggle_object = renderToggle(toggle_div, 'Merge Speakers')
+     toggle_object = renderToggle(toggle_div, 'Select Multiple Languages')
 
      // Render Language Info Div in Panel - Replacement for tooltip because of clutter
      d3.select("#map_section").append("div").attr("id", "LanguageInfo");
@@ -357,6 +358,7 @@ loadData().then(function(data){
         // console.log("CAN YOU SEE THIS YET?")
         //Stop simulation
         simulation.stop()
+        current_view = "cluster";
         
         clean('cluster') // Turns off opacity for all other charts
 
@@ -411,6 +413,7 @@ loadData().then(function(data){
     function draw_map(){
 		
         mapview = true
+        current_view = "map";
 
         // TOGGLE
         toggle_object.on('click.toggle', function(d){
@@ -520,6 +523,7 @@ loadData().then(function(data){
     
         //Stop simulation
         simulation.stop()
+        current_view = "bar1"
         
         clean('bar1')
 
@@ -557,42 +561,44 @@ loadData().then(function(data){
             , {group: "ALL OTHER LANGUAGES", number:4, x: 356, y:240}
         ]
     
-        let rects = d3.select("#barchart2").append("g").attr("class", "simRects");
+        //do the transition if coming from bar1 view
+        if (current_view === "bar1"){
+            //draw the transition rects in barchart2 view
+            let rects = d3.select("#barchart2").append("g").attr("class", "simRects");
 
-        //draw the transition rects in barchart2 view
-        rects.selectAll("rect")
-            .data(data)
-            .join("rect")
-            .attr("x", d=>d.startX)
-            .attr("y", d=>d.startY)
-            .attr("height", d=>d.height)
-            .attr("width", d=>d.width)
-            .attr('fill',d => colorScale(d.group));
+            rects.selectAll("rect")
+                .data(data)
+                .join("rect")
+                .attr("x", d=>d.startX)
+                .attr("y", d=>d.startY)
+                .attr("height", d=>d.height)
+                .attr("width", d=>d.width)
+                .attr('fill',d => colorScale(d.group));
         
-        let count = 0;
-        let callbackFunction = function(){
-            count++;
-            if (count === 130){
-                d3.select(".simRects")
-                    .style("opacity", 0)
-                d3.select("#bar-rects")
-                    .style("opacity", 1)
-                d3.select(".simRects").remove();
-                d3.select("#barchart2").attr("pointer-events", "auto");
-                views['bar2'].attachEventHandlers();
-            }
-        }   
+            let count = 0;
+            let callbackFunction = function(){
+                count++;
+                if (count === 130){
+                    d3.select(".simRects")
+                        .style("opacity", 0)
+                    d3.select("#bar-rects")
+                        .style("opacity", 1)
+                    d3.select(".simRects").remove();
+                    d3.select("#barchart2").attr("pointer-events", "auto");
+                    views['bar2'].attachEventHandlers();
+                }
+            }   
 
-        rects.selectAll("rect")
+            rects.selectAll("rect")
                 .transition()
-                .delay(300)
-                .duration(400)
+                .delay(400)
+                .duration(500)
                 //move bars to the left
                 .attr("x", function(d){
                     let object = map.filter(obj => obj.group === d.group);
                     return object[0].x;})
                 .transition()
-                .duration(400)
+                .duration(500)
                 //adjust width to match bar width in view 2
                 .attr("width", 100)
                 //drop into bars
@@ -608,7 +614,14 @@ loadData().then(function(data){
                     else return d.startY;
                 })
                 .on("end", callbackFunction);
-    
+        }
+        else{
+            d3.select("#bar-rects").style("opacity", 1);
+            d3.select("#barchart2").attr("pointer-events", "auto");
+            views['bar2'].attachEventHandlers();
+        }
+        current_view = "bar2";
+        
     } // end draw vertial barchcart function   
 
     // Draw Area Chart
@@ -616,6 +629,7 @@ loadData().then(function(data){
     
         //Stop simulation
         simulation.stop()
+        current_view = "area"
         
         clean('area')
 

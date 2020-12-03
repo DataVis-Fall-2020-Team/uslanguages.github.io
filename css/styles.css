@@ -90,7 +90,6 @@ text {
     display: inline-block;
     position: fixed;
     top: 0px;
-    /* z-index: 1; */
     margin-left: 0;
     height: 1000px;
     width: 1050px;
@@ -263,7 +262,8 @@ button:hover{
 .toggle-text {
     padding-right: 20px;
     padding-top: 5px;
-    font-size: 12px;
+    font-size: 1.2em;
+    font-family: Domine;
   }
   
   /* The switch - the box around the slider */
@@ -307,11 +307,11 @@ button:hover{
   }
   
   input:checked + .slider {
-    background-color: #2196f3;
+    background-color: #9c33a5;
   }
   
   input:focus + .slider {
-    box-shadow: 0 0 1px #2196f3;
+    box-shadow: 0 0 1px #9c33a5;
   }
   
   input:checked + .slider:before {

@@ -317,7 +317,7 @@ class US_Map{
                             + (d.Group ? d.Group.toLowerCase() : "Multiple") + "</p>";
 
             if(!map_circles_same){
-                htmlText += "<p><b>Number of Speakers:</b> " + (d.Speakers ? d.Speakers : d.Speakers_Total) +"</p>";
+                htmlText += "<p><b>Number of Speakers:</b> " + (d.Speakers ? numberWithCommas(d.Speakers) : numberWithCommas(d.Speakers_Total)) +"</p>";
             }
 
             d3.select(this)

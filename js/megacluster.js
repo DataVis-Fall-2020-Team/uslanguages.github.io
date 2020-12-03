@@ -54,11 +54,15 @@ class cluster {
 					.style("top",y_pos + 'px')
 					.style("left", x_pos + 'px')
 					.style('visibility', 'visible')
-					.html("<p style=font-size:20px>" + d.Group + "</p> \
-						   <p>" + d.Subgroup + "</p> \
-						   <p>" + d.Language + ": " + d.Speakers +"</p>"
-					)
-					
+					// .html("<p style=font-size:20px>" + d.Group + "</p> \
+					// 	   <p>" + d.Subgroup + "</p> \
+					// 	   <p>" + d.Language + ": " + d.Speakers +"</p>"
+					// )
+					.html("<h2>" + d.Language + "</h2>" +
+                            "<strong>Subgroup: </strong>" + d.Subgroup + 
+                            "</br><strong>Language Group: </strong>" + d.Group + 
+                            "</br><strong> Number of Speakers: </strong>" + numberWithCommas(d.Speakers)
+                        )
 				selected_circle = this
 				d3.select(this)
 					.attr('stroke', 'black')   
