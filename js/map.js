@@ -109,6 +109,11 @@ class US_Map{
 
         //get individual language info
         dataset0_updated = this.mapData.filter(d=>languages.includes(d.Language));
+        dataset0_updated.forEach(d=>{
+            if(d.Group != ""){
+                return d;
+            }
+        })
 
         if(dataset0_updated.length == 0){
             //Clear out all bubbles and lines
@@ -180,6 +185,7 @@ class US_Map{
                 }
             })
 
+
             // Consolidate number of speakers so there is one bubble per state
             if (dataset0_updated.length > 0){
                 state_list.forEach((g) => {
@@ -194,6 +200,13 @@ class US_Map{
                     })
                 })
             }
+
+            //Filter out those with StateCenter == 0
+            dataset0_updated.forEach((d) => {
+                if(d.Speakers_Total != 0 && d.StateCenter[0] != 0 && d.StateCenter[1] != 0){
+                    return d;
+                }
+            })
 
             // Count the number of groups. If group_ct > 1, then change the color of the circles
             this.group_ct = new Set(group_list)
@@ -224,8 +237,8 @@ class US_Map{
                     }
                 })
                 .attr("r", d=>scale_multiselect_bubble(d.Speakers_Total))
-                .attr("cx", d=>d.StateCenter[0])
-                .attr("cy", d=>d.StateCenter[1])
+                .attr("cx", d=>(d.StateCenter[0] > 0 && d.StateCenter[1] > 0) ? d.StateCenter[0] : -20)
+                .attr("cy", d=>(d.StateCenter[1] > 0 && d.StateCenter[0] > 0) ? d.StateCenter[1] : -20)
                 .attr("transform", "translate(0,140)")
                 .attr("class", "") // Clear out all the classes
                 .classed("state_bubbles", true);
@@ -325,6 +338,7 @@ class US_Map{
                 .classed("notice", true);
 
             infoBox.html(htmlText);
+            console.log(d);
 
         }) // End mouseover listener
 

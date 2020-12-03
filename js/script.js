@@ -304,7 +304,8 @@ loadData().then(function(data){
                 d3.select("#cluster").transition().style('opacity', 0)
                 views['cluster'].clearEventHandlers();
             }
-        } // End cluster if statement
+        }
+        // End cluster if statement
 
         if (chartType !== "bar1"){
             d3.select('#barchart1').transition(300).style('opacity',0)
@@ -371,7 +372,7 @@ loadData().then(function(data){
         d3.select("#cluster")
             .transition()
             .style('opacity',1)
-        
+
         d3.selectAll('.cluster_circles')
             .transition(1000)
             .attr('r',d=> scaleSize(d.Speakers))
