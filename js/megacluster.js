@@ -50,7 +50,6 @@ class cluster {
         // Create tooltip    
         let tooltip = d3.select('#tooltip')
 
-        
         // --------------------------------------------
         // Tooltip for the cluster
         // --------------------------------------------  
@@ -66,7 +65,7 @@ class cluster {
         d3.selectAll('.cluster_circles')
             .on('mouseover.cluster', function(d){
                 let x_pos = parseInt(d3.event.target.attributes['cx'].value) > 700 ? parseInt(d3.event.target.attributes['cx'].value) - 150 : parseInt(d3.event.target.attributes['cx'].value)
-                let y_pos = parseInt(d3.event.target.attributes['cy'].value) > 600 ? parseInt(d3.event.target.attributes['cy'].value) - 200 : parseInt(d3.event.target.attributes['cy'].value)
+                let y_pos = parseInt(d3.event.target.attributes['cy'].value) > 400 ? parseInt(d3.event.target.attributes['cy'].value) - 300 : parseInt(d3.event.target.attributes['cy'].value)
 
 				tooltip
 					.style("top",y_pos + 'px')
@@ -89,7 +88,7 @@ class cluster {
 
 			.on('mousemove.cluster', () => {
                 let x_pos = parseInt(d3.event.target.attributes['cx'].value) > 700 ? parseInt(d3.event.target.attributes['cx'].value) - 150 : parseInt(d3.event.target.attributes['cx'].value)
-                let y_pos = parseInt(d3.event.target.attributes['cy'].value) > 600 ? parseInt(d3.event.target.attributes['cy'].value) - 200 : parseInt(d3.event.target.attributes['cy'].value)
+                let y_pos = parseInt(d3.event.target.attributes['cy'].value) > 400 ? parseInt(d3.event.target.attributes['cy'].value) - 300 : parseInt(d3.event.target.attributes['cy'].value)
                 
 				tooltip
                     .style("top",y_pos + 'px')
