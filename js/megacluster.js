@@ -3,6 +3,7 @@ let selected_circle
 class cluster {
     constructor(svg){
         this.svg = svg
+
         this.svg
             .append("g")
             .attr("id", "cluster")
@@ -100,9 +101,9 @@ class cluster {
 
 
     circle_click.on('click.cluster', function(d){
-            // if (mapview){
+            if (mapview){
             updateOtherViews(d.Language, "brush");
-            // }
+            }
         })
         /*// --------------------------------------------
         // Tooltip for the map circles
