@@ -13,6 +13,6 @@ Links to the data sources for this project:
   * https://www.census.gov/data/tables/2013/demo/2009-2013-lang-tables.html
   * https://www.census.gov/dataviz/visualizations/045/508.php
 
-# Libraries
+### Libraries
 D3 Library: https://github.com/d3/d3 <br/>
 Bootstrap Library: https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css
