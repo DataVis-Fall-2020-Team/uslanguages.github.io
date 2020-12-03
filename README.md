@@ -8,14 +8,16 @@ As you scroll through, the visuals are interactive so you can hover and click to
 ## Links/Libraries
 
 Project Website: https://datavis-fall-2020-team.github.io/uslanguages.github.io/ <br>
+Project Video Explanation: https://www.youtube.com/watch?v=irzD8Ur3n68&feature=youtu.be <br>
 Project Inspiration:  https://github.com/cuthchow/college-majors-visualisation <br>
 Links to the data sources for this project: 
   * https://www.census.gov/data/tables/2013/demo/2009-2013-lang-tables.html
   * https://www.census.gov/dataviz/visualizations/045/508.php
 
 ### Libraries
-D3 Library: https://github.com/d3/d3 <br/>
-Bootstrap Library: https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css
+D3 Library: https://github.com/d3/d3 <br>
+Bootstrap Library: https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css <br>
+Ajax Library: https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js
 
 ### Resource Links
 There are other links and resources that we used. Most consisted of various tutorials that we learned in class (http://dataviscourse.net/tutorials/) but some consisted of public resources such as MDN Web Docs (https://developer.mozilla.org/en-US/), StackOverflow, and other resources. Below are more resource links.<br>
