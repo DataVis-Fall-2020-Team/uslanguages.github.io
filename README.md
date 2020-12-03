@@ -8,5 +8,5 @@ As you scroll through, the visuals are interactive so you can hover and click to
 # Links/Libraries
 
 Project Website: https://datavis-fall-2020-team.github.io/uslanguages.github.io/
-
+Project Inspiration:  https://github.com/cuthchow/college-majors-visualisation
 Link to the data source for this project: https://www.census.gov/data/tables/2013/demo/2009-2013-lang-tables.html
