@@ -12,7 +12,8 @@ class US_Map{
         this.lines=[[785, 705, 260, 225],[805, 753, 260, 200],[804,894,285,225],[814,858,298,289],[797,895,303,346],
                     [777,827,340,360],[770,882,370,427],[750,810,370,430],[744,815,376,508]];
         this.lineStates = ["Vermont", "New Hampshire", "Massachusetts", "Rhode Island", "Connecticut",
-            "New Jersey", "Delaware", "Maryland", "District of Columbia"]
+            "New Jersey", "Delaware", "Maryland", "District of Columbia"];
+        this.group_size = 0;
 
         //Add centers and languages per state to the data
         let that = this;
@@ -195,9 +196,8 @@ class US_Map{
             }
 
             // Count the number of groups. If group_ct > 1, then change the color of the circles
-            let group_ct
-            group_ct = new Set(group_list)
-            group_ct = group_ct.size
+            this.group_ct = new Set(group_list)
+            this.group_ct = this.group_ct.size;
 
             // Create an array of all the speaker counts
             map_speaker_total =  state_list.map(d => d.Speakers_Total)
@@ -206,7 +206,7 @@ class US_Map{
                 .data(state_list)
                 .join("circle")
                 .attr("fill", d=> {
-                    if (group_ct > 1){
+                    if (this.group_ct > 1){
                         return 'rgb(220,220,220)'
                     }
                     else {
@@ -216,7 +216,7 @@ class US_Map{
                 .attr("stroke", "black")
                 .attr("stroke-width", 1)
                 .style("opacity", d => {
-                    if (group_ct == 0){
+                    if (this.group_ct == 0){
                         return 0
                     }
                     else {
@@ -309,7 +309,7 @@ class US_Map{
             let htmlText = "<p style=font-size:20px><b>Language:</b> " + (d.Language ? d.Language : "Multiple")
                             + "</p><p><b>Sub-group:</b> " + (d.Subgroup ? d.Subgroup : "Multiple")
                             + "</p><p style=text-transform:capitalize><b>Group:</b> "
-                            + (d.Group ? d.Group.toLowerCase() : "Multiple") + "</p>";
+                            + ((that.group_ct > 1) ? "Multiple" : d.Group.toLowerCase()) + "</p>";
 
             if(!map_circles_same){
                 htmlText += "<p><b>Number of Speakers:</b> " + (d.Speakers ? numberWithCommas(d.Speakers) : numberWithCommas(d.Speakers_Total)) +"</p>";
